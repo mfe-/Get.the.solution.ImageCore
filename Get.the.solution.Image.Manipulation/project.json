@@ -1,0 +1,18 @@
+﻿{
+  "supports": {},
+  "dependencies": {
+    "ImageSharp": "1.0.0-alpha2-00051",
+    "ImageSharp.Drawing": "1.0.0-alpha2-00052",
+    "ImageSharp.Drawing.Paths": "1.0.0-alpha2-00002",
+    "ImageSharp.Formats.Bmp": "1.0.0-alpha2-00052",
+    "ImageSharp.Formats.Gif": "1.0.0-alpha2-00052",
+    "ImageSharp.Formats.Jpeg": "1.0.0-alpha2-00052",
+    "ImageSharp.Formats.Png": "1.0.0-alpha2-00048",
+    "ImageSharp.Processing": "1.0.0-alpha2-00040",
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
+    "NETStandard.Library": "1.6.1"
+  },
+  "frameworks": {
+    "netstandard1.4": {}
+  }
+}

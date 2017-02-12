@@ -8,36 +8,42 @@
     prismMvvm:ViewModelLocator.AutoWireViewModel="True"
     xmlns:prismMvvm="using:Prism.Windows.Mvvm"
     xmlns:common="using:Get.the.solution.UWP.XAML"
+    xmlns:converter="using:Get.the.solution.UWP.XAML.Converter"
 
     mc:Ignorable="d">
+    <Page.Resources>
+        <converter:StringToIntConverter x:Key="StringToIntConverter" />
+    </Page.Resources>
+    <Page.Content>
+        <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Orientation="Vertical">
+            <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Resize" TextWrapping="Wrap" />
+            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectImage"
+                Command="{Binding Path=OpenFilePickerCommand}"/>
+            <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectSize" />
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Orientation="Vertical">
-        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-            x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Resize"
-                   TextWrapping="Wrap" />
-        <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectImage" />
-        <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectSize" />
-    
-        <RadioButton GroupName="A" 
+            <RadioButton GroupName="A" IsChecked="{Binding Path=SizeSmallChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                      x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeSmall" />
-        <RadioButton GroupName="A" 
+            <RadioButton GroupName="A" IsChecked="{Binding Path=SizeMediumChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                      x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeMedium" />
-        <RadioButton GroupName="A" >
-            <RadioButton.Content>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomWidth" />
-                    <TextBox />
-                    <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomBy" />
-                    <TextBox />
-                    <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomHeight" />
-                </StackPanel>
-            </RadioButton.Content>
-        </RadioButton>
-        <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/CopyEnabled" 
-                   />
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Ok" />
-            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Cancel" />
+            <RadioButton GroupName="A" IsChecked="{Binding Path=SizeCustomChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <RadioButton.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomWidth" />
+                        <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" MaxLength="5" />
+                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomBy" />
+                        <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" MaxLength="5" />
+                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomHeight" />
+                    </StackPanel>
+                </RadioButton.Content>
+            </RadioButton>
+            <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/CopyEnabled" 
+                    IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Ok" 
+                    Command="{Binding Path=OkCommand}"/>
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Cancel"
+                    Command="{Binding Path=CancelCommand}"/>
+            </StackPanel>
         </StackPanel>
-    </StackPanel>
+    </Page.Content>
 </Page>

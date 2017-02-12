@@ -152,6 +152,10 @@
       <Project>{3597dcbb-2b03-44dd-85e7-9ef5ad703652}</Project>
       <Name>Get.the.solution.Image.Manipulation.Resources</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Get.the.solution.Image.Manipulation\Get.the.solution.Image.Manipulation.csproj">
+      <Project>{4ef2d3bf-653d-4a57-a250-882e494f95b2}</Project>
+      <Name>Get.the.solution.Image.Manipulation</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
