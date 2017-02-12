@@ -23,6 +23,7 @@ using Windows.ApplicationModel.Resources;
 using Microsoft.Practices.Unity;
 using System.Reflection;
 using System.Globalization;
+using Windows.UI.ViewManagement;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -34,7 +35,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
     /// </summary>
     sealed partial class App : PrismUnityApplication
     {
-
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -55,7 +55,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             var shell = Container.Resolve<MainPage>();
             shell.SetContentFrame(rootFrame);
-
             return shell;
         }
         /// <summary>
@@ -93,6 +92,8 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 SetViewModelLocationProvider();
             }
+
+
 
             return base.OnInitializeAsync(args);
         }

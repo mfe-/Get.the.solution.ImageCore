@@ -38,7 +38,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected void OnNavigateToCommand(MenuItem param)
         {
-            if (SelectedMenuItem.PageType == typeof(MainPage))
+            if (SelectedMenuItem.PageType == typeof(ResizePage))
             {
                 _NavigationService.Navigate(Items[1].PageType.AssemblyQualifiedName, null);
             }

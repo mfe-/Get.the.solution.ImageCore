@@ -7,9 +7,37 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     prismMvvm:ViewModelLocator.AutoWireViewModel="True"
     xmlns:prismMvvm="using:Prism.Windows.Mvvm"
+    xmlns:common="using:Get.the.solution.UWP.XAML"
+
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Text="resize" />
-    </Grid>
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Orientation="Vertical">
+        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+            x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Resize"
+                   TextWrapping="Wrap" />
+        <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectImage" />
+        <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectSize" />
+    
+        <RadioButton GroupName="A" 
+                     x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeSmall" />
+        <RadioButton GroupName="A" 
+                     x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeMedium" />
+        <RadioButton GroupName="A" >
+            <RadioButton.Content>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomWidth" />
+                    <TextBox />
+                    <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomBy" />
+                    <TextBox />
+                    <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomHeight" />
+                </StackPanel>
+            </RadioButton.Content>
+        </RadioButton>
+        <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/CopyEnabled" 
+                   />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Ok" />
+            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Cancel" />
+        </StackPanel>
+    </StackPanel>
 </Page>

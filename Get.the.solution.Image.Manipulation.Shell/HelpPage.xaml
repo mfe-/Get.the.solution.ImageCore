@@ -5,12 +5,21 @@
     xmlns:local="using:Get.the.solution.Image.Manipulation.Shell"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    prismMvvm:ViewModelLocator.AutoWireViewModel="True"
+    xmlns:prismMvvm="using:Prism.Windows.Mvvm"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:common="using:Get.the.solution.UWP.XAML"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    >
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <RichTextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="20">
             <Paragraph>
                 <Bold>Help</Bold>
+                <LineBreak />
+                First select an image and then set the proper size. Click ok to save the resized image.
             </Paragraph>
             <Paragraph>
                 <Bold>Contact</Bold>
