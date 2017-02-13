@@ -21,6 +21,7 @@
                                 ItemTemplate="{StaticResource DefaultMenuItemTemplate}"
                                 ItemsSource="{Binding Items}"
                                 SelectedItem="{Binding Path=SelectedMenuItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                IsPaneOpen="False"
                              >
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="ItemClick">

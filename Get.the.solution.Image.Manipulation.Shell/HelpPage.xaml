@@ -20,6 +20,19 @@
                 <Bold>Help</Bold>
                 <LineBreak />
                 First select an image and then set the proper size. Click ok to save the resized image.
+                <LineBreak />
+                
+            </Paragraph>
+            <Paragraph>
+                <Bold>Our apps</Bold>
+                <LineBreak />
+                <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/file-renamer/9nblggh4rkqt">Filerenamer</Hyperlink>
+                 - Rename files.
+                <LineBreak />
+                <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/coffee-clock/9nblggh442p4">CoffeeClock</Hyperlink> - Reminder. Don't forget your pizza in the oven!
+                <LineBreak />
+                <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/tetromino-fun/9nblggh3zpvm">Tetromino Fun</Hyperlink> - Our Tetris game
+                <LineBreak />
             </Paragraph>
             <Paragraph>
                 <Bold>Contact</Bold>
