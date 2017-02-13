@@ -24,6 +24,7 @@ using Microsoft.Practices.Unity;
 using System.Reflection;
 using System.Globalization;
 using Windows.UI.ViewManagement;
+using Windows.Storage;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -64,22 +65,18 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             // Set up the list of known types for the SuspensionManager
         }
-        protected override async void OnFileActivated(FileActivatedEventArgs args)
+        protected override void OnFileActivated(FileActivatedEventArgs args)
         {
             base.OnFileActivated(args);
-            if (Container == null)
-            {
-                var frame = await InitializeFrameAsync(args);
-                CreateShell(frame);
-            }
-            //NavigationService.Navigate(typeof(ResizePage).AssemblyQualifiedName, args);
+            //init prism bootstrap
+            OnActivated(args);
         }
 
         protected override Task OnInitializeAsync(IActivatedEventArgs args)
         {
             UnhandledException += App_UnhandledException;
 
-            
+
             Container.RegisterInstance<INavigationService>(NavigationService);
             Container.RegisterInstance<ISessionStateService>(SessionStateService);
 
@@ -91,6 +88,33 @@ namespace Get.the.solution.Image.Manipulation.Shell
             if ((args as LaunchActivatedEventArgs)?.PrelaunchActivated == false)
             {
                 SetViewModelLocationProvider();
+            }
+            if (args as FileActivatedEventArgs != null)
+            {
+                FileActivatedEventArgs fileargs = args as FileActivatedEventArgs;
+                IList<IStorageFile> storagefiles = new List<IStorageFile>();
+
+                foreach (var item in fileargs.Files)
+                {
+
+                    if (item is IStorageFile)
+                    {
+                        if (item is StorageFile)
+                        {
+                            storagefiles.Add(item as StorageFile);
+                        }
+                    }
+                    //if (item is IStorageFolder && item is StorageFolder)
+                    //{
+                    //    OpenFolder(item as StorageFolder);
+                    //}
+                }
+
+                Container.RegisterInstance<IEnumerable<IStorageFile>>(storagefiles);
+            }
+            else
+            {
+                Container.RegisterInstance<IEnumerable<IStorageFile>>(new List<IStorageFile>());
             }
 
 

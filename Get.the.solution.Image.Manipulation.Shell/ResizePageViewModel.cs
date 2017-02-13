@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -18,15 +16,32 @@ namespace Get.the.solution.Image.Manipulation.Shell
     {
         protected readonly INavigationService _NavigationService;
         protected readonly IResourceLoader _ResourceLoader;
+        protected readonly IEnumerable<IStorageFile> _SelectedFiles;
 
-        public ResizePageViewModel(INavigationService navigationService, IResourceLoader resourceLoader)
+        public ResizePageViewModel(IEnumerable<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader)
         {
+            _SelectedFiles = selectedFiles;
             _ResourceLoader = resourceLoader;
             _NavigationService = navigationService;
             ImageFiles = new List<IStorageFile>();
             OpenFilePickerCommand = new DelegateCommand(OnOpenFilePickerCommand);
             OkCommand = new DelegateCommand(OnOkCommand);
             CancelCommand = new DelegateCommand(OnCancelCommand);
+
+            SizeSmallChecked = true;
+
+            if (_SelectedFiles != null)
+            {
+                ImageFiles = _SelectedFiles.ToList();
+            }
+        }
+
+        //private bool _ShowOpenFilePicker;
+
+        public bool ShowOpenFilePicker
+        {
+            get { return ImageFiles != null && ImageFiles.Count==0; }
+            set { OnPropertyChanged(nameof(ShowOpenFilePicker)); }
         }
 
         #region FilePickerCommand
@@ -50,6 +65,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
             set
             {
                 SetProperty(ref _SizeSmallChecked, value, nameof(SizeSmallChecked));
+                if (SizeSmallChecked)
+                {
+                    Width = 640; Height = 480;
+                }
             }
         }
 
@@ -61,6 +80,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
             set
             {
                 SetProperty(ref _SizeMediumChecked, value, nameof(SizeMediumChecked));
+                if (SizeMediumChecked)
+                {
+                    Width = 800; Height = 600;
+                }
             }
         }
 
@@ -79,7 +102,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
         public List<IStorageFile> ImageFiles
         {
             get { return _ImageFiles; }
-            set { SetProperty(ref _ImageFiles, value, nameof(ImageFiles)); }
+            set
+            {
+                SetProperty(ref _ImageFiles, value, nameof(ImageFiles));
+                OnPropertyChanged(nameof(ShowOpenFilePicker));
+            }
         }
         #endregion
 
@@ -87,14 +114,12 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected async void OnOkCommand()
         {
-            if (SizeSmallChecked)
+            //if no file is selected open file picker 
+            if (ImageFiles == null || ImageFiles.Count == 0)
             {
-                Width = 640; Height = 480;
+                await OpenFilePickerCommand.Execute();
             }
-            if (SizeMediumChecked)
-            {
-                Width = 800; Height = 600;
-            }
+
             foreach (IStorageFile storage in ImageFiles)
             {
                 var randomAccessStream = await storage.OpenReadAsync();
@@ -103,7 +128,12 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     if (OverwriteFiles)
                     {
-                        
+                        StorageFile st = storage as StorageFile;
+
+
+
+
+                        //st.CopyAndReplaceAsync()
                     }
                     else
                     {
@@ -114,7 +144,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                             FileSavePicker.FileTypeChoices.Add(storage.FileType, new List<string>() { storage.FileType });
 
                             // Default file name if the user does not type one in or select a file to replace
-                            FileSavePicker.SuggestedFileName = $"{storage.Name.Replace(storage.FileType,String.Empty)}-{Width}x{Height}{storage.FileType}";
+                            FileSavePicker.SuggestedFileName = $"{storage.Name.Replace(storage.FileType, String.Empty)}-{Width}x{Height}{storage.FileType}";
                             StorageFile file = await FileSavePicker.PickSaveFileAsync();
                             if (null != file)
                             {

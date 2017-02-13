@@ -9,16 +9,44 @@
     xmlns:prismMvvm="using:Prism.Windows.Mvvm"
     xmlns:common="using:Get.the.solution.UWP.XAML"
     xmlns:converter="using:Get.the.solution.UWP.XAML.Converter"
-
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
     <Page.Resources>
         <converter:StringToIntConverter x:Key="StringToIntConverter" />
+        <converter:FilenamePathShorterConverter x:Key="FilenamePathShorterConverter" />
     </Page.Resources>
     <Page.Content>
         <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Orientation="Vertical">
             <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Resize" TextWrapping="Wrap" />
-            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectImage"
-                Command="{Binding Path=OpenFilePickerCommand}"/>
+            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectImage" 
+                Command="{Binding Path=OpenFilePickerCommand}">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior Binding="{Binding Path=ShowOpenFilePicker,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                        <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding Path=ShowOpenFilePicker,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                        <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </Button>
+            <ListView
+                                 ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}"
+                                 Name="listboxfiles" 
+                                 ScrollViewer.VerticalScrollBarVisibility="Visible"  
+                                 SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <!--common:OnDel.Command="{Binding Path=DataContext.DeleteFileCommand,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
+                                               common:OnDel.CommandParameter="{Binding Path=SelectedItem,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"-->
+
+                        <TextBlock x:Name="PathTextBlock"
+                                               ToolTipService.ToolTip="{Binding Path=Path}"
+                                               Text="{Binding Path=Path,Converter={StaticResource FilenamePathShorterConverter}}" >
+                        </TextBlock>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
             <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectSize" />
 
             <RadioButton GroupName="A" IsChecked="{Binding Path=SizeSmallChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
@@ -29,9 +57,11 @@
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomWidth" />
-                        <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" MaxLength="5" />
+                        <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                                 MaxLength="5" Width="70" />
                         <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomBy" />
-                        <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" MaxLength="5" />
+                        <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                                 MaxLength="5" Width="70" />
                         <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomHeight" />
                     </StackPanel>
                 </RadioButton.Content>
