@@ -40,7 +40,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         public bool ShowOpenFilePicker
         {
-            get { return ImageFiles != null && ImageFiles.Count==0; }
+            get { return ImageFiles != null && ImageFiles.Count == 0; }
             set { OnPropertyChanged(nameof(ShowOpenFilePicker)); }
         }
 
@@ -129,15 +129,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     if (OverwriteFiles)
                     {
                         StorageFile st = storage as StorageFile;
-
-
-
-
                         //st.CopyAndReplaceAsync()
                     }
                     else
                     {
-                        if (ImageFiles.Count == 1)
+                        //if (ImageFiles.Count == 1)
                         {
                             FileSavePicker FileSavePicker = new FileSavePicker();
                             FileSavePicker.DefaultFileExtension = storage.FileType;
@@ -153,6 +149,15 @@ namespace Get.the.solution.Image.Manipulation.Shell
                         }
                     }
                 }
+
+            }
+            if (_SelectedFiles == null || _SelectedFiles?.Count() != 0)
+            {
+                await CancelCommand.Execute();
+            }
+            else
+            {
+                ImageFiles = new List<IStorageFile>();
 
             }
 

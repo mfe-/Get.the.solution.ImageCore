@@ -132,6 +132,9 @@
   <data name="Ok.Content" xml:space="preserve">
     <value>Ok</value>
   </data>
+  <data name="OpenWith" xml:space="preserve">
+    <value>Resize Image with Image Resizer</value>
+  </data>
   <data name="Resize.Text" xml:space="preserve">
     <value>You can create resized copies of one selected picture and store them in your prefered folder.</value>
   </data>

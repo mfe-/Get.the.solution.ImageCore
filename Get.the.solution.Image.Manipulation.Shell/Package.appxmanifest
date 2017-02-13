@@ -23,9 +23,11 @@
       <Extensions>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="image_resizer">
-            <uap:DisplayName>ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resource/AppName</uap:DisplayName>
+            <uap:DisplayName>ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resource/OpenWith</uap:DisplayName>
+            <uap:Logo>Assets\StoreLogo.png</uap:Logo>
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="image/jpeg">.jpg</uap:FileType>
+              <uap:FileType ContentType="image/png">.png</uap:FileType>
             </uap:SupportedFileTypes>
           </uap:FileTypeAssociation>
         </uap:Extension>

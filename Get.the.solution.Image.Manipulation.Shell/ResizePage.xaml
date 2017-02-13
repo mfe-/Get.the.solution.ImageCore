@@ -30,11 +30,16 @@
                     </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <ListView
-                                 ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}"
-                                 Name="listboxfiles" 
-                                 ScrollViewer.VerticalScrollBarVisibility="Visible"  
-                                 SelectionMode="Single">
+            <ListView ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}" MaxHeight="40"
+                      Name="listboxfiles" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Single">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:DataTriggerBehavior Binding="{Binding Path=ShowOpenFilePicker,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                        <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding Path=ShowOpenFilePicker,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                        <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                    </Core:DataTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <!--common:OnDel.Command="{Binding Path=DataContext.DeleteFileCommand,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
@@ -66,8 +71,8 @@
                     </StackPanel>
                 </RadioButton.Content>
             </RadioButton>
-            <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/CopyEnabled" 
-                    IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}" />
+            <!--<CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/CopyEnabled" 
+                    IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}" />-->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Ok" 
                     Command="{Binding Path=OkCommand}"/>

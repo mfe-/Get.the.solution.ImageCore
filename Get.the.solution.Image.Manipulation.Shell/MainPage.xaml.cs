@@ -23,7 +23,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private Size _PreferredSize = new Size(480, 400);
+        private Size _PreferredSize = new Size(480, 300);
         public MainPage()
         {
             this.InitializeComponent();
