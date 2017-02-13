@@ -71,8 +71,8 @@
                     </StackPanel>
                 </RadioButton.Content>
             </RadioButton>
-            <!--<CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/CopyEnabled" 
-                    IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}" />-->
+            <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/CopyEnabled" 
+                    IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Ok" 
                     Command="{Binding Path=OkCommand}"/>

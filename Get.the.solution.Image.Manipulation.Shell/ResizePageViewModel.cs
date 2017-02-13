@@ -128,8 +128,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     if (OverwriteFiles)
                     {
-                        StorageFile st = storage as StorageFile;
-                        //st.CopyAndReplaceAsync()
+                        await FileIO.WriteBytesAsync(storage, filestream.ToArray());
                     }
                     else
                     {
@@ -151,15 +150,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 }
 
             }
-            if (_SelectedFiles == null || _SelectedFiles?.Count() != 0)
-            {
-                await CancelCommand.Execute();
-            }
-            else
-            {
-                ImageFiles = new List<IStorageFile>();
-
-            }
+            await CancelCommand.Execute();
 
         }
 
@@ -184,7 +175,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected void OnCancelCommand()
         {
-            CoreApplication.Exit();
+            if (_SelectedFiles == null || _SelectedFiles?.Count() != 0)
+            {
+                CoreApplication.Exit();
+            }
+            else
+            {
+                ImageFiles = new List<IStorageFile>();
+            }
         }
 
 
