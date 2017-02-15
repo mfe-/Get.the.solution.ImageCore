@@ -254,18 +254,23 @@ namespace Get.the.solution.Image.Manipulation.Shell
             }
             else
             {
-                //open the resized file on windows mobile
-                if (DeviceTypeHelper.GetDeviceFormFactorType() != DeviceFormFactorType.Desktop)
+                if (_LastFile != null)
                 {
-                    MessageDialog Dialog = new MessageDialog(_ResourceLoader.GetString("ShowLastFile"));
-                    Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("Yes")) { Id = 0 });
-                    Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("No")) { Id = 1 });
-                    if ((int)(await Dialog.ShowAsync()).Id == 0)
+                    //open the resized file on windows mobile
+                    if (DeviceTypeHelper.GetDeviceFormFactorType() != DeviceFormFactorType.Desktop)
                     {
-                        await OpenFileCommand.Execute(_LastFile);
+                        MessageDialog Dialog = new MessageDialog(_ResourceLoader.GetString("ShowLastFile"));
+                        Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("Yes")) { Id = 0 });
+                        Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("No")) { Id = 1 });
+                        if ((int)(await Dialog.ShowAsync()).Id == 0)
+                        {
+                            await OpenFileCommand.Execute(_LastFile);
+                        }
                     }
                 }
+
                 ImageFiles = new List<IStorageFile>();
+                _LastFile = null;
             }
         }
         #endregion

@@ -31,8 +31,10 @@
                     </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <ListView ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}" 
-                      Name="listboxfiles" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Single"
+            <ListView ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}" Name="listboxfiles" 
+                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.HorizontalScrollMode="Enabled" 
+                      SelectionMode="Single"
                       SelectedItem="{Binding Path=SelectedFile,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior Binding="{Binding Path=ShowOpenFilePicker,UpdateSourceTrigger=PropertyChanged}" Value="False">
