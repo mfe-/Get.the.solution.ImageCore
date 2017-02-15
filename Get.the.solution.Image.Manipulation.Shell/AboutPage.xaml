@@ -1,38 +1,39 @@
 ﻿<Page
-    x:Class="Get.the.solution.Image.Manipulation.Shell.HelpPage"
+    x:Class="Get.the.solution.Image.Manipulation.Shell.AboutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Get.the.solution.Image.Manipulation.Shell"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+        mc:Ignorable="d"
     prismMvvm:ViewModelLocator.AutoWireViewModel="True"
     xmlns:prismMvvm="using:Prism.Windows.Mvvm"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:common="using:Get.the.solution.UWP.XAML"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    >
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer Width="Auto" Height="Auto" VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled">
             <RichTextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="20">
                 <Paragraph>
-                    <Bold>Help</Bold>
+                    <Bold>Our apps</Bold>
                     <LineBreak />
-                    First select an image and then set the proper size. Click ok to save the resized image.
+                    <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/file-renamer/9nblggh4rkqt">Filerenamer</Hyperlink>
+                    - Rename files.
                     <LineBreak />
+                    <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/coffee-clock/9nblggh442p4">CoffeeClock</Hyperlink> - Reminder. Don't forget your pizza in the oven!
                     <LineBreak />
-                    Resize an image from windows explorer. Right click on image. select open with "Image Resizer".
-                    <InlineUIContainer>
-                        <Image Source="ms-appx://Get.the.solution.Image.Manipulation.Shell/Assets/explorer-shell-integration.png" />
-                    </InlineUIContainer>
+                    <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/tetromino-fun/9nblggh3zpvm">Tetromino Fun</Hyperlink> - Our Tetris game
                     <LineBreak />
-                    Did you know?
+                </Paragraph>
+                <Paragraph>
+                    <Bold>Contact</Bold>
                     <LineBreak />
-                    The setting of the "Resize the orginal pictures (don't create copies)" checkbox will be saved for your next session.
+                    We try to enhance the app. Send us feature requests or bugs. We are also looking for translators!
+                    Please send us your translation of the app.
                     <LineBreak />
-                    <LineBreak />
+                    <Hyperlink NavigateUri="mailto:support@get-the-solution.net">Reach us.</Hyperlink>
                 </Paragraph>
             </RichTextBlock>
         </ScrollViewer>

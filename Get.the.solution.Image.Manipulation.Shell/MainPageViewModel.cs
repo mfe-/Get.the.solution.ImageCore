@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
-    public class  MainPageViewModel  : BindableBase
+    public class MainPageViewModel : BindableBase
     {
         protected readonly INavigationService _NavigationService;
         protected readonly IResourceLoader _ResourceLoader;
@@ -24,27 +24,26 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
             Items = new List<MenuItem>()
             {
-                new MenuItem () { Name = "Resize Image", Icon = Symbol.Folder, PageType = typeof(ResizePage) },
-                new MenuItem () { Name = "About" , Icon = Symbol.Help, PageType = typeof(HelpPage) }
+                new MenuItem () { Name = resourceLoader.GetString("AppName"), Icon = Symbol.Folder, PageType = typeof(ResizePage) },
+                new MenuItem () { Name = resourceLoader.GetString("Help") , Icon = Symbol.Help, PageType = typeof(HelpPage) },
+                new MenuItem () { Name = resourceLoader.GetString("Contact"),Icon = Symbol.Contact, PageType = typeof(AboutPage) }
             };
             SelectedMenuItem = Items[0];
-            NavigateToCommand = new DelegateCommand<MenuItem>(OnNavigateToCommand);
+            NavigateToCommand = new DelegateCommand<object>(OnNavigateToCommand);
 
             _NavigationService.Navigate(Items[0].PageType.AssemblyQualifiedName, null);
         }
 
 
-        public DelegateCommand<MenuItem> NavigateToCommand { get; set; }
+        public DelegateCommand<object> NavigateToCommand { get; set; }
 
-        protected void OnNavigateToCommand(MenuItem param)
+        protected void OnNavigateToCommand(object param)
         {
-            if (SelectedMenuItem.PageType == typeof(ResizePage))
+            MenuItem clicked = (param as ItemClickEventArgs)?.ClickedItem as MenuItem;
+
+            if (clicked != null)
             {
-                _NavigationService.Navigate(Items[1].PageType.AssemblyQualifiedName, null);
-            }
-            else
-            {
-                _NavigationService.Navigate(Items[0].PageType.AssemblyQualifiedName, null);
+                _NavigationService.Navigate(clicked.PageType.AssemblyQualifiedName, null);
             }
 
         }

@@ -25,8 +25,9 @@
                              >
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="ItemClick">
-                    <Core:InvokeCommandAction Command="{Binding Path=NavigateToCommand}" 
-                                                  CommandParameter="{Binding Path=SelectedItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ElementName=hamburgerMenuControl}" />
+                    <Core:InvokeCommandAction Command="{Binding Path=NavigateToCommand}" />
+                    <!--CommandParameter="{Binding Path=SelectedItem,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged,ElementName=hamburgerMenuControl}"-->
+
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
             <Frame x:Name="rootFrame"  Grid.Row="0" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch"/>

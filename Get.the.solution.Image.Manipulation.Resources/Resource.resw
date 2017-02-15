@@ -123,6 +123,9 @@
   <data name="Cancel.Content" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
   <data name="CopyEnabled.Content" xml:space="preserve">
     <value>Resize the orginal pictures (don't create copies)</value>
   </data>
@@ -131,6 +134,9 @@
   </data>
   <data name="ExceptionOnResize" xml:space="preserve">
     <value>We are sorry but something unexpected happend :(. We added the error to the Clipboard (Get it with CTR+V) Please send us the error exception. Exception: {0}</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
   </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
