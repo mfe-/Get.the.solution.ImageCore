@@ -15,33 +15,40 @@
     >
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <RichTextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="20">
-            <Paragraph>
-                <Bold>Help</Bold>
-                <LineBreak />
-                First select an image and then set the proper size. Click ok to save the resized image.
-                <LineBreak />
-                
-            </Paragraph>
-            <Paragraph>
-                <Bold>Our apps</Bold>
-                <LineBreak />
-                <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/file-renamer/9nblggh4rkqt">Filerenamer</Hyperlink>
-                 - Rename files.
-                <LineBreak />
-                <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/coffee-clock/9nblggh442p4">CoffeeClock</Hyperlink> - Reminder. Don't forget your pizza in the oven!
-                <LineBreak />
-                <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/tetromino-fun/9nblggh3zpvm">Tetromino Fun</Hyperlink> - Our Tetris game
-                <LineBreak />
-            </Paragraph>
-            <Paragraph>
-                <Bold>Contact</Bold>
-                <LineBreak />
-                We try to enhance the app. Send us feature requests or bugs. We are also looking for translators!
+        <ScrollViewer Width="Auto" Height="Auto" VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled">
+            <RichTextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="20">
+                <Paragraph>
+                    <Bold>Help</Bold>
+                    <LineBreak />
+                    First select an image and then set the proper size. Click ok to save the resized image.
+                    <LineBreak />
+                    <LineBreak />
+                    Resize an image from windows explorer. Right click on image. select open with "Image Resizer".
+                    <InlineUIContainer>
+                        <Image Source="ms-appx://Get.the.solution.Image.Manipulation.Shell/Assets/explorer-shell-integration.png" />
+                    </InlineUIContainer>
+                    <LineBreak />
+                </Paragraph>
+                <Paragraph>
+                    <Bold>Our apps</Bold>
+                    <LineBreak />
+                    <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/file-renamer/9nblggh4rkqt">Filerenamer</Hyperlink>
+                    - Rename files.
+                    <LineBreak />
+                    <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/coffee-clock/9nblggh442p4">CoffeeClock</Hyperlink> - Reminder. Don't forget your pizza in the oven!
+                    <LineBreak />
+                    <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/tetromino-fun/9nblggh3zpvm">Tetromino Fun</Hyperlink> - Our Tetris game
+                    <LineBreak />
+                </Paragraph>
+                <Paragraph>
+                    <Bold>Contact</Bold>
+                    <LineBreak />
+                    We try to enhance the app. Send us feature requests or bugs. We are also looking for translators!
                     Please send us your translation of the app.
-                <LineBreak />
-                <Hyperlink NavigateUri="mailto:support@get-the-solution.net">Reach us.</Hyperlink>
-            </Paragraph>
-        </RichTextBlock>
+                    <LineBreak />
+                    <Hyperlink NavigateUri="mailto:support@get-the-solution.net">Reach us.</Hyperlink>
+                </Paragraph>
+            </RichTextBlock>
+        </ScrollViewer>
     </Grid>
 </Page>
