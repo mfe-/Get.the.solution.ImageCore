@@ -28,6 +28,8 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="image/jpeg">.jpg</uap:FileType>
               <uap:FileType ContentType="image/png">.png</uap:FileType>
+              <uap:FileType ContentType="image/gif">.gif</uap:FileType>
+              <uap:FileType ContentType="image/bmp">.bmp</uap:FileType>
             </uap:SupportedFileTypes>
           </uap:FileTypeAssociation>
         </uap:Extension>

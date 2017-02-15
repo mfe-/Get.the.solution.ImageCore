@@ -129,6 +129,12 @@
   <data name="Description" xml:space="preserve">
     <value>Resize Images</value>
   </data>
+  <data name="ExceptionOnResize" xml:space="preserve">
+    <value>We are sorry but something unexpected happend :(. We added the error to the Clipboard (Get it with CTR+V) Please send us the error exception. Exception: {0}</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
   <data name="Ok.Content" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -144,6 +150,9 @@
   <data name="SelectSize.Text" xml:space="preserve">
     <value>Select a size:</value>
   </data>
+  <data name="ShowLastFile" xml:space="preserve">
+    <value>Would you like to open the last modified file?</value>
+  </data>
   <data name="SizeCustomBy.Text" xml:space="preserve">
     <value>by</value>
   </data>
@@ -158,5 +167,8 @@
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Small (fits a 640 x 480 screen)</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>

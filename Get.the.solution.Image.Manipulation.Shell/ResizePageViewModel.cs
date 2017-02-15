@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using Get.the.solution.UWP.XAML;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Windows.AppModel;
 using Prism.Windows.Navigation;
@@ -7,8 +8,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.Core;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.System.Profile;
+using Windows.UI.Popups;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -27,6 +31,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             OpenFilePickerCommand = new DelegateCommand(OnOpenFilePickerCommand);
             OkCommand = new DelegateCommand(OnOkCommand);
             CancelCommand = new DelegateCommand(OnCancelCommand);
+            OpenFileCommand = new DelegateCommand<IStorageFile>(OnOpenFileCommand);
 
             SizeSmallChecked = true;
 
@@ -51,6 +56,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             FileOpenPicker fileOpenPicker = new FileOpenPicker() { ViewMode = PickerViewMode.List };
             fileOpenPicker.FileTypeFilter.Add(".jpg");
+            fileOpenPicker.FileTypeFilter.Add(".png");
+            fileOpenPicker.FileTypeFilter.Add(".gif");
+            fileOpenPicker.FileTypeFilter.Add(".bmp");
+            fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
+
             IReadOnlyList<IStorageFile> files = await fileOpenPicker.PickMultipleFilesAsync();
             ImageFiles = files.ToList();
         }
@@ -124,36 +134,52 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 var randomAccessStream = await storage.OpenReadAsync();
                 Stream stream = randomAccessStream.AsStreamForRead();
-                using (MemoryStream filestream = ImageService.Resize(stream, Width, Height))
+                try
                 {
-                    if (OverwriteFiles)
+                    using (MemoryStream filestream = ImageService.Resize(stream, Width, Height))
                     {
-                        await FileIO.WriteBytesAsync(storage, filestream.ToArray());
-                    }
-                    else
-                    {
-                        //if (ImageFiles.Count == 1)
+                        if (OverwriteFiles)
                         {
-                            FileSavePicker FileSavePicker = new FileSavePicker();
-                            FileSavePicker.DefaultFileExtension = storage.FileType;
-                            FileSavePicker.FileTypeChoices.Add(storage.FileType, new List<string>() { storage.FileType });
-
-                            // Default file name if the user does not type one in or select a file to replace
-                            FileSavePicker.SuggestedFileName = $"{storage.Name.Replace(storage.FileType, String.Empty)}-{Width}x{Height}{storage.FileType}";
-                            StorageFile file = await FileSavePicker.PickSaveFileAsync();
-                            if (null != file)
+                            await FileIO.WriteBytesAsync(storage, filestream.ToArray());
+                            _LastFile = storage;
+                        }
+                        else
+                        {
+                            //if (ImageFiles.Count == 1)
                             {
-                                await FileIO.WriteBytesAsync(file, filestream.ToArray());
+                                FileSavePicker FileSavePicker = new FileSavePicker();
+                                FileSavePicker.DefaultFileExtension = storage.FileType;
+                                FileSavePicker.FileTypeChoices.Add(storage.FileType, new List<string>() { storage.FileType });
+
+                                // Default file name if the user does not type one in or select a file to replace
+                                FileSavePicker.SuggestedFileName = $"{storage.Name.Replace(storage.FileType, String.Empty)}-{Width}x{Height}{storage.FileType}";
+                                StorageFile file = await FileSavePicker.PickSaveFileAsync();
+                                if (null != file)
+                                {
+                                    await FileIO.WriteBytesAsync(file, filestream.ToArray());
+                                    _LastFile = file;
+                                }
                             }
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), $"{e.Message} {e.InnerException}");
+
+                    DataPackage Package = new DataPackage() { RequestedOperation = DataPackageOperation.Copy };
+                    Package.SetText(message);
+                    Clipboard.SetContent(Package);
+
+                    MessageDialog Dialog = new MessageDialog(message);
+                    await Dialog.ShowAsync();
                 }
 
             }
             await CancelCommand.Execute();
 
         }
-
+        protected IStorageFile _LastFile;
 
         private int _Width;
 
@@ -173,14 +199,25 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         public DelegateCommand CancelCommand { get; set; }
 
-        protected void OnCancelCommand()
+        protected async void OnCancelCommand()
         {
-            if (_SelectedFiles == null || _SelectedFiles?.Count() != 0)
+            if ((ImageFiles == null || ImageFiles.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
             {
                 CoreApplication.Exit();
             }
             else
             {
+                //open the resized file on windows mobile
+                if (DeviceTypeHelper.GetDeviceFormFactorType() != DeviceFormFactorType.Desktop)
+                {
+                    MessageDialog Dialog = new MessageDialog(_ResourceLoader.GetString("ShowLastFile"));
+                    Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("Yes")) { Id = 0 });
+                    Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("No")) { Id = 1 });
+                    if ((int)(await Dialog.ShowAsync()).Id == 0)
+                    {
+                        await OpenFileCommand.Execute(_LastFile);
+                    }
+                }
                 ImageFiles = new List<IStorageFile>();
             }
         }
@@ -193,6 +230,23 @@ namespace Get.the.solution.Image.Manipulation.Shell
             get { return _OverwriteFiles; }
             set { SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles)); }
         }
+
+        #region OpenFileCommand
+        public DelegateCommand<IStorageFile> OpenFileCommand { get; set; }
+
+        protected async void OnOpenFileCommand(IStorageFile file)
+        {
+            if(file!=null)
+            {
+                // Launch the bug query file.
+                bool sucess = await Windows.System.Launcher.LaunchFileAsync(file);
+            }
+        }
+        protected bool CanOpenFileCommandExecuted(StorageFile file)
+        {
+            return true;
+        }
+        #endregion
 
     }
 }

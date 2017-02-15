@@ -1,4 +1,6 @@
-﻿using Prism.Mvvm;
+﻿using Prism.Commands;
+using Prism.Mvvm;
+using Prism.Windows.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
 {
     public class HelpPageViewModel : BindableBase
     {
-        public HelpPageViewModel()
+        protected readonly INavigationService _NavigationService;
+        public HelpPageViewModel(INavigationService navigationService)
         {
 
         }
+
     }
 }

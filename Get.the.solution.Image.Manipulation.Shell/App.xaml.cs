@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Globalization;
 using Windows.UI.ViewManagement;
 using Windows.Storage;
+using Windows.Foundation.Metadata;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -46,6 +47,19 @@ namespace Get.the.solution.Image.Manipulation.Shell
 #if DEBUG
             //ApplicationLanguages.PrimaryLanguageOverride = "hu";
 #endif
+        }
+        /// <summary>
+        /// Removes the StatusBar from the Windows Mobile Device
+        /// </summary>
+        public void RemoveStatusBar()
+        {
+            //draw UI to the edge of the screen
+            ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                StatusBar.GetForCurrentView().HideAsync();
+            }
         }
         /// <summary>
         /// Creates the shell of the app. Set the default page of the app.
@@ -117,7 +131,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 Container.RegisterInstance<IEnumerable<IStorageFile>>(new List<IStorageFile>());
             }
 
-
+            RemoveStatusBar();
 
             return base.OnInitializeAsync(args);
         }
