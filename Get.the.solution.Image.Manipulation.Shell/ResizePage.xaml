@@ -15,6 +15,7 @@
     <Page.Resources>
         <converter:StringToIntConverter x:Key="StringToIntConverter" />
         <converter:FilenamePathShorterConverter x:Key="FilenamePathShorterConverter" />
+        <converter:ImagePropertiesToStringConverter x:Key="ImagePropertiesToStringConverter" />
     </Page.Resources>
     <Page.Content>
         <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Orientation="Vertical">
@@ -30,8 +31,9 @@
                     </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
-            <ListView ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}" MaxHeight="40"
-                      Name="listboxfiles" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Single">
+            <ListView ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}" 
+                      Name="listboxfiles" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Single"
+                      SelectedItem="{Binding Path=SelectedFile,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior Binding="{Binding Path=ShowOpenFilePicker,UpdateSourceTrigger=PropertyChanged}" Value="False">
                         <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
@@ -44,14 +46,26 @@
                     <DataTemplate>
                         <!--common:OnDel.Command="{Binding Path=DataContext.DeleteFileCommand,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
                                                common:OnDel.CommandParameter="{Binding Path=SelectedItem,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"-->
+                        <Grid>
+                            <Grid.ColumnDefinitions >
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="PathTextBlock" Grid.Column="0"
+                                       ToolTipService.ToolTip="{Binding Path=Path}"
+                                       Text="{Binding Path=Path,Converter={StaticResource FilenamePathShorterConverter}}" >
+                            </TextBlock>
+                            <TextBlock Grid.Column="1" Margin="10 0 0 0" >
+                                <TextBlock.Text>
+                                    <Binding Converter="{StaticResource ResourceKey=ImagePropertiesToStringConverter}" />
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </Grid>
 
-                        <TextBlock x:Name="PathTextBlock"
-                                               ToolTipService.ToolTip="{Binding Path=Path}"
-                                               Text="{Binding Path=Path,Converter={StaticResource FilenamePathShorterConverter}}" >
-                        </TextBlock>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+
             <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectSize" />
 
             <RadioButton GroupName="A" IsChecked="{Binding Path=SizeSmallChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"

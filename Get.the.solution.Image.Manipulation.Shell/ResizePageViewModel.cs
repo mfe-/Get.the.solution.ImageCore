@@ -10,8 +10,8 @@ using System.Linq;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
-using Windows.System.Profile;
 using Windows.UI.Popups;
 
 namespace Get.the.solution.Image.Manipulation.Shell
@@ -21,6 +21,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         protected readonly INavigationService _NavigationService;
         protected readonly IResourceLoader _ResourceLoader;
         protected readonly IEnumerable<IStorageFile> _SelectedFiles;
+        protected IStorageFile _LastFile;
 
         public ResizePageViewModel(IEnumerable<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader)
         {
@@ -48,13 +49,48 @@ namespace Get.the.solution.Image.Manipulation.Shell
         /// </summary>
         private ApplicationDataContainer LocalSettings { get; set; }
 
-        //private bool _ShowOpenFilePicker;
-
         public bool ShowOpenFilePicker
         {
             get { return ImageFiles != null && ImageFiles.Count == 0; }
             set { OnPropertyChanged(nameof(ShowOpenFilePicker)); }
         }
+
+        #region Selected File
+        //protected void SetSelectedFileProperties(StorageFile storageFile)
+        //{
+        //    if (storageFile == null)
+        //    {
+        //        SelectedFileProperties = null;
+        //    }
+        //    else
+        //    {
+        //        SelectedFileProperties = SelectedFile.Properties.GetImagePropertiesAsync().GetAwaiter().GetResult();
+        //    }
+        //}
+
+        private StorageFile _SelectedFile;
+
+        public StorageFile SelectedFile
+        {
+            get { return _SelectedFile; }
+            set
+            {
+                SetProperty(ref _SelectedFile, value, nameof(SelectedFile));
+                //SetSelectedFileProperties(SelectedFile);
+            }
+        }
+
+        //private ImageProperties _SelectedFileProperties;
+
+        //public ImageProperties SelectedFileProperties
+        //{
+        //    get { return _SelectedFileProperties; }
+        //    set
+        //    {
+        //        SetProperty(ref _SelectedFileProperties, value, nameof(SelectedFileProperties));
+        //    }
+        //}
+        #endregion Selected File
 
         #region FilePickerCommand
         public DelegateCommand OpenFilePickerCommand { get; set; }
@@ -188,8 +224,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         }
         #endregion
-
-        protected IStorageFile _LastFile;
 
         #region Width & Height
         private int _Width;
