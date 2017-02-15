@@ -127,6 +127,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         }
         #endregion
 
+        #region OkCommand / Resize Images
         public DelegateCommand OkCommand { get; set; }
 
         protected async void OnOkCommand()
@@ -186,8 +187,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
             await CancelCommand.Execute();
 
         }
+        #endregion
+
         protected IStorageFile _LastFile;
 
+        #region Width & Height
         private int _Width;
 
         public int Width
@@ -203,7 +207,9 @@ namespace Get.the.solution.Image.Manipulation.Shell
             get { return _Height; }
             set { SetProperty(ref _Height, value, nameof(Height)); }
         }
+        #endregion
 
+        #region CancelCommand
         public DelegateCommand CancelCommand { get; set; }
 
         protected async void OnCancelCommand()
@@ -228,10 +234,12 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 ImageFiles = new List<IStorageFile>();
             }
         }
-
+        #endregion
 
         private bool _OverwriteFiles;
-
+        /// <summary>
+        /// This flag determines whether the existing file should be overwriten when resizing the image or a new file should be created
+        /// </summary>
         public bool OverwriteFiles
         {
             get { return _OverwriteFiles; }
