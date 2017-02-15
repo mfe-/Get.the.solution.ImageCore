@@ -39,7 +39,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 ImageFiles = _SelectedFiles.ToList();
             }
+            //get settings
+            LocalSettings = ApplicationData.Current.LocalSettings;
+            OverwriteFiles = LocalSettings.Values[nameof(OverwriteFiles)] == null ? false : Boolean.Parse(LocalSettings.Values[nameof(OverwriteFiles)].ToString());
         }
+        /// <summary>
+        /// Access for app settings
+        /// </summary>
+        private ApplicationDataContainer LocalSettings { get; set; }
 
         //private bool _ShowOpenFilePicker;
 
@@ -228,7 +235,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
         public bool OverwriteFiles
         {
             get { return _OverwriteFiles; }
-            set { SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles)); }
+            set
+            {
+                SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles));
+                LocalSettings.Values[nameof(OverwriteFiles)] = _OverwriteFiles;
+            }
         }
 
         #region OpenFileCommand
@@ -236,7 +247,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected async void OnOpenFileCommand(IStorageFile file)
         {
-            if(file!=null)
+            if (file != null)
             {
                 // Launch the bug query file.
                 bool sucess = await Windows.System.Launcher.LaunchFileAsync(file);
