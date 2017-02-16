@@ -29,6 +29,8 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         public ResizePageViewModel(ObservableCollection<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader)
         {
+            LocalSettings = ApplicationData.Current.LocalSettings;
+
             _SelectedFiles = selectedFiles;
             _ResourceLoader = resourceLoader;
             _NavigationService = navigationService;
@@ -40,15 +42,17 @@ namespace Get.the.solution.Image.Manipulation.Shell
             DragOverCommand = new DelegateCommand<object>(OnDragOverCommand);
             DropCommand = new DelegateCommand<object>(OnDropCommand);
 
-            SizeSmallChecked = true;
+            //SizeSmallChecked = true;
 
             if (_SelectedFiles != null)
             {
                 ImageFiles = _SelectedFiles;
             }
             //get settings
-            LocalSettings = ApplicationData.Current.LocalSettings;
+
             OverwriteFiles = LocalSettings.Values[nameof(OverwriteFiles)] == null ? false : Boolean.Parse(LocalSettings.Values[nameof(OverwriteFiles)].ToString());
+            Width = LocalSettings.Values[nameof(Width)] == null ? 1024 : Int32.Parse(LocalSettings.Values[nameof(Width)].ToString());
+            Height = LocalSettings.Values[nameof(Height)] == null ? 768 : Int32.Parse(LocalSettings.Values[nameof(Height)].ToString());
         }
         /// <summary>
         /// Access for app settings
@@ -222,7 +226,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
         public int Width
         {
             get { return _Width; }
-            set { SetProperty(ref _Width, value, nameof(Width)); }
+            set
+            {
+                SetProperty(ref _Width, value, nameof(Width));
+                LocalSettings.Values[nameof(Width)] = _Width;
+            }
         }
 
         private int _Height;
@@ -230,7 +238,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
         public int Height
         {
             get { return _Height; }
-            set { SetProperty(ref _Height, value, nameof(Height)); }
+            set
+            {
+                SetProperty(ref _Height, value, nameof(Height));
+                LocalSettings.Values[nameof(Height)] = _Height;
+            }
         }
         #endregion
 
@@ -328,7 +340,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 }
             }
 
-            if(CanDrop==false)
+            if (CanDrop == false)
             {
                 e.AcceptedOperation = DataPackageOperation.None;
             }
