@@ -83,10 +83,10 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomWidth" />
                         <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                                 MaxLength="5" Width="70" />
+                                 MaxLength="5" Width="70" common:OnFocus.SelectAll="True" />
                         <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomBy" />
                         <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                                 MaxLength="5" Width="70" />
+                                 MaxLength="5" Width="70" common:OnFocus.SelectAll="True" />
                         <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomHeight" />
                     </StackPanel>
                 </RadioButton.Content>
