@@ -26,6 +26,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         protected readonly ObservableCollection<IStorageFile> _SelectedFiles;
         protected IStorageFile _LastFile;
         protected IEnumerable<String> _AllowedFileTyes = new List<String>() { ".jpg", ".png", ".gif", ".bmp" };
+        protected int RadioOptions;
 
         public ResizePageViewModel(ObservableCollection<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader)
         {
@@ -49,6 +50,21 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 ImageFiles = _SelectedFiles;
             }
             //get settings
+
+            RadioOptions = LocalSettings.Values[nameof(RadioOptions)] == null ? 1 : Int32.Parse(LocalSettings.Values[nameof(RadioOptions)].ToString());
+
+            if (RadioOptions == 1)
+            {
+                SizeSmallChecked = true;
+            }
+            else if (RadioOptions == 2)
+            {
+                SizeMediumChecked = true;
+            }
+            else if (RadioOptions == 3)
+            {
+                SizeCustomChecked = true;
+            }
 
             OverwriteFiles = LocalSettings.Values[nameof(OverwriteFiles)] == null ? false : Boolean.Parse(LocalSettings.Values[nameof(OverwriteFiles)].ToString());
             Width = LocalSettings.Values[nameof(Width)] == null ? 1024 : Int32.Parse(LocalSettings.Values[nameof(Width)].ToString());
@@ -108,6 +124,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     Width = 640; Height = 480;
                 }
+                if(SizeSmallChecked==true)
+                {
+                    LocalSettings.Values[nameof(RadioOptions)] = 1;
+                }
+
             }
         }
 
@@ -123,6 +144,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     Width = 800; Height = 600;
                 }
+                if(SizeMediumChecked==true)
+                {
+                    LocalSettings.Values[nameof(RadioOptions)] = 2;
+                }
             }
         }
 
@@ -131,7 +156,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
         public bool SizeCustomChecked
         {
             get { return _SizeCustomChecked; }
-            set { SetProperty(ref _SizeCustomChecked, value, nameof(SizeCustomChecked)); }
+            set
+            {
+                SetProperty(ref _SizeCustomChecked, value, nameof(SizeCustomChecked));
+                if (SizeCustomChecked == true)
+                {
+                    LocalSettings.Values[nameof(RadioOptions)] = 3;
+                }
+            }
         }
         #endregion
 
