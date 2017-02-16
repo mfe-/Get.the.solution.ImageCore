@@ -26,6 +26,7 @@ using System.Globalization;
 using Windows.UI.ViewManagement;
 using Windows.Storage;
 using Windows.Foundation.Metadata;
+using System.Collections.ObjectModel;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -106,7 +107,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             if (args as FileActivatedEventArgs != null)
             {
                 FileActivatedEventArgs fileargs = args as FileActivatedEventArgs;
-                IList<IStorageFile> storagefiles = new List<IStorageFile>();
+                ObservableCollection<IStorageFile> storagefiles = new ObservableCollection<IStorageFile>();
 
                 foreach (var item in fileargs.Files)
                 {
@@ -124,11 +125,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     //}
                 }
 
-                Container.RegisterInstance<IEnumerable<IStorageFile>>(storagefiles);
+                Container.RegisterInstance<ObservableCollection<IStorageFile>>(storagefiles);
             }
             else
             {
-                Container.RegisterInstance<IEnumerable<IStorageFile>>(new List<IStorageFile>());
+                Container.RegisterInstance<ObservableCollection<IStorageFile>>(new ObservableCollection<IStorageFile>());
             }
 
             RemoveStatusBar();

@@ -5,6 +5,8 @@ using Prism.Windows.AppModel;
 using Prism.Windows.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.Core;
@@ -13,6 +15,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
+using Windows.UI.Xaml;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -20,25 +23,28 @@ namespace Get.the.solution.Image.Manipulation.Shell
     {
         protected readonly INavigationService _NavigationService;
         protected readonly IResourceLoader _ResourceLoader;
-        protected readonly IEnumerable<IStorageFile> _SelectedFiles;
+        protected readonly ObservableCollection<IStorageFile> _SelectedFiles;
         protected IStorageFile _LastFile;
+        protected IEnumerable<String> _AllowedFileTyes = new List<String>() { ".jpg", ".png", ".gif", ".bmp" };
 
-        public ResizePageViewModel(IEnumerable<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader)
+        public ResizePageViewModel(ObservableCollection<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader)
         {
             _SelectedFiles = selectedFiles;
             _ResourceLoader = resourceLoader;
             _NavigationService = navigationService;
-            ImageFiles = new List<IStorageFile>();
+            ImageFiles = new ObservableCollection<IStorageFile>();
             OpenFilePickerCommand = new DelegateCommand(OnOpenFilePickerCommand);
             OkCommand = new DelegateCommand(OnOkCommand);
             CancelCommand = new DelegateCommand(OnCancelCommand);
             OpenFileCommand = new DelegateCommand<IStorageFile>(OnOpenFileCommand);
+            DragOverCommand = new DelegateCommand<object>(OnDragOverCommand);
+            DropCommand = new DelegateCommand<object>(OnDropCommand);
 
             SizeSmallChecked = true;
 
             if (_SelectedFiles != null)
             {
-                ImageFiles = _SelectedFiles.ToList();
+                ImageFiles = _SelectedFiles;
             }
             //get settings
             LocalSettings = ApplicationData.Current.LocalSettings;
@@ -56,17 +62,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
         }
 
         #region Selected File
-        //protected void SetSelectedFileProperties(StorageFile storageFile)
-        //{
-        //    if (storageFile == null)
-        //    {
-        //        SelectedFileProperties = null;
-        //    }
-        //    else
-        //    {
-        //        SelectedFileProperties = SelectedFile.Properties.GetImagePropertiesAsync().GetAwaiter().GetResult();
-        //    }
-        //}
 
         private StorageFile _SelectedFile;
 
@@ -76,20 +71,8 @@ namespace Get.the.solution.Image.Manipulation.Shell
             set
             {
                 SetProperty(ref _SelectedFile, value, nameof(SelectedFile));
-                //SetSelectedFileProperties(SelectedFile);
             }
         }
-
-        //private ImageProperties _SelectedFileProperties;
-
-        //public ImageProperties SelectedFileProperties
-        //{
-        //    get { return _SelectedFileProperties; }
-        //    set
-        //    {
-        //        SetProperty(ref _SelectedFileProperties, value, nameof(SelectedFileProperties));
-        //    }
-        //}
         #endregion Selected File
 
         #region FilePickerCommand
@@ -98,14 +81,13 @@ namespace Get.the.solution.Image.Manipulation.Shell
         protected async void OnOpenFilePickerCommand()
         {
             FileOpenPicker fileOpenPicker = new FileOpenPicker() { ViewMode = PickerViewMode.List };
-            fileOpenPicker.FileTypeFilter.Add(".jpg");
-            fileOpenPicker.FileTypeFilter.Add(".png");
-            fileOpenPicker.FileTypeFilter.Add(".gif");
-            fileOpenPicker.FileTypeFilter.Add(".bmp");
+            foreach (String Filetypeextension in _AllowedFileTyes)
+                fileOpenPicker.FileTypeFilter.Add(Filetypeextension);
+
             fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
 
             IReadOnlyList<IStorageFile> files = await fileOpenPicker.PickMultipleFilesAsync();
-            ImageFiles = files.ToList();
+            ImageFiles = new ObservableCollection<IStorageFile>(files);
         }
         #endregion
 
@@ -150,16 +132,25 @@ namespace Get.the.solution.Image.Manipulation.Shell
         #endregion
 
         #region Images
-        private List<IStorageFile> _ImageFiles;
+        private ObservableCollection<IStorageFile> _ImageFiles;
 
-        public List<IStorageFile> ImageFiles
+        public ObservableCollection<IStorageFile> ImageFiles
         {
             get { return _ImageFiles; }
             set
             {
                 SetProperty(ref _ImageFiles, value, nameof(ImageFiles));
-                OnPropertyChanged(nameof(ShowOpenFilePicker));
+                if (ImageFiles != null)
+                {
+                    ImageFiles.CollectionChanged += ImageFiles_CollectionChanged;
+                }
             }
+        }
+
+        private void ImageFiles_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(ShowOpenFilePicker));
+            OnPropertyChanged(nameof(CanOverwriteFiles));
         }
         #endregion
 
@@ -269,7 +260,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     }
                 }
 
-                ImageFiles = new List<IStorageFile>();
+                ImageFiles = new ObservableCollection<IStorageFile>();
                 _LastFile = null;
             }
         }
@@ -305,6 +296,82 @@ namespace Get.the.solution.Image.Manipulation.Shell
             return true;
         }
         #endregion
+
+        #region DragOver
+        public DelegateCommand<object> DragOverCommand { get; set; }
+
+        /// <summary>
+        /// Determine whether the draged file is a supported image.
+        /// </summary>
+        /// <param name="param">Provides event informations.</param>
+        protected void OnDragOverCommand(object param)
+        {
+            DragEventArgs e = param as DragEventArgs;
+
+            e.DragUIOverride.IsContentVisible = true;
+            e.DragUIOverride.IsGlyphVisible = true;
+            IReadOnlyList<IStorageItem> Items = e.DataView.GetStorageItemsAsync().GetAwaiter().GetResult();
+            //Flag determine wether draged files are allowed
+            bool CanDrop = true;
+            foreach (var item in Items)
+            {
+                if (item is IStorageFile)
+                {
+                    if (item is StorageFile)
+                    {
+                        CanDrop = _AllowedFileTyes.Contains((item as StorageFile).FileType);
+                    }
+                }
+                if (item is IStorageFolder && item is StorageFolder)
+                {
+                    CanDrop = false;
+                }
+            }
+
+            if(CanDrop==false)
+            {
+                e.AcceptedOperation = DataPackageOperation.None;
+            }
+        }
+        #endregion
+
+        public DelegateCommand<object> DropCommand { get; set; }
+        /// <summary>
+        /// Add Dropped files to our <see cref="ImageFiles"/> list.
+        /// </summary>
+        /// <param name="param"></param>
+        protected void OnDropCommand(object param)
+        {
+            if (param != null && param as IReadOnlyList<IStorageItem> != null)
+            {
+                if (ImageFiles == null)
+                {
+                    ImageFiles = new ObservableCollection<IStorageFile>();
+                }
+                foreach (var item in param as IReadOnlyList<IStorageItem>)
+                {
+                    if (item is IStorageFile)
+                    {
+                        if (item is StorageFile)
+                        {
+                            ImageFiles.Add(item as StorageFile);
+                        }
+                    }
+                    //if (item is IStorageFolder && item is StorageFolder)
+                    //{
+                    //    OpenFolder(item as StorageFolder);
+                    //}
+                }
+            }
+        }
+
+        public bool CanOverwriteFiles
+        {
+            get
+            {
+                return ImageFiles?.Count(a => ((a as StorageFile)?.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0) == 0;
+            }
+        }
 
     }
 }
