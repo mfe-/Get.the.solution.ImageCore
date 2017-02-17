@@ -180,6 +180,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     ImageFiles.CollectionChanged += ImageFiles_CollectionChanged;
                 }
+                OnPropertyChanged(nameof(ShowOpenFilePicker));
             }
         }
 
