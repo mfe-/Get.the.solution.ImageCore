@@ -89,8 +89,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected override Task OnInitializeAsync(IActivatedEventArgs args)
         {
-            UnhandledException += App_UnhandledException;
-
+            UnhandledException += App_UnhandledException;           
 
             Container.RegisterInstance<INavigationService>(NavigationService);
             Container.RegisterInstance<ISessionStateService>(SessionStateService);

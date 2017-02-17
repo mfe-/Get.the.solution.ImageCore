@@ -95,8 +95,28 @@
                     IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}"
                       IsEnabled="{Binding Path=CanOverwriteFiles,UpdateSourceTrigger=PropertyChanged}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Ok" 
-                    Command="{Binding Path=OkCommand}"/>
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Save" 
+                    Command="{Binding Path=OkCommand}">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                        </Core:DataTriggerBehavior>
+                        <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                        </Core:DataTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </Button>
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SaveAs" 
+                    Command="{Binding Path=OkCommand}">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                        </Core:DataTriggerBehavior>
+                        <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                        </Core:DataTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </Button>
                 <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Cancel"
                     Command="{Binding Path=CancelCommand}"/>
             </StackPanel>

@@ -150,6 +150,12 @@
   <data name="Resize.Text" xml:space="preserve">
     <value>You can create resized copies of one selected picture and store them in your prefered folder.</value>
   </data>
+  <data name="Save.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SaveAs.Content" xml:space="preserve">
+    <value>Save As</value>
+  </data>
   <data name="SelectImage.Content" xml:space="preserve">
     <value>Select Image</value>
   </data>

@@ -283,7 +283,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected async void OnCancelCommand()
         {
-            if ((ImageFiles == null || ImageFiles.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
+            if ((ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
             {
                 CoreApplication.Exit();
             }
@@ -321,6 +321,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles));
                 LocalSettings.Values[nameof(OverwriteFiles)] = _OverwriteFiles;
+                OnPropertyChanged(nameof(CanOverwriteFiles));
             }
         }
 
@@ -413,7 +414,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             get
             {
-                return ImageFiles?.Count(a => ((a as StorageFile)?.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0) == 0;
+                bool can= ImageFiles?.Count(a => ((a as StorageFile)?.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0) == 0;
+
+                if(can==false)
+                {
+                    OverwriteFiles = false;
+                }
+                return can;
+
             }
         }
 
