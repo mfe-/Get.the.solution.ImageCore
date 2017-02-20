@@ -204,10 +204,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
             foreach (IStorageFile storage in ImageFiles)
             {
-                var randomAccessStream = await storage.OpenReadAsync();
-                Stream stream = randomAccessStream.AsStreamForRead();
                 try
                 {
+                    var randomAccessStream = await storage.OpenReadAsync();
+                    Stream stream = randomAccessStream.AsStreamForRead();
                     using (MemoryStream filestream = ImageService.Resize(stream, Width, Height))
                     {
                         if (OverwriteFiles)
