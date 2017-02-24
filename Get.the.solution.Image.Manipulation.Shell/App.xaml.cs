@@ -27,6 +27,7 @@ using Windows.UI.ViewManagement;
 using Windows.Storage;
 using Windows.Foundation.Metadata;
 using System.Collections.ObjectModel;
+using Windows.Globalization;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -46,7 +47,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             this.InitializeComponent();
 #if DEBUG
-            //ApplicationLanguages.PrimaryLanguageOverride = "hu";
+            ApplicationLanguages.PrimaryLanguageOverride = "de";
 #endif
         }
         /// <summary>
