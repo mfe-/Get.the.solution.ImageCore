@@ -9,11 +9,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 
@@ -42,6 +44,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             OpenFileCommand = new DelegateCommand<IStorageFile>(OnOpenFileCommand);
             DragOverCommand = new DelegateCommand<object>(OnDragOverCommand);
             DropCommand = new DelegateCommand<object>(OnDropCommand);
+            ShareCommand = new DelegateCommand(OnShareCommand);
 
             //SizeSmallChecked = true;
 
@@ -100,6 +103,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected async void OnOpenFilePickerCommand()
         {
+            await OpenFilePicker();
+        }
+        protected async Task OpenFilePicker()
+        {
             FileOpenPicker fileOpenPicker = new FileOpenPicker() { ViewMode = PickerViewMode.List };
             foreach (String Filetypeextension in _AllowedFileTyes)
                 fileOpenPicker.FileTypeFilter.Add(Filetypeextension);
@@ -124,7 +131,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     Width = 640; Height = 480;
                 }
-                if(SizeSmallChecked==true)
+                if (SizeSmallChecked == true)
                 {
                     LocalSettings.Values[nameof(RadioOptions)] = 1;
                 }
@@ -144,7 +151,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     Width = 800; Height = 600;
                 }
-                if(SizeMediumChecked==true)
+                if (SizeMediumChecked == true)
                 {
                     LocalSettings.Values[nameof(RadioOptions)] = 2;
                 }
@@ -191,47 +198,49 @@ namespace Get.the.solution.Image.Manipulation.Shell
         }
         #endregion
 
-        #region OkCommand / Resize Images
-        public DelegateCommand OkCommand { get; set; }
-
-        protected async void OnOkCommand()
+        public async Task<bool> ResizeImages(ImageAction action, Action<MemoryStream, String> ProcessedImage = null)
         {
             //if no file is selected open file picker 
             if (ImageFiles == null || ImageFiles.Count == 0)
             {
-                await OpenFilePickerCommand.Execute();
+                await OpenFilePicker();
             }
 
-            foreach (IStorageFile storage in ImageFiles)
+            foreach (IStorageFile Storeage in ImageFiles)
             {
                 try
                 {
-                    var randomAccessStream = await storage.OpenReadAsync();
-                    Stream stream = randomAccessStream.AsStreamForRead();
-                    using (MemoryStream filestream = ImageService.Resize(stream, Width, Height))
+                    var RandomAccessStream = await Storeage.OpenReadAsync();
+                    Stream ImageStream = RandomAccessStream.AsStreamForRead();
+                    using (MemoryStream ImageFileStream = ImageService.Resize(ImageStream, Width, Height))
                     {
-                        if (OverwriteFiles)
+                        String SuggestedFileName = $"{Storeage.Name.Replace(Storeage.FileType, String.Empty)}-{Width}x{Height}{Storeage.FileType}";
+                        if (action.Equals(ImageAction.Save))
                         {
-                            await FileIO.WriteBytesAsync(storage, filestream.ToArray());
-                            _LastFile = storage;
+                            await FileIO.WriteBytesAsync(Storeage, ImageFileStream.ToArray());
+                            _LastFile = Storeage;
                         }
-                        else
+                        else if (action.Equals(ImageAction.SaveAs))
                         {
                             //if (ImageFiles.Count == 1)
                             {
                                 FileSavePicker FileSavePicker = new FileSavePicker();
-                                FileSavePicker.DefaultFileExtension = storage.FileType;
-                                FileSavePicker.FileTypeChoices.Add(storage.FileType, new List<string>() { storage.FileType });
+                                FileSavePicker.DefaultFileExtension = Storeage.FileType;
+                                FileSavePicker.FileTypeChoices.Add(Storeage.FileType, new List<string>() { Storeage.FileType });
 
                                 // Default file name if the user does not type one in or select a file to replace
-                                FileSavePicker.SuggestedFileName = $"{storage.Name.Replace(storage.FileType, String.Empty)}-{Width}x{Height}{storage.FileType}";
-                                StorageFile file = await FileSavePicker.PickSaveFileAsync();
-                                if (null != file)
+                                FileSavePicker.SuggestedFileName = SuggestedFileName;
+                                StorageFile File = await FileSavePicker.PickSaveFileAsync();
+                                if (null != File)
                                 {
-                                    await FileIO.WriteBytesAsync(file, filestream.ToArray());
-                                    _LastFile = file;
+                                    await FileIO.WriteBytesAsync(File, ImageFileStream.ToArray());
+                                    _LastFile = File;
                                 }
                             }
+                        }
+                        else if (action.Equals(ImageAction.Process))
+                        {
+                            ProcessedImage?.Invoke(ImageFileStream, $"{SuggestedFileName}");
                         }
                     }
                 }
@@ -245,13 +254,87 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
                     MessageDialog Dialog = new MessageDialog(message);
                     await Dialog.ShowAsync();
+                    return false;
                 }
 
             }
+            return true;
+        }
+
+        #region OkCommand / Resize Images
+        public DelegateCommand OkCommand { get; set; }
+
+        protected async void OnOkCommand()
+        {
+            ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
+            bool Result = await ResizeImages(Action);
             await CancelCommand.Execute();
 
         }
         #endregion
+
+
+        public DelegateCommand ShareCommand { get; set; }
+
+        protected void OnShareCommand()
+        {
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            dataTransferManager.TargetApplicationChosen += DataTransferManager_TargetApplicationChosen;
+            DataTransferManager.ShowShareUI();
+            //bool Result = await ResizeImages(ImageAction.Share);
+
+        }
+
+        private void DataTransferManager_TargetApplicationChosen(DataTransferManager sender, TargetApplicationChosenEventArgs args)
+        {
+    
+        }
+
+        private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            DataRequest Request = args.Request;
+            DataRequestDeferral Deferral = Request.GetDeferral();
+
+            //our DataPackage we want to share
+            DataPackage Package = new DataPackage();
+            Package.RequestedOperation = DataPackageOperation.Copy;
+            Package.Properties.ApplicationName = _ResourceLoader.GetString("AppName");
+            Package.Destroyed += Package_Destroyed;
+            Package.OperationCompleted += Package_OperationCompleted;
+            List<IStorageItem> ResizedImages = new List<IStorageItem>();
+            Action<MemoryStream, string> ProcessImage = new Action<MemoryStream, string>((ImageFileStream, FileName) =>
+               {
+                   StorageFolder TempFolder = ApplicationData.Current.TemporaryFolder;
+                   StorageFile TempFile = TempFolder.CreateFileAsync(FileName, CreationCollisionOption.ReplaceExisting).AsTask().GetAwaiter().GetResult();
+                   FileIO.WriteBytesAsync(TempFile, ImageFileStream.ToArray()).AsTask().GetAwaiter().GetResult();
+                   Package.Properties.Title = $"{Package.Properties.Title } {FileName}";
+                   ResizedImages.Add(TempFile);
+
+                   //var stream = RandomAccessStreamReference.CreateFromStream(ImageFileStream.AsRandomAccessStream());
+
+                   //Package.ResourceMap.Add(FileName, stream);
+
+               });
+
+            var Result = await ResizeImages(ImageAction.Process, ProcessImage);
+
+            Package.SetStorageItems(ResizedImages);
+
+            Request.Data = Package;
+            Deferral.Complete();
+            //await CancelCommand.Execute();
+        }
+
+        private void Package_OperationCompleted(DataPackage sender, OperationCompletedEventArgs args)
+        {
+
+        }
+
+        private void Package_Destroyed(DataPackage sender, object args)
+        {
+   
+        }
 
         #region Width & Height
         private int _Width;
@@ -415,9 +498,9 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             get
             {
-                bool can= ImageFiles?.Count(a => ((a as StorageFile)?.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0) == 0;
+                bool can = ImageFiles?.Count(a => ((a as StorageFile)?.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0) == 0;
 
-                if(can==false)
+                if (can == false)
                 {
                     OverwriteFiles = false;
                 }

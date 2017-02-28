@@ -47,7 +47,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             this.InitializeComponent();
 #if DEBUG
-            ApplicationLanguages.PrimaryLanguageOverride = "de";
+            //ApplicationLanguages.PrimaryLanguageOverride = "de";
 #endif
         }
         /// <summary>

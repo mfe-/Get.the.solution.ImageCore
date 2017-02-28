@@ -162,6 +162,9 @@
   <data name="SelectSize.Text" xml:space="preserve">
     <value>Wähle eine Größe</value>
   </data>
+  <data name="Share.Content" xml:space="preserve">
+    <value>Teilen</value>
+  </data>
   <data name="ShowLastFile" xml:space="preserve">
     <value>Wollen Sie die letzte modifizierte Datei öffnen?</value>
   </data>

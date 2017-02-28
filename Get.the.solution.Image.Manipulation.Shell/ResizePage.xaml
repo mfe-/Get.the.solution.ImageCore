@@ -117,6 +117,8 @@
                         </Core:DataTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </Button>
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Share"
+                    Command="{Binding Path=ShareCommand}"/>
                 <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Cancel"
                     Command="{Binding Path=CancelCommand}"/>
             </StackPanel>
