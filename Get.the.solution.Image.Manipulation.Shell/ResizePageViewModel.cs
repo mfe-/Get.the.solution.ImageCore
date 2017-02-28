@@ -273,22 +273,15 @@ namespace Get.the.solution.Image.Manipulation.Shell
         }
         #endregion
 
-
+        #region Share
         public DelegateCommand ShareCommand { get; set; }
 
         protected void OnShareCommand()
         {
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            dataTransferManager.TargetApplicationChosen += DataTransferManager_TargetApplicationChosen;
+
             DataTransferManager.ShowShareUI();
-            //bool Result = await ResizeImages(ImageAction.Share);
-
-        }
-
-        private void DataTransferManager_TargetApplicationChosen(DataTransferManager sender, TargetApplicationChosenEventArgs args)
-        {
-    
         }
 
         private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
@@ -300,8 +293,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             DataPackage Package = new DataPackage();
             Package.RequestedOperation = DataPackageOperation.Copy;
             Package.Properties.ApplicationName = _ResourceLoader.GetString("AppName");
-            Package.Destroyed += Package_Destroyed;
-            Package.OperationCompleted += Package_OperationCompleted;
+ 
             List<IStorageItem> ResizedImages = new List<IStorageItem>();
             Action<MemoryStream, string> ProcessImage = new Action<MemoryStream, string>((ImageFileStream, FileName) =>
                {
@@ -311,30 +303,23 @@ namespace Get.the.solution.Image.Manipulation.Shell
                    Package.Properties.Title = $"{Package.Properties.Title } {FileName}";
                    ResizedImages.Add(TempFile);
 
-                   //var stream = RandomAccessStreamReference.CreateFromStream(ImageFileStream.AsRandomAccessStream());
-
-                   //Package.ResourceMap.Add(FileName, stream);
-
                });
 
             var Result = await ResizeImages(ImageAction.Process, ProcessImage);
-
+            Package.OperationCompleted += Package_OperationCompleted1;
             Package.SetStorageItems(ResizedImages);
-
             Request.Data = Package;
             Deferral.Complete();
-            //await CancelCommand.Execute();
+
         }
 
-        private void Package_OperationCompleted(DataPackage sender, OperationCompletedEventArgs args)
+        private async void Package_OperationCompleted1(DataPackage sender, OperationCompletedEventArgs args)
         {
-
+            await CancelCommand.Execute();
         }
+        #endregion 
 
-        private void Package_Destroyed(DataPackage sender, object args)
-        {
-   
-        }
+
 
         #region Width & Height
         private int _Width;
