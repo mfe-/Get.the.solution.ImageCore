@@ -163,7 +163,7 @@
     <value>Select a size:</value>
   </data>
   <data name="Share.Content" xml:space="preserve">
-    <value>Share (e.g for Email)</value>
+    <value>Share (Email)</value>
   </data>
   <data name="ShowLastFile" xml:space="preserve">
     <value>Would you like to open the last modified file?</value>

@@ -118,7 +118,27 @@
                     </Interactivity:Interaction.Behaviors>
                 </Button>
                 <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Share"
-                    Command="{Binding Path=ShareCommand}"/>
+                    Command="{Binding Path=ShareCommand}">
+
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                            <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
+                        </Core:DataTriggerBehavior>
+                        <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                            <Core:ChangePropertyAction PropertyName="IsEnabled" Value="False" />
+                        </Core:DataTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </Button>
+                <ProgressRing IsActive="True" >
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                        </Core:DataTriggerBehavior>
+                        <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                        </Core:DataTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </ProgressRing>
                 <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Cancel"
                     Command="{Binding Path=CancelCommand}"/>
             </StackPanel>

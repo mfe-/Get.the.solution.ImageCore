@@ -87,10 +87,16 @@ namespace Get.the.solution.Image.Manipulation.Shell
             //init prism bootstrap
             OnActivated(args);
         }
+        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            base.OnShareTargetActivated(args);
+            //init prism bootstrap
+            OnActivated(args);
+        }
 
         protected override Task OnInitializeAsync(IActivatedEventArgs args)
         {
-            UnhandledException += App_UnhandledException;           
+            UnhandledException += App_UnhandledException;
 
             Container.RegisterInstance<INavigationService>(NavigationService);
             Container.RegisterInstance<ISessionStateService>(SessionStateService);
@@ -104,12 +110,24 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 SetViewModelLocationProvider();
             }
-            if (args as FileActivatedEventArgs != null)
+            if (args as FileActivatedEventArgs != null || args as ShareTargetActivatedEventArgs != null)
             {
-                FileActivatedEventArgs fileargs = args as FileActivatedEventArgs;
+                IReadOnlyList<IStorageItem> Files = null;
+                if (args.GetType().Equals(typeof(FileActivatedEventArgs)))
+                {
+                    FileActivatedEventArgs fileargs = args as FileActivatedEventArgs;
+                    Files = fileargs.Files;
+                }
+                else if (args.GetType().Equals(typeof(ShareTargetActivatedEventArgs)))
+                {
+                    ShareTargetActivatedEventArgs fileargs = args as ShareTargetActivatedEventArgs;
+                    Files = fileargs.ShareOperation.Data.GetStorageItemsAsync().AsTask().GetAwaiter().GetResult() ;
+
+                }
+
                 ObservableCollection<IStorageFile> storagefiles = new ObservableCollection<IStorageFile>();
 
-                foreach (var item in fileargs.Files)
+                foreach (var item in Files)
                 {
 
                     if (item is IStorageFile)
@@ -126,6 +144,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 }
 
                 Container.RegisterInstance<ObservableCollection<IStorageFile>>(storagefiles);
+                if (args.GetType().Equals(typeof(ShareTargetActivatedEventArgs)))
+                {
+                    (args as ShareTargetActivatedEventArgs).ShareOperation.ReportCompleted();
+                }
+         
             }
             else
             {

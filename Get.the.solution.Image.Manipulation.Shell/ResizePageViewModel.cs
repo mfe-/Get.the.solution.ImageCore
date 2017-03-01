@@ -29,6 +29,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         protected IStorageFile _LastFile;
         protected IEnumerable<String> _AllowedFileTyes = new List<String>() { ".jpg", ".png", ".gif", ".bmp" };
         protected int RadioOptions;
+        protected DataTransferManager _DataTransferManager;
 
         public ResizePageViewModel(ObservableCollection<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader)
         {
@@ -46,6 +47,9 @@ namespace Get.the.solution.Image.Manipulation.Shell
             DropCommand = new DelegateCommand<object>(OnDropCommand);
             ShareCommand = new DelegateCommand(OnShareCommand);
 
+            //Object for Sharing data in uwp
+            _DataTransferManager = DataTransferManager.GetForCurrentView();
+            _DataTransferManager.DataRequested += DataTransferManager_DataRequested;
             //SizeSmallChecked = true;
 
             if (_SelectedFiles != null)
@@ -274,13 +278,21 @@ namespace Get.the.solution.Image.Manipulation.Shell
         #endregion
 
         #region Share
+
+        private bool _SharingProcess;
+        /// <summary>
+        /// Indicates whether the app is in share process
+        /// </summary>
+        public bool SharingProcess
+        {
+            get { return _SharingProcess; }
+            set { SetProperty(ref _SharingProcess, value, nameof(SharingProcess)); }
+        }
         public DelegateCommand ShareCommand { get; set; }
 
         protected void OnShareCommand()
         {
-            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-
+            SharingProcess = true;
             DataTransferManager.ShowShareUI();
         }
 
@@ -291,13 +303,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
             //our DataPackage we want to share
             DataPackage Package = new DataPackage();
+            Package.OperationCompleted += Package_OperationCompleted1;
             Package.RequestedOperation = DataPackageOperation.Copy;
             Package.Properties.ApplicationName = _ResourceLoader.GetString("AppName");
- 
+
             List<IStorageItem> ResizedImages = new List<IStorageItem>();
             Action<MemoryStream, string> ProcessImage = new Action<MemoryStream, string>((ImageFileStream, FileName) =>
                {
-                   StorageFolder TempFolder = ApplicationData.Current.TemporaryFolder;
+                   StorageFolder TempFolder = ApplicationData.Current.LocalCacheFolder;
                    StorageFile TempFile = TempFolder.CreateFileAsync(FileName, CreationCollisionOption.ReplaceExisting).AsTask().GetAwaiter().GetResult();
                    FileIO.WriteBytesAsync(TempFile, ImageFileStream.ToArray()).AsTask().GetAwaiter().GetResult();
                    Package.Properties.Title = $"{Package.Properties.Title } {FileName}";
@@ -305,11 +318,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
                });
 
-            var Result = await ResizeImages(ImageAction.Process, ProcessImage);
-            Package.OperationCompleted += Package_OperationCompleted1;
-            Package.SetStorageItems(ResizedImages);
-            Request.Data = Package;
+            bool Result = await ResizeImages(ImageAction.Process, ProcessImage);
+            if ((ResizedImages == null || ResizedImages.Count != 0) && Result == true)
+            {
+                Package.SetStorageItems(ResizedImages);
+                Request.Data = Package;
+            }
             Deferral.Complete();
+            SharingProcess = false;
 
         }
 
