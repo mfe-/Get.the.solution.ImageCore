@@ -22,6 +22,66 @@
     </Page.Resources>
     <Page.Content>
         <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Orientation="Vertical">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="VisualStateGroupGamePoints">
+                    <VisualState x:Name="normal">
+                        <VisualState.Setters>
+                            <Setter Target="listboxfiles.MaxHeight" Value="40"></Setter>
+                        </VisualState.Setters>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowHeight="350"></AdaptiveTrigger>
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                    <VisualState x:Name="bigger">
+                        <VisualState.Setters>
+                            <Setter Target="listboxfiles.MaxHeight" Value="80"></Setter>
+                        </VisualState.Setters>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowHeight="390"></AdaptiveTrigger>
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                    <VisualState x:Name="biggger">
+                        <VisualState.Setters>
+                            <Setter Target="listboxfiles.MaxHeight" Value="120"></Setter>
+                        </VisualState.Setters>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowHeight="430"></AdaptiveTrigger>
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                    <VisualState x:Name="bigggger">
+                        <VisualState.Setters>
+                            <Setter Target="listboxfiles.MaxHeight" Value="160"></Setter>
+                        </VisualState.Setters>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowHeight="470"></AdaptiveTrigger>
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                    <VisualState x:Name="biggggger">
+                        <VisualState.Setters>
+                            <Setter Target="listboxfiles.MaxHeight" Value="200"></Setter>
+                        </VisualState.Setters>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowHeight="510"></AdaptiveTrigger>
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                    <VisualState x:Name="bigggggger">
+                        <VisualState.Setters>
+                            <Setter Target="listboxfiles.MaxHeight" Value="240"></Setter>
+                        </VisualState.Setters>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowHeight="550"></AdaptiveTrigger>
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                    <VisualState x:Name="biggggggger">
+                        <VisualState.Setters>
+                            <Setter Target="listboxfiles.MaxHeight" Value="280"></Setter>
+                        </VisualState.Setters>
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowHeight="590"></AdaptiveTrigger>
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
             <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Resize" TextWrapping="Wrap" />
             <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectImage" 
                 Command="{Binding Path=OpenFilePickerCommand}">
