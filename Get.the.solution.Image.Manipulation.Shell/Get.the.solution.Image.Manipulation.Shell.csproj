@@ -100,6 +100,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutPage.cs" />
     <Compile Include="AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>

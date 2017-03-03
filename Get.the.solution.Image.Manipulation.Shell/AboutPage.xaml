@@ -17,6 +17,19 @@
         <ScrollViewer Width="Auto" Height="Auto" VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled">
             <RichTextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="20">
                 <Paragraph>
+                    <Bold>About</Bold>
+                    <LineBreak />
+                    <InlineUIContainer>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Version" />
+                                <TextBlock Text="{Binding Path=AppVersion,Mode=OneTime}" />
+                            </StackPanel>
+                            <TextBox Header="Used LocalCacheFolder for Sharing" Text="{Binding Path=LocalCacheFolder,Mode=OneTime}" />
+                        </StackPanel>
+                    </InlineUIContainer>
+                </Paragraph>
+                <Paragraph>
                     <Bold>Our apps</Bold>
                     <LineBreak />
                     <Hyperlink NavigateUri="https://www.microsoft.com/en-us/store/p/file-renamer/9nblggh4rkqt">Filerenamer</Hyperlink>
