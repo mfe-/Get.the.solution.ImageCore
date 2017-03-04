@@ -47,9 +47,9 @@ namespace Get.the.solution.Image.Manipulation.Shell
             DropCommand = new DelegateCommand<object>(OnDropCommand);
             ShareCommand = new DelegateCommand(OnShareCommand);
 
-            //Object for Sharing data in uwp
-            _DataTransferManager = DataTransferManager.GetForCurrentView();
-            _DataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            ////Object for Sharing data in uwp
+            //_DataTransferManager = DataTransferManager.GetForCurrentView();
+            //_DataTransferManager.DataRequested += DataTransferManager_DataRequested;
             //SizeSmallChecked = true;
 
             if (_SelectedFiles != null)
@@ -202,7 +202,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         }
         #endregion
 
-        public async Task<bool> ResizeImages(ImageAction action, Action<MemoryStream, String> ProcessedImage = null)
+        public async Task<bool> ResizeImages(ImageAction action, Action<IStorageFile, String> ProcessedImage = null)
         {
             //if no file is selected open file picker 
             if (ImageFiles == null || ImageFiles.Count == 0)
@@ -218,7 +218,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     Stream ImageStream = RandomAccessStream.AsStreamForRead();
                     using (MemoryStream ImageFileStream = ImageService.Resize(ImageStream, Width, Height))
                     {
-                        String SuggestedFileName = $"{Storeage.Name.Replace(Storeage.FileType, String.Empty)}-{Width}x{Height}{Storeage.FileType}";
+                        String SuggestedFileName = GenerateResizedFileName(Storeage);
                         if (action.Equals(ImageAction.Save))
                         {
                             await FileIO.WriteBytesAsync(Storeage, ImageFileStream.ToArray());
@@ -244,7 +244,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
                         }
                         else if (action.Equals(ImageAction.Process))
                         {
-                            ProcessedImage?.Invoke(ImageFileStream, $"{SuggestedFileName}");
+                            StorageFolder TempFolder = ApplicationData.Current.LocalCacheFolder;
+                            StorageFile TempFile = await TempFolder.CreateFileAsync(SuggestedFileName, CreationCollisionOption.ReplaceExisting);
+
+                            await FileIO.WriteBytesAsync(TempFile, ImageFileStream.ToArray());
+                            ProcessedImage?.Invoke(TempFile, $"{SuggestedFileName}");
                         }
                     }
                 }
@@ -263,6 +267,18 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
             }
             return true;
+        }
+
+        private string GenerateResizedFileName(IStorageFile storeage)
+        {
+            if (storeage != null)
+            {
+                return $"{storeage.Name.Replace(storeage.FileType, String.Empty)}-{Width}x{Height}{storeage.FileType}";
+            }
+            else
+            {
+                return String.Empty;
+            }
         }
 
         #region OkCommand / Resize Images
@@ -290,42 +306,97 @@ namespace Get.the.solution.Image.Manipulation.Shell
         }
         public DelegateCommand ShareCommand { get; set; }
 
-        protected void OnShareCommand()
+        protected async void OnShareCommand()
         {
-            SharingProcess = true;
-            DataTransferManager.ShowShareUI();
-        }
+            try
+            {
+                LocalCachedResizedImages = new List<IStorageItem>();
+                Action<IStorageFile, string> ProcessImage = new Action<IStorageFile, string>((ImageFileStream, FileName) =>
+                {
+                    LocalCachedResizedImages.Add(ImageFileStream);
+                });
+                bool Result = await ResizeImages(ImageAction.Process, ProcessImage);
+                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+                DataTransferManager.ShowShareUI();
 
-        private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+            }
+            catch (Exception e)
+            {
+                SharingProcess = false;
+            }
+        }
+        protected List<IStorageItem> LocalCachedResizedImages = new List<IStorageItem>();
+        ///// <summary>
+        ///// https://docs.microsoft.com/en-us/uwp/api/Windows.ApplicationModel.DataTransfer.DataPackage#Windows_ApplicationModel_DataTransfer_DataPackage_SetDataProvider_System_String_Windows_ApplicationModel_DataTransfer_DataProviderHandler_
+        ///// </summary>
+        ///// <param name="request"></param>
+        //protected async void Share_DataProvider(DataProviderRequest request)
+        //{
+        //    DataProviderDeferral Task = request.GetDeferral();
+        //    try
+        //    {
+        //        List<IStorageItem> ResizedImages = new List<IStorageItem>();
+        //        Action<IStorageFile, string> ProcessImage = new Action<IStorageFile, string>((ImageFileStream, FileName) =>
+        //        {
+        //            ResizedImages.Add(ImageFileStream);
+        //        });
+
+        //        bool Result = await ResizeImages(ImageAction.Process, ProcessImage);
+        //        if ((ResizedImages == null || ResizedImages.Count != 0) && Result == true)
+        //        {
+        //            request.SetData(ResizedImages);
+        //        }
+        //    }
+        //    finally
+        //    {
+        //        Task.Complete();
+        //    }
+
+        //}
+
+        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             DataRequest Request = args.Request;
             DataRequestDeferral Deferral = Request.GetDeferral();
-
-            //our DataPackage we want to share
-            DataPackage Package = new DataPackage();
-            Package.OperationCompleted += Package_OperationCompleted1;
-            Package.RequestedOperation = DataPackageOperation.Copy;
-            Package.Properties.ApplicationName = _ResourceLoader.GetString("AppName");
-
-            List<IStorageItem> ResizedImages = new List<IStorageItem>();
-            Action<MemoryStream, string> ProcessImage = new Action<MemoryStream, string>((ImageFileStream, FileName) =>
-               {
-                   StorageFolder TempFolder = ApplicationData.Current.LocalCacheFolder;
-                   StorageFile TempFile = TempFolder.CreateFileAsync(FileName, CreationCollisionOption.ReplaceExisting).AsTask().GetAwaiter().GetResult();
-                   FileIO.WriteBytesAsync(TempFile, ImageFileStream.ToArray()).AsTask().GetAwaiter().GetResult();
-                   Package.Properties.Title = $"{Package.Properties.Title } {FileName}";
-                   ResizedImages.Add(TempFile);
-
-               });
-
-            bool Result = await ResizeImages(ImageAction.Process, ProcessImage);
-            if ((ResizedImages == null || ResizedImages.Count != 0) && Result == true)
+            try
             {
-                Package.SetStorageItems(ResizedImages);
-                Request.Data = Package;
+                if (ImageFiles != null && ImageFiles.Count != 0)
+                {
+                    //our DataPackage we want to share
+                    DataPackage Package = new DataPackage();
+                    Package.OperationCompleted += Package_OperationCompleted1;
+                    Package.Destroyed += Package_Destroyed;
+                    Package.RequestedOperation = DataPackageOperation.Copy;
+                    foreach (var File in ImageFiles)
+                    {
+                        Package.Properties.Description = $"{Package.Properties.Title } {GenerateResizedFileName(File)}";
+                    }
+                    Package.Properties.Title = "Resized Images";
+                    //Package.SetDataProvider(StandardDataFormats.StorageItems, Share_DataProvider);
+                    Package.Properties.ApplicationName = _ResourceLoader.GetString("AppName");
+                    foreach (String Extension in _AllowedFileTyes)
+                    {
+                        Package.Properties.FileTypes.Add(Extension);
+                    }
+                    Package.SetStorageItems(LocalCachedResizedImages);
+                    Request.Data = Package;
+                    SharingProcess = false;
+                }
+                else
+                {
+                    args.Request.FailWithDisplayText("Nothing to share");
+                }
             }
-            Deferral.Complete();
-            SharingProcess = false;
+            finally
+            {
+                Deferral.Complete();
+            }
+
+        }
+
+        private void Package_Destroyed(DataPackage sender, object args)
+        {
 
         }
 

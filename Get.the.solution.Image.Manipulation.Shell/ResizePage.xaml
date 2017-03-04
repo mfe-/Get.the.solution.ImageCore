@@ -177,9 +177,7 @@
                         </Core:DataTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </Button>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Share"
-                    Command="{Binding Path=ShareCommand}">
-
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Share" Name="ShareButton">
                     <Interactivity:Interaction.Behaviors>
                         <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
                             <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
@@ -187,6 +185,10 @@
                         <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="True">
                             <Core:ChangePropertyAction PropertyName="IsEnabled" Value="False" />
                         </Core:DataTriggerBehavior>
+                        <Core:EventTriggerBehavior EventName="Tapped">
+                            <Core:ChangePropertyAction PropertyName="SharingProcess" Value="True" TargetObject="{Binding DataContext,ElementName=ShareButton}"  />
+                            <Core:InvokeCommandAction Command="{Binding ShareCommand}" />
+                        </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </Button>
                 <ProgressRing IsActive="True" >
