@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Get.the.solution.UWP.XAML;
+using Prism.Mvvm;
 using Prism.Windows.Navigation;
 using System;
 using System.Collections.Generic;
@@ -18,14 +19,12 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         }
 
+
         public String AppVersion
         {
             get
             {
-                Package package = Package.Current;
-                PackageId packageId = package.Id;
-                PackageVersion version = packageId.Version;
-                return string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+                return AppHelper.GetAppVersion();
             }
         }
 

@@ -231,7 +231,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                                 FileSavePicker FileSavePicker = new FileSavePicker();
                                 FileSavePicker.DefaultFileExtension = Storeage.FileType;
                                 FileSavePicker.FileTypeChoices.Add(Storeage.FileType, new List<string>() { Storeage.FileType });
-
+                                //FileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
                                 // Default file name if the user does not type one in or select a file to replace
                                 FileSavePicker.SuggestedFileName = SuggestedFileName;
                                 StorageFile File = await FileSavePicker.PickSaveFileAsync();

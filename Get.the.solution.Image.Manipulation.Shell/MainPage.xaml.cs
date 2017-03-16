@@ -29,6 +29,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
             this.InitializeComponent();
             ApplicationView.PreferredLaunchViewSize = _PreferredSize;
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+            String lang = Windows.System.UserProfile.GlobalizationPreferences.Languages.FirstOrDefault();
+            if (lang.Contains("pt"))
+            {
+                _PreferredSize = new Size(535, 350);
+            }
             ApplicationView.GetForCurrentView().SetPreferredMinSize(_PreferredSize);
         }
         public void SetContentFrame(Frame frame)

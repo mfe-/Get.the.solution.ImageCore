@@ -104,6 +104,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <PRIResource Include="pt\Resource.resw" />
     <PRIResource Include="de\Resource.resw" />
     <PRIResource Include="en\Resource.resw" />
     <None Include="project.json" />

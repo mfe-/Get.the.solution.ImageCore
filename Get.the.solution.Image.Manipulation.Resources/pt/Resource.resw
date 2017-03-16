@@ -118,77 +118,77 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppName" xml:space="preserve">
-    <value>Image Resizer</value>
+    <value>Redimensionador de Imagem</value>
   </data>
   <data name="Cancel.Content" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
   </data>
   <data name="Contact" xml:space="preserve">
-    <value>Contact</value>
+    <value>Contactar</value>
   </data>
   <data name="CopyEnabled.Content" xml:space="preserve">
-    <value>Resize the orginal pictures (don't create copies)</value>
+    <value>Redimensionar as imagens originais (sem criar cópias)</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>Easy Resize Images
-Resize Image by starting the app. Select the image you want to resize.
-Or
-Right click on image file, select open with Image Resizer.
-Support for .jpg, .png, .gif, .bmp
-You also can send the resized image via email, by sharing the image.</value>
+    <value>Redimensionar imagens facilmente.
+Redimensiona a imagem abrindo a aplicação, selecionando a imagem que queres redimensionar.
+Ou
+Clica com o botão do lado direito do rato, e seleciona abrir com Redimensionador de Imagem
+Suporta .jpg, .png, .gif, .bmp
+Também é possível enviar a imagem redimensionada por e-mail, partilhando-a.</value>
   </data>
   <data name="ExceptionOnResize" xml:space="preserve">
-    <value>We are sorry but something unexpected happend :(. We added the error to the Clipboard (Get it with CTR+V) Please send us the error exception. Exception: {0}</value>
+    <value>Pedimos desculpa, mas algo correu mal :(. O erro foi adicionado à área de cópia (acessível com CTRL + V) Por favor envie-nos o código de erro. Código: {0}</value>
   </data>
   <data name="Help" xml:space="preserve">
-    <value>Help</value>
+    <value>Ajuda</value>
   </data>
   <data name="No" xml:space="preserve">
-    <value>No</value>
+    <value>Não</value>
   </data>
   <data name="Ok.Content" xml:space="preserve">
     <value>Ok</value>
   </data>
   <data name="OpenWith" xml:space="preserve">
-    <value>Resize Image with Image Resizer</value>
+    <value>Redimensionar imagem com Redimensionador de Imagem</value>
   </data>
   <data name="Resize.Text" xml:space="preserve">
-    <value>You can create resized copies of one selected picture and store them in your prefered folder.</value>
+    <value>É possível criar copias redimensionadas de uma imagem e guardá-las numa pasta escolhida.</value>
   </data>
   <data name="Save.Content" xml:space="preserve">
-    <value>Save</value>
+    <value>Guardar</value>
   </data>
   <data name="SaveAs.Content" xml:space="preserve">
-    <value>Save As</value>
+    <value>Guardar como</value>
   </data>
   <data name="SelectImage.Content" xml:space="preserve">
-    <value>Select Image</value>
+    <value>Selecionar imagem</value>
   </data>
   <data name="SelectSize.Text" xml:space="preserve">
-    <value>Select a size:</value>
+    <value>Selecionar um tamanho:</value>
   </data>
   <data name="Share.Content" xml:space="preserve">
-    <value>Share (e.g for Email)</value>
+    <value>Partilhar (p.ex, por e-mail)</value>
   </data>
   <data name="ShowLastFile" xml:space="preserve">
-    <value>Would you like to open the last modified file?</value>
+    <value>Deseja abrir o último ficheiro modificado?</value>
   </data>
   <data name="SizeCustomBy.Text" xml:space="preserve">
-    <value>by</value>
+    <value>por</value>
   </data>
   <data name="SizeCustomHeight.Text" xml:space="preserve">
-    <value> screen)</value>
+    <value>)</value>
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>Custom (fits a </value>
+    <value>Personalizado (cabe nas dimensões</value>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
-    <value>Medium (fits a 800 x 600 screen)</value>
+    <value>Médio (cabe nas dimensões 800 x 600)</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
-    <value>Small (fits a 640 x 480 screen)</value>
+    <value>Pequeno (cabe nas dimensões 640 x 480)</value>
   </data>
   <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
+    <value>Sim</value>
   </data>
 </root>
