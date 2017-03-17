@@ -1,1 +1,1 @@
-C:\Users\mfe\Documents\Visual Studio 2015\Projects\Get.the.solution.Image\Get.the.solution.Image.Manipulation.Shell\AppPackages\Get.the.solution.Image.Manipulation.Shell_1.1.23.0\Get.the.solution.Image.Manipulation.Shell_1.1.23.0_x86_x64_arm.appxbundle
+C:\Users\mfe\Documents\Visual Studio 2015\Projects\Get.the.solution.Image\Get.the.solution.Image.Manipulation.Shell\AppPackages\Get.the.solution.Image.Manipulation.Shell_1.1.26.0\Get.the.solution.Image.Manipulation.Shell_1.1.26.0_x86_x64_arm.appxbundle
