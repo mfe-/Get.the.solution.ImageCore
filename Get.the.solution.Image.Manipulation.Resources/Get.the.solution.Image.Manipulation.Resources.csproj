@@ -108,6 +108,7 @@
     <PRIResource Include="de\Resource.resw" />
     <PRIResource Include="en\Resource.resw" />
     <PRIResource Include="es\Resource.resw" />
+    <PRIResource Include="hr\Resource.resw" />
     <None Include="project.json" />
     <PRIResource Include="Resource.resw" />
   </ItemGroup>
