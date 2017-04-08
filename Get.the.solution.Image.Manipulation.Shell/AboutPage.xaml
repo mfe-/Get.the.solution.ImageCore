@@ -46,7 +46,7 @@
                     We try to enhance the app. Send us feature requests or bugs. We are also looking for translators!
                     Please send us your translation of the app.
                     <LineBreak />
-                    Many thanks to the following translators: João P. (pt), MyDaniel (es). 
+                    Many thanks to the following translators: João P. (pt), MyDaniel (es). Demian (hr)
                     <LineBreak />
                     <Hyperlink NavigateUri="mailto:support@get-the-solution.net">Reach us.</Hyperlink>
                 </Paragraph>
