@@ -1,4 +1,5 @@
 ﻿using Get.the.solution.UWP.XAML;
+using Microsoft.Practices.ServiceLocation;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Windows.AppModel;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
@@ -26,12 +28,13 @@ namespace Get.the.solution.Image.Manipulation.Shell
         protected readonly INavigationService _NavigationService;
         protected readonly IResourceLoader _ResourceLoader;
         protected readonly ObservableCollection<IStorageFile> _SelectedFiles;
+        protected readonly bool _Sharing;
         protected IStorageFile _LastFile;
         protected IEnumerable<String> _AllowedFileTyes = new List<String>() { ".jpg", ".png", ".gif", ".bmp" };
         protected int RadioOptions;
         protected DataTransferManager _DataTransferManager;
 
-        public ResizePageViewModel(ObservableCollection<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader)
+        public ResizePageViewModel(ObservableCollection<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader, TimeSpan sharing)
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
 
@@ -47,10 +50,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
             DropCommand = new DelegateCommand<object>(OnDropCommand);
             ShareCommand = new DelegateCommand(OnShareCommand);
 
-            ////Object for Sharing data in uwp
-            //_DataTransferManager = DataTransferManager.GetForCurrentView();
-            //_DataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            //SizeSmallChecked = true;
+            if(TimeSpan.MaxValue.Equals(sharing))
+            {
+                _Sharing = true;
+            }
+            else
+            {
+                _Sharing = false;
+            }
 
             if (_SelectedFiles != null)
             {
@@ -248,6 +255,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                             StorageFile TempFile = await TempFolder.CreateFileAsync(SuggestedFileName, CreationCollisionOption.ReplaceExisting);
 
                             await FileIO.WriteBytesAsync(TempFile, ImageFileStream.ToArray());
+                            _LastFile = TempFile;
                             ProcessedImage?.Invoke(TempFile, $"{SuggestedFileName}");
                         }
                     }
@@ -406,8 +414,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
         }
         #endregion 
 
-
-
         #region Width & Height
         private int _Width;
 
@@ -441,6 +447,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             if ((ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
             {
+                if(Sharing==true)
+                {
+                    ShareOperation shareOperation = ServiceLocator.Current.GetInstance<ShareOperation>();
+                    if(shareOperation!=null)
+                    {
+                        shareOperation.ReportCompleted();
+                    }
+                }
                 CoreApplication.Exit();
             }
             else
@@ -578,6 +592,16 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 }
                 return can;
 
+            }
+        }
+        /// <summary>
+        /// Returns a flag which indicates whether the app is used as share target
+        /// </summary>
+        public bool Sharing
+        {
+            get
+            {
+                return _Sharing;
             }
         }
 

@@ -28,6 +28,8 @@ using Windows.Storage;
 using Windows.Foundation.Metadata;
 using System.Collections.ObjectModel;
 using Windows.Globalization;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -47,7 +49,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             this.InitializeComponent();
 #if DEBUG
-            //ApplicationLanguages.PrimaryLanguageOverride = "es";
+            //ApplicationLanguages.PrimaryLanguageOverride = "hr";
 #endif
         }
         /// <summary>
@@ -117,12 +119,27 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     FileActivatedEventArgs fileargs = args as FileActivatedEventArgs;
                     Files = fileargs.Files;
+
+                    Container.RegisterInstance(TimeSpan.MinValue);
                 }
                 else if (args.GetType().Equals(typeof(ShareTargetActivatedEventArgs)))
                 {
                     ShareTargetActivatedEventArgs fileargs = args as ShareTargetActivatedEventArgs;
-                    Files = fileargs.ShareOperation.Data.GetStorageItemsAsync().AsTask().GetAwaiter().GetResult() ;
 
+
+                    if (fileargs.ShareOperation.Data.Contains(StandardDataFormats.StorageItems))
+                    {
+                        Files = fileargs.ShareOperation.Data.GetStorageItemsAsync().AsTask().GetAwaiter().GetResult();
+                    }
+                    else
+                    {
+                        Files = Array.Empty<IStorageItem>();
+                        //fileargs("ShareNoDataRetrieved");
+
+
+                    }
+                    Container.RegisterInstance<ShareOperation>(fileargs.ShareOperation);
+                    Container.RegisterInstance(TimeSpan.MaxValue);
                 }
 
                 ObservableCollection<IStorageFile> storagefiles = new ObservableCollection<IStorageFile>();
@@ -144,15 +161,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 }
 
                 Container.RegisterInstance<ObservableCollection<IStorageFile>>(storagefiles);
-                if (args.GetType().Equals(typeof(ShareTargetActivatedEventArgs)))
-                {
-                    (args as ShareTargetActivatedEventArgs).ShareOperation.ReportCompleted();
-                }
-         
             }
             else
             {
                 Container.RegisterInstance<ObservableCollection<IStorageFile>>(new ObservableCollection<IStorageFile>());
+                Container.RegisterInstance(TimeSpan.MinValue);
             }
 
             RemoveStatusBar();
