@@ -103,7 +103,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             Container.RegisterInstance<INavigationService>(NavigationService);
             Container.RegisterInstance<ISessionStateService>(SessionStateService);
 
-            ResourceLoaderAdapter resourceLoader = new ResourceLoaderAdapter(ResourceLoader.GetForCurrentView("Get.the.solution.Image.Manipulation.Resources/Resource"));
+            ResourceLoaderAdapter resourceLoader = new ResourceLoaderAdapter(ResourceLoader.GetForCurrentView("Get.the.solution.Image.Manipulation.Resources/Resources"));
             Container.RegisterInstance<IResourceLoader>(resourceLoader);
 
 

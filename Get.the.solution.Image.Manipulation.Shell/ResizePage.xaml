@@ -82,8 +82,8 @@
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
-            <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Resize" TextWrapping="Wrap" />
-            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectImage" 
+            <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Resize" TextWrapping="Wrap" />
+            <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SelectImage" 
                 Command="{Binding Path=OpenFilePickerCommand}">
                 <Interactivity:Interaction.Behaviors>
                     <Core:DataTriggerBehavior Binding="{Binding Path=ShowOpenFilePicker,UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -132,30 +132,30 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SelectSize" />
+            <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SelectSize" />
 
             <RadioButton GroupName="A" IsChecked="{Binding Path=SizeSmallChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                     x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeSmall" />
+                     x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeSmall" />
             <RadioButton GroupName="A" IsChecked="{Binding Path=SizeMediumChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                     x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeMedium" />
+                     x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeMedium" />
             <RadioButton GroupName="A" IsChecked="{Binding Path=SizeCustomChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomWidth" />
+                        <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomWidth" />
                         <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" />
-                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomBy" />
+                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomBy" />
                         <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" />
-                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SizeCustomHeight" />
+                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight" />
                     </StackPanel>
                 </RadioButton.Content>
             </RadioButton>
-            <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/CopyEnabled" 
+            <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/CopyEnabled" 
                     IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}"
                       IsEnabled="{Binding Path=CanOverwriteFiles,UpdateSourceTrigger=PropertyChanged}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Save" 
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Save" 
                     Command="{Binding Path=OkCommand}">
                     <Interactivity:Interaction.Behaviors>
                         <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -166,7 +166,7 @@
                         </Core:DataTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </Button>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/SaveAs" 
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SaveAs" 
                     Command="{Binding Path=OkCommand}">
                     <Interactivity:Interaction.Behaviors>
                         <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
@@ -177,7 +177,7 @@
                         </Core:DataTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </Button>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Share" Name="ShareButton">
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Share" Name="ShareButton">
                     <Interactivity:Interaction.Behaviors>
 
                         <Core:DataTriggerBehavior Binding="{Binding Path=Sharing,UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -206,7 +206,7 @@
                         </Core:DataTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </ProgressRing>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resource/Cancel"
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Cancel"
                     Command="{Binding Path=CancelCommand}"/>
             </StackPanel>
         </StackPanel>

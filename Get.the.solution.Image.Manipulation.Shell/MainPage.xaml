@@ -12,6 +12,7 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:common="using:Get.the.solution.UWP.XAML"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    RequestedTheme="Default"
     >
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

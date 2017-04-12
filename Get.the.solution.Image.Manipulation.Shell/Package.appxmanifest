@@ -11,12 +11,16 @@
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
   </Dependencies>
   <Resources>
-    <Resource Language="x-generate" />
+    <Resource Language="de"/>
+    <Resource Language="en-US"/>
+    <Resource Language="es"/>
+    <Resource Language="hr"/>
+    <Resource Language="pt"/>
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Get.the.solution.Image.Manipulation.Shell.App">
-      <uap:VisualElements DisplayName="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resource/AppName" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resource/Description" BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resource/AppName">
+      <uap:VisualElements DisplayName="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resources/AppName" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resources/Description" BackgroundColor="transparent">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resources/AppName">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo" />
             <uap:ShowOn Tile="wide310x150Logo" />
@@ -30,20 +34,8 @@
         </uap:InitialRotationPreference>
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="image_resizer">
-            <uap:DisplayName>ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resource/OpenWith</uap:DisplayName>
-            <uap:Logo>Assets\StoreLogo.png</uap:Logo>
-            <uap:SupportedFileTypes>
-              <uap:FileType ContentType="image/jpeg">.jpg</uap:FileType>
-              <uap:FileType ContentType="image/png">.png</uap:FileType>
-              <uap:FileType ContentType="image/gif">.gif</uap:FileType>
-              <uap:FileType ContentType="image/bmp">.bmp</uap:FileType>
-            </uap:SupportedFileTypes>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
         <uap:Extension Category="windows.shareTarget">
-          <uap:ShareTarget Description="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resource/AppName">
+          <uap:ShareTarget Description="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resources/AppName">
             <uap:SupportedFileTypes>
               <uap:FileType>.jpg</uap:FileType>
               <uap:FileType>.png</uap:FileType>
@@ -53,8 +45,20 @@
             <uap:DataFormat>Bitmap, jpeg, png,</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="image_resizer">
+            <uap:DisplayName>ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resources/OpenWith</uap:DisplayName>
+            <uap:Logo>Assets\StoreLogo.png</uap:Logo>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="image/jpeg">.jpg</uap:FileType>
+              <uap:FileType ContentType="image/png">.png</uap:FileType>
+              <uap:FileType ContentType="image/gif">.gif</uap:FileType>
+              <uap:FileType ContentType="image/bmp">.bmp</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
         <!--<uap:Extension Category="windows.shareTarget">
-          <uap:ShareTarget Description="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resource/OpenWith">
+          <uap:ShareTarget Description="ms-resource:/Get.the.solution.Image.Manipulation.Resources/Resources/OpenWith">
             <uap:SupportedFileTypes>
               <uap:FileType>.jpg</uap:FileType>
               <uap:FileType>.png</uap:FileType>

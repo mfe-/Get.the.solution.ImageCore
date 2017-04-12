@@ -104,13 +104,13 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <PRIResource Include="pt\Resource.resw" />
-    <PRIResource Include="de\Resource.resw" />
-    <PRIResource Include="en\Resource.resw" />
-    <PRIResource Include="es\Resource.resw" />
-    <PRIResource Include="hr\Resource.resw" />
+    <PRIResource Include="Strings\pt\Resources.resw" />
+    <PRIResource Include="Strings\de\Resources.resw" />
+    <PRIResource Include="Strings\en\Resources.resw" />
+    <PRIResource Include="Strings\es\Resources.resw" />
+    <PRIResource Include="Strings\hr\Resources.resw" />
     <None Include="project.json" />
-    <PRIResource Include="Resource.resw" />
+    <PRIResource Include="Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
