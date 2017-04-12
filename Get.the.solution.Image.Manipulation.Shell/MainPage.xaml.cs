@@ -23,7 +23,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private Size _PreferredSize = new Size(515, 350);
+        private Size _PreferredSize = new Size(515, 410);
         public MainPage()
         {
             this.InitializeComponent();
@@ -32,7 +32,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             String lang = Windows.System.UserProfile.GlobalizationPreferences.Languages.FirstOrDefault();
             if (lang.Contains("pt"))
             {
-                _PreferredSize = new Size(535, 350);
+                _PreferredSize = new Size(535, 410);
             }
             ApplicationView.GetForCurrentView().SetPreferredMinSize(_PreferredSize);
         }

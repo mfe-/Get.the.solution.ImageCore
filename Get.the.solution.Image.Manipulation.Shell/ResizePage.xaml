@@ -140,7 +140,7 @@
                      x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeMedium" />
             <RadioButton GroupName="A" IsChecked="{Binding Path=SizeCustomChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <RadioButton.Content>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" >
                         <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomWidth" />
                         <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" />
@@ -148,6 +148,19 @@
                         <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" />
                         <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight" />
+                    </StackPanel>
+                </RadioButton.Content>
+            </RadioButton>
+            <RadioButton GroupName="A" IsChecked="{Binding Path=SizePercentChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+                <RadioButton.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentWidth" />
+                        <TextBox Text="{Binding WidthPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                                 MaxLength="3" Width="70" common:OnFocus.SelectAll="True" />
+                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentBy" />
+                        <TextBox Text="{Binding HeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                                 MaxLength="3" Width="70" common:OnFocus.SelectAll="True" />
+                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentHeight" />
                     </StackPanel>
                 </RadioButton.Content>
             </RadioButton>

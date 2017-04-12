@@ -50,7 +50,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             DropCommand = new DelegateCommand<object>(OnDropCommand);
             ShareCommand = new DelegateCommand(OnShareCommand);
 
-            if(TimeSpan.MaxValue.Equals(sharing))
+            if (TimeSpan.MaxValue.Equals(sharing))
             {
                 _Sharing = true;
             }
@@ -79,10 +79,17 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 SizeCustomChecked = true;
             }
+            else if (RadioOptions == 4)
+            {
+                SizePercentChecked = true;
+            }
 
             OverwriteFiles = LocalSettings.Values[nameof(OverwriteFiles)] == null ? false : Boolean.Parse(LocalSettings.Values[nameof(OverwriteFiles)].ToString());
             Width = LocalSettings.Values[nameof(Width)] == null ? 1024 : Int32.Parse(LocalSettings.Values[nameof(Width)].ToString());
             Height = LocalSettings.Values[nameof(Height)] == null ? 768 : Int32.Parse(LocalSettings.Values[nameof(Height)].ToString());
+
+            WidthPercent = LocalSettings.Values[nameof(WidthPercent)] == null ? 100 : Int32.Parse(LocalSettings.Values[nameof(WidthPercent)].ToString());
+            HeightPercent = LocalSettings.Values[nameof(HeightPercent)] == null ? 100 : Int32.Parse(LocalSettings.Values[nameof(HeightPercent)].ToString());
         }
         /// <summary>
         /// Access for app settings
@@ -183,6 +190,24 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 }
             }
         }
+
+
+
+        private bool _SizePercentChecked;
+
+        public bool SizePercentChecked
+        {
+            get { return _SizePercentChecked; }
+            set
+            {
+                SetProperty(ref _SizePercentChecked, value, nameof(SizePercentChecked));
+                if (SizePercentChecked == true)
+                {
+                    LocalSettings.Values[nameof(RadioOptions)] = 4;
+                }
+            }
+        }
+
         #endregion
 
         #region Images
@@ -223,6 +248,16 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 {
                     var RandomAccessStream = await Storeage.OpenReadAsync();
                     Stream ImageStream = RandomAccessStream.AsStreamForRead();
+
+                    if(SizePercentChecked == true)
+                    {
+                        ImageProperties Properties = await (Storeage as StorageFile)?.Properties.GetImagePropertiesAsync();
+                        if(Properties!=null)
+                        {
+                            Width = (int)Properties.Width * WidthPercent / 100;
+                            Height = (int)Properties.Height * HeightPercent / 100;
+                        }
+                    }
                     using (MemoryStream ImageFileStream = ImageService.Resize(ImageStream, Width, Height))
                     {
                         String SuggestedFileName = GenerateResizedFileName(Storeage);
@@ -427,6 +462,19 @@ namespace Get.the.solution.Image.Manipulation.Shell
             }
         }
 
+
+        private int _PercentWidth;
+
+        public int WidthPercent
+        {
+            get { return _PercentWidth; }
+            set
+            {
+                SetProperty(ref _PercentWidth, value, nameof(WidthPercent));
+                LocalSettings.Values[nameof(WidthPercent)] = _PercentWidth;
+            }
+        }
+
         private int _Height;
 
         public int Height
@@ -438,6 +486,18 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 LocalSettings.Values[nameof(Height)] = _Height;
             }
         }
+
+        private int _PercentHeight;
+
+        public int HeightPercent
+        {
+            get { return _PercentHeight; }
+            set
+            {
+                SetProperty(ref _PercentHeight, value, nameof(HeightPercent));
+                LocalSettings.Values[nameof(HeightPercent)] = _PercentHeight;
+            }
+        }
         #endregion
 
         #region CancelCommand
@@ -447,10 +507,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             if ((ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
             {
-                if(Sharing==true)
+                if (Sharing == true)
                 {
                     ShareOperation shareOperation = ServiceLocator.Current.GetInstance<ShareOperation>();
-                    if(shareOperation!=null)
+                    if (shareOperation != null)
                     {
                         shareOperation.ReportCompleted();
                     }
