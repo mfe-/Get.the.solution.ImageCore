@@ -110,9 +110,8 @@
                 </Interactivity:Interaction.Behaviors>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <!--common:OnDel.Command="{Binding Path=DataContext.DeleteFileCommand,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
-                                               common:OnDel.CommandParameter="{Binding Path=SelectedItem,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"-->
-                        <Grid>
+                        <Grid common:OnDel.Command="{Binding Path=DataContext.DeleteFileCommand,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
+                              common:OnDel.CommandParameter="{Binding Path=SelectedItem,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}">
                             <Grid.ColumnDefinitions >
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto" />
@@ -142,10 +141,10 @@
                 <RadioButton.Content>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomWidth" />
-                        <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                        <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=Default}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" />
                         <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomBy" />
-                        <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                        <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=Default}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" />
                         <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight" />
                     </StackPanel>
@@ -167,8 +166,12 @@
             <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/CopyEnabled" 
                     IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}"
                       IsEnabled="{Binding Path=CanOverwriteFiles,UpdateSourceTrigger=PropertyChanged}"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Save" 
+            <CheckBox x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/KeepAspectRatio" 
+                    IsChecked="{Binding Path=KeepAspectRatio,Mode=TwoWay}"
+                          IsEnabled="{Binding Path=SingleFile,UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel Orientation="Horizontal" >
+
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Save" HorizontalAlignment="Right"
                     Command="{Binding Path=OkCommand}">
                     <Interactivity:Interaction.Behaviors>
                         <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -179,7 +182,7 @@
                         </Core:DataTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </Button>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SaveAs" 
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SaveAs" HorizontalAlignment="Right"
                     Command="{Binding Path=OkCommand}">
                     <Interactivity:Interaction.Behaviors>
                         <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
@@ -190,7 +193,7 @@
                         </Core:DataTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </Button>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Share" Name="ShareButton">
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Share" Name="ShareButton" HorizontalAlignment="Right">
                     <Interactivity:Interaction.Behaviors>
 
                         <Core:DataTriggerBehavior Binding="{Binding Path=Sharing,UpdateSourceTrigger=PropertyChanged}" Value="True">
@@ -209,7 +212,7 @@
                         </Core:EventTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </Button>
-                <ProgressRing IsActive="True" >
+                <ProgressRing IsActive="True" HorizontalAlignment="Right">
                     <Interactivity:Interaction.Behaviors>
                         <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="True">
                             <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
@@ -219,7 +222,7 @@
                         </Core:DataTriggerBehavior>
                     </Interactivity:Interaction.Behaviors>
                 </ProgressRing>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Cancel"
+                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Cancel" HorizontalAlignment="Right"
                     Command="{Binding Path=CancelCommand}"/>
             </StackPanel>
         </StackPanel>

@@ -33,6 +33,9 @@
                     The setting of the "Resize the orginal pictures (don't create copies)" checkbox will be saved for your next session.
                     <LineBreak />
                     <LineBreak />
+                    When you selected the wrong image file to resize you can select it and press "DEL" to remove it from the list.
+                    <LineBreak />
+                    <LineBreak />
                 </Paragraph>
             </RichTextBlock>
         </ScrollViewer>

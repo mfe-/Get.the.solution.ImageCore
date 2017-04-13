@@ -20,6 +20,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
+using System.Runtime.CompilerServices;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -49,6 +50,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             DragOverCommand = new DelegateCommand<object>(OnDragOverCommand);
             DropCommand = new DelegateCommand<object>(OnDropCommand);
             ShareCommand = new DelegateCommand(OnShareCommand);
+            DeleteFileCommand = new DelegateCommand<IStorageFile>(OnDeleteFile);
 
             if (TimeSpan.MaxValue.Equals(sharing))
             {
@@ -90,7 +92,35 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
             WidthPercent = LocalSettings.Values[nameof(WidthPercent)] == null ? 100 : Int32.Parse(LocalSettings.Values[nameof(WidthPercent)].ToString());
             HeightPercent = LocalSettings.Values[nameof(HeightPercent)] == null ? 100 : Int32.Parse(LocalSettings.Values[nameof(HeightPercent)].ToString());
+
+            KeepAspectRatio = LocalSettings.Values[nameof(KeepAspectRatio)] == null ? false : Boolean.Parse(LocalSettings.Values[nameof(KeepAspectRatio)].ToString());
+            PropertyChanged += ResizePageViewModel_PropertyChanged;
         }
+
+        private void ResizePageViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if ((SingleFile == true && KeepAspectRatio == true) &&
+                (nameof(Width).Equals(e.PropertyName) || nameof(Height).Equals(e.PropertyName)))
+            {
+                PropertyChanged -= ResizePageViewModel_PropertyChanged;
+                if (SelectedFile == null && ImageFiles.Count > 0)
+                {
+                    SelectedFile = ImageFiles.First() as StorageFile;
+                }
+                ImageProperties Properties = SelectedFile?.Properties.GetImagePropertiesAsync().AsTask().GetAwaiter().GetResult();
+
+                if (Properties != null && nameof(Width).Equals(e.PropertyName))
+                {
+                    Height = (int)(((float)Properties.Height / (float)Properties.Width) * Width);
+                }
+                else if (Properties != null && nameof(Height).Equals(e.PropertyName))
+                {
+                    Width = (int)(((float)Properties.Height / (float)Properties.Width) * Height);
+                }
+                PropertyChanged += ResizePageViewModel_PropertyChanged;
+            }
+        }
+
         /// <summary>
         /// Access for app settings
         /// </summary>
@@ -224,6 +254,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     ImageFiles.CollectionChanged += ImageFiles_CollectionChanged;
                 }
                 OnPropertyChanged(nameof(ShowOpenFilePicker));
+                OnPropertyChanged(nameof(SingleFile));
             }
         }
 
@@ -231,6 +262,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             OnPropertyChanged(nameof(ShowOpenFilePicker));
             OnPropertyChanged(nameof(CanOverwriteFiles));
+            OnPropertyChanged(nameof(SingleFile));
         }
         #endregion
 
@@ -249,10 +281,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     var RandomAccessStream = await Storeage.OpenReadAsync();
                     Stream ImageStream = RandomAccessStream.AsStreamForRead();
 
-                    if(SizePercentChecked == true)
+                    if (SizePercentChecked == true)
                     {
                         ImageProperties Properties = await (Storeage as StorageFile)?.Properties.GetImagePropertiesAsync();
-                        if(Properties!=null)
+                        if (Properties != null)
                         {
                             Width = (int)Properties.Width * WidthPercent / 100;
                             Height = (int)Properties.Height * HeightPercent / 100;
@@ -555,6 +587,19 @@ namespace Get.the.solution.Image.Manipulation.Shell
             }
         }
 
+
+        private bool _KeepAspectRatio;
+
+        public bool KeepAspectRatio
+        {
+            get { return _KeepAspectRatio; }
+            set
+            {
+                SetProperty(ref _KeepAspectRatio, value, nameof(KeepAspectRatio));
+                LocalSettings.Values[nameof(KeepAspectRatio)] = _KeepAspectRatio;
+            }
+        }
+
         #region OpenFileCommand
         public DelegateCommand<IStorageFile> OpenFileCommand { get; set; }
 
@@ -640,6 +685,18 @@ namespace Get.the.solution.Image.Manipulation.Shell
             }
         }
 
+
+        public DelegateCommand<IStorageFile> DeleteFileCommand { get; set; }
+
+        protected void OnDeleteFile(IStorageFile param)
+        {
+            if(ImageFiles!=null && param != null)
+            {
+                ImageFiles.Remove(param);
+            }
+        }
+ 
+
         public bool CanOverwriteFiles
         {
             get
@@ -654,6 +711,20 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
             }
         }
+        public bool SingleFile
+        {
+            get
+            {
+                bool single = ImageFiles?.Count == 1;
+
+                if (single == false)
+                {
+                    KeepAspectRatio = false;
+                }
+                return single;
+            }
+        }
+
         /// <summary>
         /// Returns a flag which indicates whether the app is used as share target
         /// </summary>

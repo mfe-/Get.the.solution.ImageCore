@@ -106,8 +106,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
             ResourceLoaderAdapter resourceLoader = new ResourceLoaderAdapter(ResourceLoader.GetForCurrentView("Get.the.solution.Image.Manipulation.Resources/Resources"));
             Container.RegisterInstance<IResourceLoader>(resourceLoader);
 
-
-
             if ((args as LaunchActivatedEventArgs)?.PrelaunchActivated == false)
             {
                 SetViewModelLocationProvider();
