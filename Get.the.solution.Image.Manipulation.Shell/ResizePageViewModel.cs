@@ -727,10 +727,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 bool single = ImageFiles?.Count == 1;
 
-                if (single == false)
-                {
-                    KeepAspectRatio = false;
-                }
+                //if (single == false)
+                //{
+                //    KeepAspectRatio = false;
+                //}
                 return single;
             }
         }
