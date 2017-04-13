@@ -12,9 +12,10 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:common="using:Get.the.solution.UWP.XAML"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    RequestedTheme="Default"
-    >
+    RequestedTheme="Dark"
 
+    >
+    <!--common:Debug.DisplayWindowSize="True"-->
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:HamburgerMenu x:Name="hamburgerMenuControl"
                                 PaneBackground="Black"

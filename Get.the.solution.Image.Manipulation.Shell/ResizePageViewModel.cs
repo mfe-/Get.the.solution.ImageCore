@@ -108,14 +108,14 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     SelectedFile = ImageFiles.First() as StorageFile;
                 }
                 ImageProperties Properties = SelectedFile?.Properties.GetImagePropertiesAsync().AsTask().GetAwaiter().GetResult();
-
+                float R = (float)Properties.Width/ (float)Properties.Height ;
                 if (Properties != null && nameof(Width).Equals(e.PropertyName))
                 {
-                    Height = (int)(((float)Properties.Height / (float)Properties.Width) * Width);
+                    Height = (int)(Width / R);
                 }
                 else if (Properties != null && nameof(Height).Equals(e.PropertyName))
                 {
-                    Width = (int)(((float)Properties.Height / (float)Properties.Width) * Height);
+                    Width = (int)(Height * R);
                 }
                 PropertyChanged += ResizePageViewModel_PropertyChanged;
             }
@@ -504,6 +504,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 SetProperty(ref _PercentWidth, value, nameof(WidthPercent));
                 LocalSettings.Values[nameof(WidthPercent)] = _PercentWidth;
+                if(KeepAspectRatio)
+                {
+                    _PercentHeight = _PercentWidth;
+                    OnPropertyChanged(nameof(HeightPercent));
+                }
             }
         }
 
@@ -528,6 +533,11 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 SetProperty(ref _PercentHeight, value, nameof(HeightPercent));
                 LocalSettings.Values[nameof(HeightPercent)] = _PercentHeight;
+                if (KeepAspectRatio)
+                {
+                    _PercentWidth = _PercentHeight;
+                    OnPropertyChanged(nameof(WidthPercent));
+                }
             }
         }
         #endregion
