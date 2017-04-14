@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="8273mfetzel.ResizeImage" Publisher="CN=8F2F0FD9-2706-45A2-AB07-DFAD9CE7C504" Version="1.1.33.0" />
+  <Identity Name="8273mfetzel.ResizeImage" Publisher="CN=8F2F0FD9-2706-45A2-AB07-DFAD9CE7C504" Version="1.1.35.0" />
   <mp:PhoneIdentity PhoneProductId="3ead5d44-e3c5-44d4-a827-b0a034a756cf" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Resize Image</DisplayName>

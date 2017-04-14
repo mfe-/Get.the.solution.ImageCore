@@ -130,12 +130,7 @@
     <value>Redimensionar as imagens originais (sem criar cópias)</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>Redimensionar imagens facilmente.
-Redimensiona a imagem abrindo a aplicação, selecionando a imagem que queres redimensionar.
-Ou
-Clica com o botão do lado direito do rato, e seleciona abrir com Redimensionador de Imagem
-Suporta .jpg, .png, .gif, .bmp
-Também é possível enviar a imagem redimensionada por e-mail, partilhando-a.</value>
+    <value>Redimensionar imagens facilmente. Redimensiona a imagem abrindo a aplicação, selecionando a imagem que queres redimensionar. Ou Clica com o botão do lado direito do rato, e seleciona abrir com Redimensionador de Imagem Suporta .jpg, .png, .gif, .bmp Também é possível enviar a imagem redimensionada por e-mail, partilhando-a.</value>
   </data>
   <data name="ExceptionOnResize" xml:space="preserve">
     <value>Pedimos desculpa, mas algo correu mal :(. O erro foi adicionado à área de cópia (acessível com CTRL + V) Por favor envie-nos o código de erro. Código: {0}</value>

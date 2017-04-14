@@ -130,12 +130,7 @@
     <value>Redimensionar las imágenes originales (Sin crear copias)</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>Cambia el tamaño de una imagen fácilmente
-Abre la App y selecciona la imagen que quieras cambiar de tamaño.
-O
-Haz click derecho y selecciona “abrir con Image Resizer”.
-Soporta formatos .jpg, .png, .gif, .bmp
-También puedes enviar la imágen por e-mail y compartirla.</value>
+    <value>Cambia el tamaño de una imagen fácilmente Abre la App y selecciona la imagen que quieras cambiar de tamaño. O Haz click derecho y selecciona “abrir con Image Resizer”. Soporta formatos .jpg, .png, .gif, .bmp También puedes enviar la imágen por e-mail y compartirla.</value>
   </data>
   <data name="ExceptionOnResize" xml:space="preserve">
     <value>¡Lo sentimos! Ha ocurrido algo inesperado:(. Hemos agregado el error al portapapeles (Puedes usarlo con CTR+V) Por favor, envíanos la excepción del error. Excepción: {0}</value>
