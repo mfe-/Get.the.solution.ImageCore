@@ -186,11 +186,20 @@
   <data name="SizePercentBy.Text" xml:space="preserve">
     <value>by</value>
   </data>
+  <data name="SizePercentBy.Text1" xml:space="preserve">
+    <value>po</value>
+  </data>
   <data name="SizePercentHeight.Text" xml:space="preserve">
+    <value>%)</value>
+  </data>
+  <data name="SizePercentHeight.Text1" xml:space="preserve">
     <value>%)</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
     <value>Percent (fits a</value>
+  </data>
+  <data name="SizePercentWidth.Text1" xml:space="preserve">
+    <value>posto (</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Small (fits a 640 x 480 screen)</value>

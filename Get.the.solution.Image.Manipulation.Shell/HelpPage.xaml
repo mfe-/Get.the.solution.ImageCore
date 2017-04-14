@@ -35,6 +35,7 @@
                     <LineBreak />
                     When you selected the wrong image file to resize you can select it and press "DEL" to remove it from the list.
                     <LineBreak />
+                    Double Tappe an image to open it.
                     <LineBreak />
                 </Paragraph>
             </RichTextBlock>

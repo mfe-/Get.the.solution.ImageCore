@@ -6,12 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-    prismMvvm:ViewModelLocator.AutoWireViewModel="True"
     xmlns:prismMvvm="using:Prism.Windows.Mvvm"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:common="using:Get.the.solution.UWP.XAML"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls">
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+        prismMvvm:ViewModelLocator.AutoWireViewModel="True">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer Width="Auto" Height="Auto" VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled">
@@ -43,12 +43,14 @@
                 <Paragraph>
                     <Bold>Contact</Bold>
                     <LineBreak />
-                    We try to enhance the app. Send us feature requests or bugs. We are also looking for translators!
-                    Please send us your translation of the app.
+                    We try to enhance the app. Send us feature requests or bugs. We are also looking for translators and testers!
+                    Please send us your translation of the app. To get into the insider test programm write us an email! Thanks!
                     <LineBreak />
                     Many thanks to the following translators: João P. (pt), MyDaniel (es). Demian (hr)
                     <LineBreak />
                     <Hyperlink NavigateUri="mailto:support@get-the-solution.net">Reach us.</Hyperlink>
+                    <LineBreak />
+                    <Hyperlink NavigateUri="https://twitter.com/mfe_">Write me on twitter.</Hyperlink>
                 </Paragraph>
             </RichTextBlock>
         </ScrollViewer>

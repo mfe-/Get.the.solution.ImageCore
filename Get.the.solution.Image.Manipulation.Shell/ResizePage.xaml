@@ -69,7 +69,7 @@
                             <Setter Target="listboxfiles.MaxHeight" Value="40"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowHeight="490" MinWindowWidth="0"></AdaptiveTrigger>
+                            <AdaptiveTrigger MinWindowHeight="490"></AdaptiveTrigger>
                         </VisualState.StateTriggers>
                     </VisualState>
                     <VisualState x:Name="bigger">
@@ -109,7 +109,7 @@
                             <Setter Target="listboxfiles.MaxHeight" Value="240"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowHeight="690"></AdaptiveTrigger>
+                            <AdaptiveTrigger MinWindowHeight="690" MinWindowWidth="0"></AdaptiveTrigger>
                         </VisualState.StateTriggers>
                     </VisualState>
                     <VisualState x:Name="biggggggger">
@@ -117,7 +117,7 @@
                             <Setter Target="listboxfiles.MaxHeight" Value="280"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowHeight="730"></AdaptiveTrigger>
+                            <AdaptiveTrigger MinWindowHeight="730" MinWindowWidth="0"></AdaptiveTrigger>
                         </VisualState.StateTriggers>
                     </VisualState>
                 </VisualStateGroup>
@@ -150,8 +150,7 @@
                 </Interactivity:Interaction.Behaviors>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid common:OnDel.Command="{Binding Path=DataContext.DeleteFileCommand,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
-                              common:OnDel.CommandParameter="{Binding Path=SelectedItem,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}">
+                        <Grid>
                             <Grid.ColumnDefinitions >
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto" />
@@ -177,8 +176,58 @@
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem" BasedOn="{StaticResource ListViewItemExpanded}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter
+                                                    x:Name="ListViewItem"
+                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                  SelectionCheckMarkVisualEnabled="True"
+                                                  CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                  CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                                  DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
+                                                  DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                  FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
+                                                  FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                  PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                  PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
+                                                  PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                  SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
+                                                  SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                  SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
+                                                  PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
+                                                  SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
+                                                  DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                  DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                  ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  ContentMargin="{TemplateBinding Padding}"
+                                                  CheckMode="Inline"
+                                                  common:OnDel.Command="{Binding Path=DataContext.DeleteFileCommand,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
+                                                  common:OnDel.CommandParameter="{Binding Path=SelectedItem,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
+                                             
+                                                    >
+                                        <!--FlyoutBase.AttachedFlyout="{StaticResource Menue}"-->
+                                        <Interactivity:Interaction.Behaviors>
+                                            <Core:EventTriggerBehavior EventName="DoubleTapped">
+                                                <Core:InvokeCommandAction 
+                                                                Command="{Binding Path=DataContext.OpenFileCommand,ElementName=listboxfiles,RelativeSource={RelativeSource Mode=Self}}"
+                                                                CommandParameter="{Binding}"/>
+                                            </Core:EventTriggerBehavior>
+
+                                        </Interactivity:Interaction.Behaviors>
+
+                                    </ListViewItemPresenter>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
             </ListView>
-            
+
             <TextBlock Grid.Row="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SelectSize" Margin="5 0 0 0" />
 
             <RadioButton Grid.Row="3" GroupName="A" IsChecked="{Binding Path=SizeSmallChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
