@@ -143,6 +143,9 @@ Também é possível enviar a imagem redimensionada por e-mail, partilhando-a.</
   <data name="Help" xml:space="preserve">
     <value>Ajuda</value>
   </data>
+  <data name="KeepAspectRatio.Content" xml:space="preserve">
+    <value>Manter relação de aspecto</value>
+  </data>
   <data name="No" xml:space="preserve">
     <value>Não</value>
   </data>
@@ -184,6 +187,15 @@ Também é possível enviar a imagem redimensionada por e-mail, partilhando-a.</
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Médio (cabe nas dimensões 800 x 600)</value>
+  </data>
+  <data name="SizePercentBy.Text" xml:space="preserve">
+    <value>de</value>
+  </data>
+  <data name="SizePercentHeight.Text" xml:space="preserve">
+    <value>%)</value>
+  </data>
+  <data name="SizePercentWidth.Text" xml:space="preserve">
+    <value>Por cento (</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Pequeno (cabe nas dimensões 640 x 480)</value>

@@ -138,6 +138,9 @@
   <data name="Help" xml:space="preserve">
     <value>Hilfe</value>
   </data>
+  <data name="KeepAspectRatio.Content" xml:space="preserve">
+    <value>Seitenverhältnisse beibehalten</value>
+  </data>
   <data name="No" xml:space="preserve">
     <value>Nein</value>
   </data>
@@ -179,6 +182,15 @@
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Mittel (800 x 600 )</value>
+  </data>
+  <data name="SizePercentBy.Text" xml:space="preserve">
+    <value>x</value>
+  </data>
+  <data name="SizePercentHeight.Text" xml:space="preserve">
+    <value>%)</value>
+  </data>
+  <data name="SizePercentWidth.Text" xml:space="preserve">
+    <value>Prozent (</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Klein (640 x 480 )</value>

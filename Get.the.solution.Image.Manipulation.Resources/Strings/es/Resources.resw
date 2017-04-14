@@ -143,6 +143,9 @@ También puedes enviar la imágen por e-mail y compartirla.</value>
   <data name="Help" xml:space="preserve">
     <value>Ayuda</value>
   </data>
+  <data name="KeepAspectRatio.Content" xml:space="preserve">
+    <value>mantener la relación de aspecto</value>
+  </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
@@ -185,8 +188,20 @@ También puedes enviar la imágen por e-mail y compartirla.</value>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Mediano (Encaja en una pantalla de 800 x 600)</value>
   </data>
+  <data name="SizePercentBy.Text" xml:space="preserve">
+    <value>x</value>
+  </data>
+  <data name="SizePercentHeight.Text" xml:space="preserve">
+    <value>%)</value>
+  </data>
+  <data name="SizePercentWidth.Text" xml:space="preserve">
+    <value>por ciento (</value>
+  </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Pequeño (Encaja en una pantalla de 640 x 480)</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Sí</value>

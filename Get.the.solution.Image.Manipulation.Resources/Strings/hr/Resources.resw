@@ -138,6 +138,9 @@
   <data name="Help" xml:space="preserve">
     <value>Pomoć</value>
   </data>
+  <data name="KeepAspectRatio.Content" xml:space="preserve">
+    <value>zadržati omjer</value>
+  </data>
   <data name="No" xml:space="preserve">
     <value>Ne</value>
   </data>

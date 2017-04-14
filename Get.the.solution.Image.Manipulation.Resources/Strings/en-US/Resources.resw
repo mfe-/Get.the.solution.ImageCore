@@ -138,6 +138,9 @@
   <data name="Help" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="KeepAspectRatio.Content" xml:space="preserve">
+    <value>Keep aspect ratio</value>
+  </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
