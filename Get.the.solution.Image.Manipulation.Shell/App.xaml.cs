@@ -49,7 +49,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             this.InitializeComponent();
 #if DEBUG
-            //ApplicationLanguages.PrimaryLanguageOverride = "hr";
+            ApplicationLanguages.PrimaryLanguageOverride = "fr";
 #endif
         }
         /// <summary>

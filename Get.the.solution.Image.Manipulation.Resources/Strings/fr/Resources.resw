@@ -118,81 +118,100 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppName" xml:space="preserve">
-    <value>Image Resizer</value>
+    <value>imagé redimensionner</value>
+    <comment>Image Resizer</comment>
   </data>
   <data name="Cancel.Content" xml:space="preserve">
-    <value>Cancel</value>
+    <value>annuler</value>
+    <comment>Cancel</comment>
   </data>
   <data name="Contact" xml:space="preserve">
-    <value>Contact</value>
+    <value>contact</value>
+    <comment>Contact</comment>
   </data>
   <data name="CopyEnabled.Content" xml:space="preserve">
-    <value>Resize the orginal pictures (don't create copies)</value>
+    <value>Redimensionner les images originales (Ne créez pas de copies)</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>Resize Images</value>
+    <value>Facilement redimensionne images jpg, png gif et bmp par appeller l'app. Choisi les images et la taille.</value>
   </data>
   <data name="ExceptionOnResize" xml:space="preserve">
-    <value>We are sorry but something unexpected happend :(. We added the error to the Clipboard (Get it with CTR+V) Please send us the error exception. Exception: {0}</value>
+    <value>Nous sommes desolés: un erreur! S'il vous plaît envoye nous cette exception: {0}</value>
   </data>
   <data name="Help" xml:space="preserve">
-    <value>Help</value>
+    <value>rescousse</value>
+    <comment>Help</comment>
   </data>
   <data name="KeepAspectRatio.Content" xml:space="preserve">
-    <value>Keep aspect ratio</value>
+    <value>Conserver les proportions</value>
+    <comment>Keep aspect ratio</comment>
   </data>
   <data name="No" xml:space="preserve">
-    <value>No</value>
+    <value>non</value>
   </data>
   <data name="Ok.Content" xml:space="preserve">
-    <value>Ok</value>
+    <value>en ordre</value>
+    <comment>Ok</comment>
   </data>
   <data name="OpenWith" xml:space="preserve">
-    <value>Resize Image with Image Resizer</value>
+    <value>redimensionne</value>
+    <comment>Resize Image with Image Resizer</comment>
   </data>
   <data name="Resize.Text" xml:space="preserve">
-    <value>You can create resized copies of one selected picture and store them in your prefered folder.</value>
+    <value>Choisi des images.</value>
   </data>
   <data name="Save.Content" xml:space="preserve">
-    <value>Save</value>
+    <value>enregistrer</value>
+    <comment>Save</comment>
   </data>
   <data name="SaveAs.Content" xml:space="preserve">
-    <value>Save As</value>
+    <value>enregistrer sous</value>
+    <comment>Save As</comment>
   </data>
   <data name="SelectImage.Content" xml:space="preserve">
-    <value>Select Image</value>
+    <value>Sélectionner l'image</value>
   </data>
   <data name="SelectSize.Text" xml:space="preserve">
-    <value>Select a size:</value>
+    <value>Sélectionnez une taille:</value>
   </data>
   <data name="Share.Content" xml:space="preserve">
-    <value>Share (Email)</value>
+    <value>Partagez (p. ex. émail)</value>
   </data>
   <data name="ShowLastFile" xml:space="preserve">
-    <value>Would you like to open the last modified file?</value>
+    <value>Voulez-vous ouvrir le dernier fichier modifié?</value>
   </data>
   <data name="SizeCustomBy.Text" xml:space="preserve">
-    <value>by</value>
+    <value>par</value>
+    <comment>by</comment>
   </data>
   <data name="SizeCustomHeight.Text" xml:space="preserve">
-    <value> screen)</value>
+    <value>pixels)</value>
+    <comment>screen)</comment>
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>Custom (fits a </value>
+    <value>coutume (</value>
+    <comment>Custom (fits a</comment>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
-    <value>Medium (fits a 800 x 600 screen)</value>
+    <value>moyen  (800 x 600 pixels)</value>
+    <comment>Medium (fits a 800 x 600 screen)</comment>
+  </data>
+  <data name="SizePercentBy.Text" xml:space="preserve">
+    <value>par</value>
+    <comment>by</comment>
   </data>
   <data name="SizePercentHeight.Text" xml:space="preserve">
     <value>%)</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
-    <value>Percent (fits a</value>
+    <value>pourcent (</value>
+    <comment>Percent (fits a</comment>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
-    <value>Small (fits a 640 x 480 screen)</value>
+    <value>petit (640 x 480 pixels)</value>
+    <comment>Small (fits a 640 x 480 screen)</comment>
   </data>
   <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
+    <value>oui</value>
   </data>
 </root>
