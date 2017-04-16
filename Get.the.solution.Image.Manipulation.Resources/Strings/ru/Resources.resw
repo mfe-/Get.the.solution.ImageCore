@@ -138,6 +138,27 @@
   <data name="Help" xml:space="preserve">
     <value>Помощь</value>
   </data>
+  <data name="HelpAutoSave.Text" xml:space="preserve">
+    <value>Настройка «Изменить размер оригинала (не создавать копию)» сохранится для вашей следующей сессии.</value>
+  </data>
+  <data name="HelpDidYouKnow.Text" xml:space="preserve">
+    <value>Знаете ли вы?</value>
+  </data>
+  <data name="HelpDoubleTap.Text" xml:space="preserve">
+    <value>Double Tappe an image to open it.</value>
+  </data>
+  <data name="HelpFromShell.Text" xml:space="preserve">
+    <value>Сначала выберите изображение, а затем нужный размер. Нажмите «Ok», чтобы сохранить измененное изображение.</value>
+  </data>
+  <data name="HelpFromShellHow.Text" xml:space="preserve">
+    <value>Изменение изображения через проводник Windows. Правый клик на изображении, выбрать: «Открыть с помощью &gt; Image Resizer».</value>
+  </data>
+  <data name="HelpRemoveImage.Text" xml:space="preserve">
+    <value>When you selected the wrong image file to resize you can select it and press "DEL" to remove it from the list.</value>
+  </data>
+  <data name="HelpTitle.Text" xml:space="preserve">
+    <value>Помощь</value>
+  </data>
   <data name="KeepAspectRatio.Content" xml:space="preserve">
     <value>Сохранять пропорции</value>
   </data>

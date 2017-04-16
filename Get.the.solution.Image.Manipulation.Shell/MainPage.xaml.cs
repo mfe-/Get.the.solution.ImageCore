@@ -34,6 +34,10 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 _PreferredSize = new Size(535, 450);
             }
+            if (lang.Contains("ru"))
+            {
+                _PreferredSize = new Size(545, 450);
+            }
             ApplicationView.GetForCurrentView().SetPreferredMinSize(_PreferredSize);
             //on screen buttons issue
             ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);

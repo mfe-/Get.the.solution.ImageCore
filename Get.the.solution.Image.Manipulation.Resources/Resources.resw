@@ -135,7 +135,25 @@
   <data name="ExceptionOnResize" xml:space="preserve">
     <value>We are sorry but something unexpected happend :(. We added the error to the Clipboard (Get it with CTR+V) Please send us the error exception. Exception: {0}</value>
   </data>
-  <data name="Help" xml:space="preserve">
+  <data name="HelpAutoSave.Text" xml:space="preserve">
+    <value>The setting of the "Resize the orginal pictures (don't create copies)" checkbox will be saved for your next session.</value>
+  </data>
+  <data name="HelpDidYouKnow.Text" xml:space="preserve">
+    <value>Did you know?</value>
+  </data>
+  <data name="HelpDoubleTap.Text" xml:space="preserve">
+    <value>Double Tappe an image to open it.</value>
+  </data>
+  <data name="HelpFromShell.Text" xml:space="preserve">
+    <value>First select an image and then set the proper size. Click ok to save the resized image.</value>
+  </data>
+  <data name="HelpFromShellHow.Text" xml:space="preserve">
+    <value>Resize an image from windows explorer. Right click on image. select open with "Image Resizer".</value>
+  </data>
+  <data name="HelpRemoveImage.Text" xml:space="preserve">
+    <value>When you selected the wrong image file to resize you can select it and press "DEL" to remove it from the list.</value>
+  </data>
+  <data name="HelpTitle.Text" xml:space="preserve">
     <value>Help</value>
   </data>
   <data name="KeepAspectRatio.Content" xml:space="preserve">

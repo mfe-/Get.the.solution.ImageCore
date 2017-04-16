@@ -18,24 +18,30 @@
         <ScrollViewer Width="Auto" Height="Auto" VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled">
             <RichTextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="20">
                 <Paragraph>
-                    <Bold>Help</Bold>
+                    <Bold>
+                        <Run x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/HelpTitle" />
+                    </Bold>
                     <LineBreak />
-                    First select an image and then set the proper size. Click ok to save the resized image.
+                    <Run x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/HelpFromShell" />
                     <LineBreak />
                     <LineBreak />
-                    Resize an image from windows explorer. Right click on image. select open with "Image Resizer".
+                    <Run x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/HelpFromShellHow" />
+                    <LineBreak />
                     <InlineUIContainer>
-                        <Image Source="ms-appx://Get.the.solution.Image.Manipulation.Shell/Assets/explorer-shell-integration.png" />
+                        <Image Width="400" Source="ms-appx://Get.the.solution.Image.Manipulation.Shell/Assets/explorer-shell-integration.png" />
                     </InlineUIContainer>
                     <LineBreak />
-                    Did you know?
+                    <Run x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/HelpDidYouKnow" />
                     <LineBreak />
-                    The setting of the "Resize the orginal pictures (don't create copies)" checkbox will be saved for your next session.
+                    <!--The setting of the "Resize the orginal pictures (don't create copies)" checkbox will be saved for your next session.-->
+                    <Run x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/HelpAutoSave" />
                     <LineBreak />
                     <LineBreak />
-                    When you selected the wrong image file to resize you can select it and press "DEL" to remove it from the list.
+                    <!--When you selected the wrong image file to resize you can select it and press "DEL" to remove it from the list.-->
+                    <Run x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/HelpRemoveImage" />
                     <LineBreak />
-                    Double Tappe an image to open it.
+                    <!--Double Tappe an image to open it.-->
+                    <Run x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/HelpDoubleTap" />
                     <LineBreak />
                 </Paragraph>
             </RichTextBlock>

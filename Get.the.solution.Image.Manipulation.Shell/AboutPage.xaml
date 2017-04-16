@@ -46,11 +46,14 @@
                     We try to enhance the app. Send us feature requests or bugs. We are also looking for translators and testers!
                     Please send us your translation of the app. To get into the insider test programm write us an email! Thanks!
                     <LineBreak />
-                    Many thanks to the following translators: João P. (pt), MyDaniel (es). Demian (hr), Simon Fetzel(fr), Vyacheslav (ru)
+                    Many thanks to the following translators: João P. (pt), MyDaniel (es). Demian (hr), S. Fetzel(fr), Vyacheslav (ru)
                     <LineBreak />
+                    When reporting a bug, please tell us the version of the app you are using, the device and the steps to reproduce the error.
                     <Hyperlink NavigateUri="mailto:support@get-the-solution.net">Reach us.</Hyperlink>
                     <LineBreak />
                     <Hyperlink NavigateUri="https://twitter.com/mfe_">Write me on twitter.</Hyperlink>
+                    You can support us by donating, so we can drink more coffee and work even faster!
+                    <Hyperlink NavigateUri="http://get-the-solution.net/index-1-11-get%20the%20solution%20-%20Software.html">Use the Paypal button at the bottom of the page.</Hyperlink>
                 </Paragraph>
             </RichTextBlock>
         </ScrollViewer>
