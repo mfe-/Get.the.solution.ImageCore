@@ -108,7 +108,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     SelectedFile = ImageFiles.First() as StorageFile;
                 }
                 ImageProperties Properties = SelectedFile?.Properties.GetImagePropertiesAsync().AsTask().GetAwaiter().GetResult();
-                float R = (float)Properties.Width/ (float)Properties.Height ;
+                float R = (float)Properties.Width / (float)Properties.Height;
                 if (Properties != null && nameof(Width).Equals(e.PropertyName))
                 {
                     Height = (int)(Width / R);
@@ -155,14 +155,23 @@ namespace Get.the.solution.Image.Manipulation.Shell
         }
         protected async Task OpenFilePicker()
         {
-            FileOpenPicker fileOpenPicker = new FileOpenPicker() { ViewMode = PickerViewMode.List };
-            foreach (String Filetypeextension in _AllowedFileTyes)
-                fileOpenPicker.FileTypeFilter.Add(Filetypeextension);
+            try
+            {
+                Resizing = true;
+                FileOpenPicker fileOpenPicker = new FileOpenPicker() { ViewMode = PickerViewMode.List };
+                foreach (String Filetypeextension in _AllowedFileTyes)
+                    fileOpenPicker.FileTypeFilter.Add(Filetypeextension);
 
-            fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
+                fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
 
-            IReadOnlyList<IStorageFile> files = await fileOpenPicker.PickMultipleFilesAsync();
-            ImageFiles = new ObservableCollection<IStorageFile>(files);
+                IReadOnlyList<IStorageFile> files = await fileOpenPicker.PickMultipleFilesAsync();
+                ImageFiles = new ObservableCollection<IStorageFile>(files);
+            }
+            finally
+            {
+                Resizing = false;
+            }
+
         }
         #endregion
 
@@ -268,6 +277,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         public async Task<bool> ResizeImages(ImageAction action, Action<IStorageFile, String> ProcessedImage = null)
         {
+            Resizing = true;
             //if no file is selected open file picker 
             if (ImageFiles == null || ImageFiles.Count == 0)
             {
@@ -295,8 +305,17 @@ namespace Get.the.solution.Image.Manipulation.Shell
                         String SuggestedFileName = GenerateResizedFileName(Storeage);
                         if (action.Equals(ImageAction.Save))
                         {
-                            await FileIO.WriteBytesAsync(Storeage, ImageFileStream.ToArray());
-                            _LastFile = Storeage;
+                            try
+                            {
+                                await FileIO.WriteBytesAsync(Storeage, ImageFileStream.ToArray());
+                                _LastFile = Storeage;
+                            }
+                            catch (UnauthorizedAccessException e)
+                            {
+
+                            }
+
+
                         }
                         else if (action.Equals(ImageAction.SaveAs))
                         {
@@ -329,6 +348,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 }
                 catch (Exception e)
                 {
+                    Resizing = false;
                     String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), $"{e.Message} {e.InnerException}");
 
                     DataPackage Package = new DataPackage() { RequestedOperation = DataPackageOperation.Copy };
@@ -341,7 +361,19 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 }
 
             }
+            Resizing = false;
             return true;
+        }
+
+        private bool _Resizing;
+
+        public bool Resizing
+        {
+            get { return _Resizing; }
+            protected set
+            {
+                SetProperty(ref _Resizing, value, nameof(Resizing));
+            }
         }
 
         private string GenerateResizedFileName(IStorageFile storeage)
@@ -478,7 +510,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
             {
                 SetProperty(ref _PercentWidth, value, nameof(WidthPercent));
                 LocalSettings.Values[nameof(WidthPercent)] = _PercentWidth;
-                if(KeepAspectRatio)
+                if (KeepAspectRatio)
                 {
                     _PercentHeight = _PercentWidth;
                     OnPropertyChanged(nameof(HeightPercent));
@@ -674,12 +706,12 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected void OnDeleteFile(IStorageFile param)
         {
-            if(ImageFiles!=null && param != null)
+            if (ImageFiles != null && param != null)
             {
                 ImageFiles.Remove(param);
             }
         }
- 
+
 
         public bool CanOverwriteFiles
         {

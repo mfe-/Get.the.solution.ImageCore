@@ -133,6 +133,12 @@
                     <Core:DataTriggerBehavior Binding="{Binding Path=ShowOpenFilePicker,UpdateSourceTrigger=PropertyChanged}" Value="False">
                         <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
                     </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding Path=Resizing,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                        <Core:ChangePropertyAction PropertyName="IsEnabled" Value="False" />
+                    </Core:DataTriggerBehavior>
+                    <Core:DataTriggerBehavior Binding="{Binding Path=Resizing,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                        <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
+                    </Core:DataTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Button>
             <ListView Grid.Row="1" ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}" Name="listboxfiles" 
@@ -291,7 +297,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="0" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Save" HorizontalAlignment="Right"
-                    Command="{Binding Path=OkCommand}">
+                    Command="{Binding Path=OkCommand}" >
                         <Interactivity:Interaction.Behaviors>
                             <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
@@ -299,8 +305,24 @@
                             <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
                             </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=Resizing,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Core:ChangePropertyAction PropertyName="IsEnabled" Value="False" />
+                            </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=Resizing,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
+                            </Core:DataTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                     </Button>
+                    <ProgressRing Grid.Column="0" IsActive="True" HorizontalAlignment="Right">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=Resizing,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                            </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=Resizing,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </Core:DataTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </ProgressRing>
                     <Button Grid.Column="1" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SaveAs" HorizontalAlignment="Right"
                     Command="{Binding Path=OkCommand}">
                         <Interactivity:Interaction.Behaviors>
@@ -309,6 +331,12 @@
                             </Core:DataTriggerBehavior>
                             <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=Resizing,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Core:ChangePropertyAction PropertyName="IsEnabled" Value="False" />
+                            </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=Resizing,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
                             </Core:DataTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                     </Button>
