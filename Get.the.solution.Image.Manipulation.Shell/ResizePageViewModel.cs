@@ -402,33 +402,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
             }
         }
         protected List<IStorageItem> LocalCachedResizedImages = new List<IStorageItem>();
-        ///// <summary>
-        ///// https://docs.microsoft.com/en-us/uwp/api/Windows.ApplicationModel.DataTransfer.DataPackage#Windows_ApplicationModel_DataTransfer_DataPackage_SetDataProvider_System_String_Windows_ApplicationModel_DataTransfer_DataProviderHandler_
-        ///// </summary>
-        ///// <param name="request"></param>
-        //protected async void Share_DataProvider(DataProviderRequest request)
-        //{
-        //    DataProviderDeferral Task = request.GetDeferral();
-        //    try
-        //    {
-        //        List<IStorageItem> ResizedImages = new List<IStorageItem>();
-        //        Action<IStorageFile, string> ProcessImage = new Action<IStorageFile, string>((ImageFileStream, FileName) =>
-        //        {
-        //            ResizedImages.Add(ImageFileStream);
-        //        });
-
-        //        bool Result = await ResizeImages(ImageAction.Process, ProcessImage);
-        //        if ((ResizedImages == null || ResizedImages.Count != 0) && Result == true)
-        //        {
-        //            request.SetData(ResizedImages);
-        //        }
-        //    }
-        //    finally
-        //    {
-        //        Task.Complete();
-        //    }
-
-        //}
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
@@ -461,6 +434,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 else
                 {
                     args.Request.FailWithDisplayText("Nothing to share");
+                    SharingProcess = false;
                 }
             }
             finally
