@@ -143,7 +143,7 @@
             </Button>
             <ListView Grid.Row="1" ItemsSource="{Binding Path=ImageFiles,UpdateSourceTrigger=PropertyChanged}" Name="listboxfiles" 
                       ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                      ScrollViewer.HorizontalScrollMode="Disabled" 
+                      ScrollViewer.HorizontalScrollMode="Auto" 
                       SelectionMode="Single"
                       SelectedItem="{Binding Path=SelectedFile,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <Interactivity:Interaction.Behaviors>
