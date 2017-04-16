@@ -35,6 +35,8 @@ namespace Get.the.solution.Image.Manipulation.Shell
                 _PreferredSize = new Size(535, 450);
             }
             ApplicationView.GetForCurrentView().SetPreferredMinSize(_PreferredSize);
+            //on screen buttons issue
+            ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
         }
         public void SetContentFrame(Frame frame)
         {

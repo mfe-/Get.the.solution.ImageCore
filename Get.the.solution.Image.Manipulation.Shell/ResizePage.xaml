@@ -236,28 +236,42 @@
                      x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeMedium" Padding="5 0 0 0" />
             <RadioButton Grid.Row="5" GroupName="A" IsChecked="{Binding Path=SizeCustomChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <RadioButton.Content>
-                    <StackPanel Orientation="Horizontal" >
-                        <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomWidth" />
-                        <TextBox Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomWidth" />
+                        <TextBox Grid.Column="1" Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" InputScope="Number" />
-                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomBy" />
-                        <TextBox Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                        <TextBlock Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomBy" />
+                        <TextBox Grid.Column="3" Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" InputScope="Number" />
-                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="4"  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight" />
+                    </Grid>
                 </RadioButton.Content>
             </RadioButton>
             <RadioButton Grid.Row="6" GroupName="A" IsChecked="{Binding Path=SizePercentChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
                 <RadioButton.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentWidth" />
-                        <TextBox Text="{Binding WidthPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentWidth" />
+                        <TextBox Grid.Column="1" Text="{Binding WidthPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="3" Width="70" common:OnFocus.SelectAll="True" InputScope="Number"  />
-                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentBy" />
-                        <TextBox Text="{Binding HeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                        <TextBlock Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentBy" />
+                        <TextBox Grid.Column="3" Text="{Binding HeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="3" Width="70" common:OnFocus.SelectAll="True" InputScope="Number"  />
-                        <TextBlock  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentHeight" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="4" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentHeight" />
+                    </Grid>
                 </RadioButton.Content>
             </RadioButton>
             <CheckBox Grid.Row="7" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/CopyEnabled" 
@@ -266,62 +280,71 @@
             <CheckBox Grid.Row="8" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/KeepAspectRatio" 
                     IsChecked="{Binding Path=KeepAspectRatio,Mode=TwoWay}"
                           IsEnabled="{Binding Path=SingleFile,UpdateSourceTrigger=PropertyChanged}"/>
-            <StackPanel Grid.Row="9" Orientation="Horizontal" VerticalAlignment="Bottom" >
-
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Save" HorizontalAlignment="Right"
+            <Grid Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Save" HorizontalAlignment="Right"
                     Command="{Binding Path=OkCommand}">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
-                        </Core:DataTriggerBehavior>
-                        <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
-                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
-                        </Core:DataTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                </Button>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SaveAs" HorizontalAlignment="Right"
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                            </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </Core:DataTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </Button>
+                    <Button Grid.Column="1" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SaveAs" HorizontalAlignment="Right"
                     Command="{Binding Path=OkCommand}">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
-                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
-                        </Core:DataTriggerBehavior>
-                        <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
-                        </Core:DataTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                </Button>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Share" Name="ShareButton" HorizontalAlignment="Right">
-                    <Interactivity:Interaction.Behaviors>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                            </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=OverwriteFiles,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </Core:DataTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </Button>
+                    <Button Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Share" Name="ShareButton" HorizontalAlignment="Right">
+                        <Interactivity:Interaction.Behaviors>
 
-                        <Core:DataTriggerBehavior Binding="{Binding Path=Sharing,UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
-                        </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=Sharing,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </Core:DataTriggerBehavior>
 
-                        <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
-                            <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
-                        </Core:DataTriggerBehavior>
-                        <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Core:ChangePropertyAction PropertyName="IsEnabled" Value="False" />
-                        </Core:DataTriggerBehavior>
-                        <Core:EventTriggerBehavior EventName="Tapped">
-                            <Core:ChangePropertyAction PropertyName="SharingProcess" Value="True" TargetObject="{Binding DataContext,ElementName=ShareButton}"  />
-                            <Core:InvokeCommandAction Command="{Binding ShareCommand}" />
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                </Button>
-                <ProgressRing IsActive="True" HorizontalAlignment="Right">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="True">
-                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
-                        </Core:DataTriggerBehavior>
-                        <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
-                            <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
-                        </Core:DataTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                </ProgressRing>
-                <Button x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Cancel" HorizontalAlignment="Right"
+                            <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
+                            </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Core:ChangePropertyAction PropertyName="IsEnabled" Value="False" />
+                            </Core:DataTriggerBehavior>
+                            <Core:EventTriggerBehavior EventName="Tapped">
+                                <Core:ChangePropertyAction PropertyName="SharingProcess" Value="True" TargetObject="{Binding DataContext,ElementName=ShareButton}"  />
+                                <Core:InvokeCommandAction Command="{Binding ShareCommand}" />
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </Button>
+                    <ProgressRing Grid.Column="3" IsActive="True" HorizontalAlignment="Right">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" />
+                            </Core:DataTriggerBehavior>
+                            <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
+                            </Core:DataTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </ProgressRing>
+                    <Button Grid.Column="4" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Cancel" HorizontalAlignment="Right"
                     Command="{Binding Path=CancelCommand}"/>
-            </StackPanel>
+                </Grid>
+            </Grid>
         </Grid>
     </Page.Content>
 </Page>
