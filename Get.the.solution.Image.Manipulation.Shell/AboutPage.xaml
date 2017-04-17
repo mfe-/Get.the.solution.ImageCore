@@ -53,7 +53,7 @@
                     <LineBreak />
                     <Hyperlink NavigateUri="https://twitter.com/mfe_">Write me on twitter.</Hyperlink>
                     You can support us by donating, so we can drink more coffee and work even faster!
-                    <Hyperlink NavigateUri="http://get-the-solution.net/index-1-11-get%20the%20solution%20-%20Software.html">Use the Paypal button at the bottom of the page.</Hyperlink>
+                    Our Paypal account: support@get-the-solution.net
                 </Paragraph>
             </RichTextBlock>
         </ScrollViewer>
