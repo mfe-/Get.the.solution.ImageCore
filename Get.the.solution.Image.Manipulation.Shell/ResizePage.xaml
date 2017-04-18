@@ -60,6 +60,7 @@
                         <VisualState.Setters>
                             <Setter Target="listboxfiles.(Grid.Column)" Value="0"/>
                             <Setter Target="listboxfiles.MaxHeight" Value="40"></Setter>
+                            <Setter Target="ResizeText.Width" Value="400"></Setter>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -122,8 +123,9 @@
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
-            <TextBlock Grid.Row="0" Grid.Column="0" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" 
-                       x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Resize" TextWrapping="Wrap" />
+            <TextBlock Name="ResizeText" Grid.Row="0" Grid.Column="0" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" 
+                       x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Resize" TextWrapping="Wrap" 
+                       HorizontalAlignment="Left" />
             <Button x:Name="ButtonFilePicker" Grid.Row="1" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SelectImage" 
                 Command="{Binding Path=OpenFilePickerCommand}">
                 <Interactivity:Interaction.Behaviors>
@@ -256,7 +258,7 @@
                         <TextBlock Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomBy" />
                         <TextBox Grid.Column="3" Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="5" Width="70" common:OnFocus.SelectAll="True" InputScope="Number" />
-                        <TextBlock Grid.Column="4"  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight" />
+                        <TextBlock Grid.Column="4"  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight" TextWrapping="Wrap" />
                     </Grid>
                 </RadioButton.Content>
             </RadioButton>
@@ -276,7 +278,7 @@
                         <TextBlock Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentBy" />
                         <TextBox Grid.Column="3" Text="{Binding HeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
                                  MaxLength="3" Width="70" common:OnFocus.SelectAll="True" InputScope="Number"  />
-                        <TextBlock Grid.Column="4" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentHeight" />
+                        <TextBlock Grid.Column="4" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentHeight" TextWrapping="Wrap" />
                     </Grid>
                 </RadioButton.Content>
             </RadioButton>
@@ -296,6 +298,10 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Button Grid.Column="0" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Save" HorizontalAlignment="Right"
                     Command="{Binding Path=OkCommand}" >
                         <Interactivity:Interaction.Behaviors>
@@ -340,13 +346,12 @@
                             </Core:DataTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                     </Button>
-                    <Button Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Share" Name="ShareButton" HorizontalAlignment="Right">
+                    <Button Grid.Column="2" Name="ShareButton" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Share" 
+                            HorizontalAlignment="Right">
                         <Interactivity:Interaction.Behaviors>
-
                             <Core:DataTriggerBehavior Binding="{Binding Path=Sharing,UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
                             </Core:DataTriggerBehavior>
-
                             <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
                                 <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
                             </Core:DataTriggerBehavior>
@@ -357,6 +362,11 @@
                                 <Core:ChangePropertyAction PropertyName="SharingProcess" Value="True" TargetObject="{Binding DataContext,ElementName=ShareButton}"  />
                                 <Core:InvokeCommandAction Command="{Binding ShareCommand}" />
                             </Core:EventTriggerBehavior>
+                            <Core:DataTriggerBehavior 
+                                Binding="{Binding Path=ActualWidth, ElementName=ShareButton,RelativeSource={RelativeSource Mode=Self}}" ComparisonCondition="GreaterThan" Value="260">
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" TargetObject="{Binding ElementName=CancelButtonGridOne}" />
+                                <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" TargetObject="{Binding ElementName=CancelButtonGridTwo}" />
+                            </Core:DataTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                     </Button>
                     <ProgressRing Grid.Column="3" IsActive="True" HorizontalAlignment="Right">
@@ -369,8 +379,25 @@
                             </Core:DataTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                     </ProgressRing>
-                    <Button Grid.Column="4" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Cancel" HorizontalAlignment="Right"
-                    Command="{Binding Path=CancelCommand}"/>
+                    <Button Grid.Column="4" Name="CancelButtonGridOne" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Cancel" HorizontalAlignment="Right"
+                    Command="{Binding Path=CancelCommand}" >
+                        <!--<VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="CancelToLong">
+                                    <VisualState.StateTriggers>
+                                        <AdaptiveTrigger MinWindowWidth="260" />
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="CancelButtonGridOne.(Grid.Row)" Value="1" />
+                                        <Setter Target="CancelButtonGridOne.(Grid.ColumnSpan)" Value="4" />
+                                        <Setter Target="CancelButtonGridOne.HorizontalAlignment" Value="Left" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>-->
+                    </Button>
+                    <Button Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4" Name="CancelButtonGridTwo" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Cancel" 
+                            Visibility="Collapsed" HorizontalAlignment="Left" Command="{Binding Path=CancelCommand}" />
                 </Grid>
             </Grid>
         </Grid>

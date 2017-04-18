@@ -14,9 +14,21 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     >
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Name="Container" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Container.Width" Value="460"></Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <ScrollViewer Width="Auto" Height="Auto" VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled">
-            <RichTextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="20">
+            <RichTextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="20 20 20 20">
                 <Paragraph>
                     <Bold>
                         <Run x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/HelpTitle" />

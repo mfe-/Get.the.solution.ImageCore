@@ -199,7 +199,7 @@
     <value>пикселей)</value>
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>Заданный (размером</value>
+    <value>Заданный (</value>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Средний (800 x 600 пикселей)</value>
@@ -211,7 +211,7 @@
     <value>%)</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
-    <value>Процент (</value>
+    <value>В процентах (</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Маленький (640 x 480 пикселей)</value>
