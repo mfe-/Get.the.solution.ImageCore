@@ -61,6 +61,8 @@
                             <Setter Target="listboxfiles.(Grid.Column)" Value="0"/>
                             <Setter Target="listboxfiles.MaxHeight" Value="40"></Setter>
                             <Setter Target="ResizeText.Width" Value="400"></Setter>
+                            <Setter Target="CheckBoxCopyEnabled.Width" Value="400"></Setter>
+                            <Setter Target="CheckBoxKeepAspectRatio.Width" Value="400"></Setter>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -282,10 +284,10 @@
                     </Grid>
                 </RadioButton.Content>
             </RadioButton>
-            <CheckBox Grid.Row="7" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/CopyEnabled" 
+            <CheckBox Name="CheckBoxCopyEnabled" Grid.Row="7" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/CopyEnabled" 
                     IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}"
                       IsEnabled="{Binding Path=CanOverwriteFiles,UpdateSourceTrigger=PropertyChanged}"/>
-            <CheckBox Grid.Row="8" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/KeepAspectRatio" 
+            <CheckBox Name="CheckBoxKeepAspectRatio" Grid.Row="8" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/KeepAspectRatio" 
                     IsChecked="{Binding Path=KeepAspectRatio,Mode=TwoWay}"
                           IsEnabled="{Binding Path=SingleFile,UpdateSourceTrigger=PropertyChanged}"/>
             <Grid Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Bottom">

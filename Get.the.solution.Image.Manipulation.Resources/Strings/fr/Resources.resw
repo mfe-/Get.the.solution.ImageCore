@@ -118,100 +118,102 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppName" xml:space="preserve">
-    <value>imagé redimensionner</value>
-    <comment>Image Resizer</comment>
+    <value>Redimensionnement d’image</value>
   </data>
   <data name="Cancel.Content" xml:space="preserve">
-    <value>annuler</value>
-    <comment>Cancel</comment>
+    <value>Annuler</value>
   </data>
   <data name="Contact" xml:space="preserve">
-    <value>contact</value>
-    <comment>Contact</comment>
+    <value>Contact</value>
   </data>
   <data name="CopyEnabled.Content" xml:space="preserve">
-    <value>Redimensionner les images originales (Ne créez pas de copies)</value>
+    <value>Redimensionner les images originales (ne pas créer de copies)</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>Facilement redimensionne images jpg, png gif et bmp par appeller l'app. Choisi les images et la taille.</value>
+    <value>Redimensionne facilement des images (.jpg, .png, .gif &amp; .bmp) en démarrant l’application. Vous pouvez choisir</value>
   </data>
   <data name="ExceptionOnResize" xml:space="preserve">
-    <value>Nous sommes desolés: un erreur! S'il vous plaît envoye nous cette exception: {0}</value>
+    <value>Nous sommes desolé: une erreur s’est produite ! S'il vous plaît envoyez nous cette exception: {0}</value>
   </data>
   <data name="Help" xml:space="preserve">
-    <value>rescousse</value>
-    <comment>Help</comment>
+    <value>Aide</value>
+  </data>
+  <data name="HelpAutoSave.Text" xml:space="preserve">
+    <value>Le paramètre «Redimensionner les images originales (ne pas créer de copies) » sera sauvegardé pour votre prochaine session</value>
+  </data>
+  <data name="HelpDidYouKnow.Text" xml:space="preserve">
+    <value>Le saviez-vous ?</value>
+  </data>
+  <data name="HelpDoubleTap.Text" xml:space="preserve">
+    <value>Double cliquer sur une image pour l’ouvrir</value>
+  </data>
+  <data name="HelpFromShell.Text" xml:space="preserve">
+    <value>Sélectionnez d'abord une image, puis définissez la taille appropriée. Cliquez sur « Ok »  pour enregistrer l'image redimensionnée.</value>
+  </data>
+  <data name="HelpFromShellHow.Text" xml:space="preserve">
+    <value>Redimensionner une image depuis l’explorateur de fichier. Clic droit sur l’image. Sélectionner ouvrir avec « Redimensionnement d’image ».</value>
+  </data>
+  <data name="HelpRemoveImage.Text" xml:space="preserve">
+    <value>Lorsque vous avez sélectionné la mauvaise image à redimensionner, vous pouvez la sélectionner et appuyez sur "Suppr." pour la supprimer de la liste.</value>
   </data>
   <data name="KeepAspectRatio.Content" xml:space="preserve">
     <value>Conserver les proportions</value>
-    <comment>Keep aspect ratio</comment>
   </data>
   <data name="No" xml:space="preserve">
-    <value>non</value>
+    <value>Non</value>
   </data>
   <data name="Ok.Content" xml:space="preserve">
-    <value>en ordre</value>
-    <comment>Ok</comment>
+    <value>Ok</value>
   </data>
   <data name="OpenWith" xml:space="preserve">
-    <value>redimensionne</value>
-    <comment>Resize Image with Image Resizer</comment>
+    <value>Redimensionner l’image avec</value>
   </data>
   <data name="Resize.Text" xml:space="preserve">
-    <value>Choisi des images.</value>
+    <value>Choisir des images</value>
   </data>
   <data name="Save.Content" xml:space="preserve">
-    <value>enregistrer</value>
-    <comment>Save</comment>
+    <value>Enregistrer</value>
   </data>
   <data name="SaveAs.Content" xml:space="preserve">
-    <value>enregistrer sous</value>
-    <comment>Save As</comment>
+    <value>Enregistrer sous</value>
   </data>
   <data name="SelectImage.Content" xml:space="preserve">
-    <value>Sélectionner l'image</value>
+    <value>Sélectionner les images</value>
   </data>
   <data name="SelectSize.Text" xml:space="preserve">
-    <value>Sélectionnez une taille:</value>
+    <value>Sélectionnez une taille :</value>
   </data>
   <data name="Share.Content" xml:space="preserve">
-    <value>Partagez (p. ex. émail)</value>
+    <value>Partagez (ex : émail)</value>
   </data>
   <data name="ShowLastFile" xml:space="preserve">
-    <value>Voulez-vous ouvrir le dernier fichier modifié?</value>
+    <value>Voulez-vous ouvrir le dernier fichier modifié ?</value>
   </data>
   <data name="SizeCustomBy.Text" xml:space="preserve">
     <value>par</value>
-    <comment>by</comment>
   </data>
   <data name="SizeCustomHeight.Text" xml:space="preserve">
     <value>pixels)</value>
-    <comment>screen)</comment>
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>coutume (</value>
-    <comment>Custom (fits a</comment>
+    <value>Personnalisé</value>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
-    <value>moyen  (800 x 600 pixels)</value>
-    <comment>Medium (fits a 800 x 600 screen)</comment>
+    <value>Moyen  (800 x 600 pixels)</value>
   </data>
   <data name="SizePercentBy.Text" xml:space="preserve">
     <value>par</value>
-    <comment>by</comment>
   </data>
   <data name="SizePercentHeight.Text" xml:space="preserve">
     <value>%)</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
-    <value>pourcent (</value>
-    <comment>Percent (fits a</comment>
+    <value>Pourcentage (</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
-    <value>petit (640 x 480 pixels)</value>
-    <comment>Small (fits a 640 x 480 screen)</comment>
+    <value>Petit (640 x 480 pixels</value>
   </data>
   <data name="Yes" xml:space="preserve">
-    <value>oui</value>
+    <value>Oui</value>
   </data>
 </root>
