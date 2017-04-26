@@ -20,27 +20,33 @@
         <converter:FilenamePathShorterConverter x:Key="FilenamePathShorterConverter" />
         <converter:ImagePropertiesToStringConverter x:Key="ImagePropertiesToStringConverter" />
         <converter:StoreFileToBitmapImageConverter x:Key="StoreFileToBitmapImageConverter" />
+        <Style TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <!--<Style TargetType="TextBox">
+            <Setter Property="MaxHeight" Value=""
+        </Style>-->
     </Page.Resources>
     <Page.Content>
-        <Grid Margin="2" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid Margin="2" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="5">
             <Grid.RowDefinitions>
                 <!-- Header 0-->
-                <RowDefinition Height="Auto" MaxHeight="40" />
+                <RowDefinition Height="Auto" MinHeight="40" />
                 <!-- ListView and Button 1-->
                 <RowDefinition Height="Auto" />
                 <!-- Select Size 2 -->
-                <RowDefinition Height="Auto" MaxHeight="30" />
-                <RowDefinition Height="Auto" MaxHeight="40" />
-                <RowDefinition Height="Auto" MaxHeight="40" />
-                <RowDefinition Height="Auto" MaxHeight="42" />
-                <RowDefinition Height="Auto" MaxHeight="42" />
-                <RowDefinition Height="Auto" MaxHeight="40" />
-                <RowDefinition Height="Auto" MaxHeight="40" />
+                <RowDefinition Height="Auto" MinHeight="30" />
+                <RowDefinition Height="Auto" MinHeight="40" />
+                <RowDefinition Height="Auto" MinHeight="40" />
+                <RowDefinition Height="Auto" MinHeight="42" />
+                <RowDefinition Height="Auto" MinHeight="42" />
+                <RowDefinition Height="Auto" MinHeight="40" />
+                <RowDefinition Height="Auto" MinHeight="40" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="515" Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
@@ -60,9 +66,6 @@
                         <VisualState.Setters>
                             <Setter Target="listboxfiles.(Grid.Column)" Value="0"/>
                             <Setter Target="listboxfiles.MaxHeight" Value="40"></Setter>
-                            <Setter Target="ResizeText.Width" Value="400"></Setter>
-                            <Setter Target="CheckBoxCopyEnabled.Width" Value="400"></Setter>
-                            <Setter Target="CheckBoxKeepAspectRatio.Width" Value="400"></Setter>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -77,7 +80,7 @@
                     </VisualState>
                     <VisualState x:Name="bigger">
                         <VisualState.Setters>
-                            <Setter Target="listboxfiles.MaxHeight" Value="80"></Setter>
+                            <Setter Target="listboxfiles.MaxHeight" Value="82"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
                             <AdaptiveTrigger MinWindowHeight="530" MinWindowWidth="0"></AdaptiveTrigger>
@@ -85,7 +88,7 @@
                     </VisualState>
                     <VisualState x:Name="biggger">
                         <VisualState.Setters>
-                            <Setter Target="listboxfiles.MaxHeight" Value="120"></Setter>
+                            <Setter Target="listboxfiles.MaxHeight" Value="122"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
                             <AdaptiveTrigger MinWindowHeight="570" MinWindowWidth="0"></AdaptiveTrigger>
@@ -93,7 +96,7 @@
                     </VisualState>
                     <VisualState x:Name="bigggger">
                         <VisualState.Setters>
-                            <Setter Target="listboxfiles.MaxHeight" Value="160"></Setter>
+                            <Setter Target="listboxfiles.MaxHeight" Value="162"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
                             <AdaptiveTrigger MinWindowHeight="610" MinWindowWidth="0"></AdaptiveTrigger>
@@ -101,7 +104,7 @@
                     </VisualState>
                     <VisualState x:Name="biggggger">
                         <VisualState.Setters>
-                            <Setter Target="listboxfiles.MaxHeight" Value="200"></Setter>
+                            <Setter Target="listboxfiles.MaxHeight" Value="202"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
                             <AdaptiveTrigger MinWindowHeight="650" MinWindowWidth="0"></AdaptiveTrigger>
@@ -109,7 +112,7 @@
                     </VisualState>
                     <VisualState x:Name="bigggggger">
                         <VisualState.Setters>
-                            <Setter Target="listboxfiles.MaxHeight" Value="240"></Setter>
+                            <Setter Target="listboxfiles.MaxHeight" Value="242"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
                             <AdaptiveTrigger MinWindowHeight="690" MinWindowWidth="0"></AdaptiveTrigger>
@@ -117,7 +120,7 @@
                     </VisualState>
                     <VisualState x:Name="biggggggger">
                         <VisualState.Setters>
-                            <Setter Target="listboxfiles.MaxHeight" Value="280"></Setter>
+                            <Setter Target="listboxfiles.MaxHeight" Value="282"></Setter>
                         </VisualState.Setters>
                         <VisualState.StateTriggers>
                             <AdaptiveTrigger MinWindowHeight="730" MinWindowWidth="0"></AdaptiveTrigger>
@@ -126,7 +129,7 @@
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
             <TextBlock Name="ResizeText" Grid.Row="0" Grid.Column="0" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" 
-                       x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Resize" TextWrapping="Wrap" 
+                       x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Resize"
                        HorizontalAlignment="Left" />
             <Button x:Name="ButtonFilePicker" Grid.Row="1" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SelectImage" 
                 Command="{Binding Path=OpenFilePickerCommand}">
@@ -179,8 +182,20 @@
                             </TextBlock>
                             <ToolTipService.ToolTip>
                                 <Grid>
-                                    <Image Source="{Binding Converter={StaticResource ResourceKey=StoreFileToBitmapImageConverter}}" />
-                                    <TextBlock Text="{Binding Path=Path}" />
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" >
+                                        <Run>
+                                            <Run.Text>
+                                                <Binding Converter="{StaticResource ResourceKey=ImagePropertiesToStringConverter}" />
+                                            </Run.Text>
+                                        </Run>
+                                        <Run Text=" " />
+                                        <Run Text="{Binding Path=Name}" />
+                                    </TextBlock>
+                                    <Image Grid.Row="1" Source="{Binding Converter={StaticResource ResourceKey=StoreFileToBitmapImageConverter}}" />
                                 </Grid>
                             </ToolTipService.ToolTip>
                         </Grid>
@@ -244,53 +259,64 @@
                      x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeSmall" Padding="5 0 0 0" />
             <RadioButton Grid.Row="4" GroupName="A" IsChecked="{Binding Path=SizeMediumChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                      x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeMedium" Padding="5 0 0 0" />
-            <RadioButton Grid.Row="5" GroupName="A" IsChecked="{Binding Path=SizeCustomChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+            <RadioButton Grid.Row="5" GroupName="A" HorizontalAlignment="Stretch" Padding="5 0 0 0" HorizontalContentAlignment="Stretch"
+                         IsChecked="{Binding Path=SizeCustomChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <RadioButton.Content>
-                    <Grid>
+                    <Grid HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition  />
+                            <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="60" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomWidth" />
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomWidth" />
                         <TextBox Grid.Column="1" Text="{Binding Width,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                                 MaxLength="5" Width="70" common:OnFocus.SelectAll="True" InputScope="Number" />
-                        <TextBlock Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomBy" />
+                                 MaxLength="5" Width="70" common:OnFocus.SelectAll="True" InputScope="Number" 
+                                 VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomBy"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"/>
                         <TextBox Grid.Column="3" Text="{Binding Height,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                                 MaxLength="5" Width="70" common:OnFocus.SelectAll="True" InputScope="Number" />
-                        <TextBlock Grid.Column="4"  x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight" TextWrapping="Wrap" />
+                                 MaxLength="5" Width="70" common:OnFocus.SelectAll="True" InputScope="Number"
+                                 VerticalAlignment="Center" HorizontalAlignment="Left" />
+                        <TextBlock Grid.Column="4" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizeCustomHeight"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left"  />
                     </Grid>
                 </RadioButton.Content>
             </RadioButton>
-            <RadioButton Grid.Row="6" GroupName="A" IsChecked="{Binding Path=SizePercentChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
+            <RadioButton Grid.Row="6" GroupName="A" HorizontalAlignment="Stretch" Padding="5 0 0 0" HorizontalContentAlignment="Stretch"
+                         IsChecked="{Binding Path=SizePercentChecked,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" >
                 <RadioButton.Content>
-                    <Grid>
+                    <Grid HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition  />
+                            <ColumnDefinition Width="80" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="60" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentWidth" />
+                        <TextBlock Grid.Column="0" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentWidth"
+                                   VerticalAlignment="Center" />
                         <TextBox Grid.Column="1" Text="{Binding WidthPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                                 MaxLength="3" Width="70" common:OnFocus.SelectAll="True" InputScope="Number"  />
-                        <TextBlock Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentBy" />
+                                 MaxLength="3" Width="70" common:OnFocus.SelectAll="True" InputScope="Number"
+                                 VerticalAlignment="Center" HorizontalAlignment="Left" />
+                        <TextBlock Grid.Column="2" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentBy"
+                                   HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <TextBox Grid.Column="3" Text="{Binding HeightPercent,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
-                                 MaxLength="3" Width="70" common:OnFocus.SelectAll="True" InputScope="Number"  />
-                        <TextBlock Grid.Column="4" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentHeight" TextWrapping="Wrap" />
+                                 MaxLength="3" Width="70" common:OnFocus.SelectAll="True" InputScope="Number" 
+                                 VerticalAlignment="Center" HorizontalAlignment="Left" />
+                        <TextBlock Grid.Column="4" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/SizePercentHeight" 
+                                   HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     </Grid>
                 </RadioButton.Content>
             </RadioButton>
             <CheckBox Name="CheckBoxCopyEnabled" Grid.Row="7" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/CopyEnabled" 
-                    IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}"
-                      IsEnabled="{Binding Path=CanOverwriteFiles,UpdateSourceTrigger=PropertyChanged}"/>
+                      IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}" IsEnabled="{Binding Path=CanOverwriteFiles,UpdateSourceTrigger=PropertyChanged}"
+                      Padding="5 0 0 0"/>
             <CheckBox Name="CheckBoxKeepAspectRatio" Grid.Row="8" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/KeepAspectRatio" 
-                    IsChecked="{Binding Path=KeepAspectRatio,Mode=TwoWay}"
-                          IsEnabled="{Binding Path=SingleFile,UpdateSourceTrigger=PropertyChanged}"/>
-            <Grid Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+                    IsChecked="{Binding Path=KeepAspectRatio,Mode=TwoWay}" IsEnabled="{Binding Path=SingleFile,UpdateSourceTrigger=PropertyChanged}"
+                      Padding="5 0 0 0"/>
+            <Grid Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -365,7 +391,8 @@
                                 <Core:InvokeCommandAction Command="{Binding ShareCommand}" />
                             </Core:EventTriggerBehavior>
                             <Core:DataTriggerBehavior 
-                                Binding="{Binding Path=ActualWidth, ElementName=ShareButton,RelativeSource={RelativeSource Mode=Self}}" ComparisonCondition="GreaterThan" Value="260">
+                                Binding="{Binding Path=ActualWidth, ElementName=ShareButton,RelativeSource={RelativeSource Mode=Self}}" 
+                                ComparisonCondition="GreaterThan" Value="200">
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" TargetObject="{Binding ElementName=CancelButtonGridOne}" />
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" TargetObject="{Binding ElementName=CancelButtonGridTwo}" />
                             </Core:DataTriggerBehavior>

@@ -32,7 +32,7 @@
 
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
-            <Frame x:Name="rootFrame"  Grid.Row="0" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch"/>
+            <Frame x:Name="rootFrame"  Grid.Row="0" />
 
         </controls:HamburgerMenu>
     </Grid>
