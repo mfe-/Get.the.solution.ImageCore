@@ -312,10 +312,10 @@
             </RadioButton>
             <CheckBox Name="CheckBoxCopyEnabled" Grid.Row="7" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/CopyEnabled" 
                       IsChecked="{Binding Path=OverwriteFiles,Mode=TwoWay}" IsEnabled="{Binding Path=CanOverwriteFiles,UpdateSourceTrigger=PropertyChanged}"
-                      Padding="5 0 0 0"/>
+                      Padding="5 0 0 0" VerticalContentAlignment="Center"/>
             <CheckBox Name="CheckBoxKeepAspectRatio" Grid.Row="8" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/KeepAspectRatio" 
                     IsChecked="{Binding Path=KeepAspectRatio,Mode=TwoWay}" IsEnabled="{Binding Path=SingleFile,UpdateSourceTrigger=PropertyChanged}"
-                      Padding="5 0 0 0"/>
+                      Padding="5 0 0 0" VerticalContentAlignment="Center"/>
             <Grid Grid.Row="9" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" >
                 <Grid>
                     <Grid.ColumnDefinitions>
