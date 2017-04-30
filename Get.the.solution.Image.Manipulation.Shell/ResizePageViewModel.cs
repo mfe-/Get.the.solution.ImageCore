@@ -21,6 +21,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using System.Runtime.CompilerServices;
+using Microsoft.Services.Store.Engagement;
 
 namespace Get.the.solution.Image.Manipulation.Shell
 {
@@ -34,10 +35,13 @@ namespace Get.the.solution.Image.Manipulation.Shell
         protected IEnumerable<String> _AllowedFileTyes = new List<String>() { ".jpg", ".png", ".gif", ".bmp" };
         protected int RadioOptions;
         protected DataTransferManager _DataTransferManager;
+        protected readonly StoreServicesCustomEventLogger _Logger;
+
 
         public ResizePageViewModel(ObservableCollection<IStorageFile> selectedFiles, INavigationService navigationService, IResourceLoader resourceLoader, TimeSpan sharing)
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
+            _Logger = StoreServicesCustomEventLogger.GetDefault();
 
             _SelectedFiles = selectedFiles;
             _ResourceLoader = resourceLoader;
@@ -151,6 +155,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         protected async void OnOpenFilePickerCommand()
         {
+            _Logger.Log($"OpenFilePickerCommand");
             await OpenFilePicker();
         }
         protected async Task OpenFilePicker()
@@ -278,6 +283,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         public async Task<bool> ResizeImages(ImageAction action, Action<IStorageFile, String> ProcessedImage = null)
         {
             Resizing = true;
+            _Logger.Log($"ResizeImages start");
             //if no file is selected open file picker 
             if (ImageFiles == null || ImageFiles.Count == 0)
             {
@@ -362,6 +368,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
             }
             Resizing = false;
+            _Logger.Log($"ResizeImages successful");
             return true;
         }
 
@@ -394,6 +401,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         protected async void OnOkCommand()
         {
             ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
+            _Logger.Log($"OkCommand {Action}");
             bool Result = await ResizeImages(Action);
             await CancelCommand.Execute();
 
@@ -417,6 +425,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             try
             {
+                _Logger.Log("ShareCommand");
                 LocalCachedResizedImages = new List<IStorageItem>();
                 Action<IStorageFile, string> ProcessImage = new Action<IStorageFile, string>((ImageFileStream, FileName) =>
                 {
@@ -577,6 +586,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                         Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("No")) { Id = 1 });
                         if ((int)(await Dialog.ShowAsync()).Id == 0)
                         {
+                            _Logger.Log("ShowLastFile");
                             await OpenFileCommand.Execute(_LastFile);
                         }
                     }
@@ -623,6 +633,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             if (file != null)
             {
+                _Logger.Log("OpenFileCommand");
                 // Launch the bug query file.
                 bool sucess = await Windows.System.Launcher.LaunchFileAsync(file);
             }
@@ -678,6 +689,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         /// <param name="param"></param>
         protected void OnDropCommand(object param)
         {
+            _Logger.Log("DropCommand");
             if (param != null && param as IReadOnlyList<IStorageItem> != null)
             {
                 if (ImageFiles == null)
@@ -708,6 +720,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             if (ImageFiles != null && param != null)
             {
+                _Logger.Log("DeleteFile");
                 ImageFiles.Remove(param);
             }
         }

@@ -48,6 +48,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         public App()
         {
             this.InitializeComponent();
+            this.RequiresPointerMode = ApplicationRequiresPointerMode.WhenRequested;
 #if DEBUG
             //ApplicationLanguages.PrimaryLanguageOverride = "ru";
 #endif
