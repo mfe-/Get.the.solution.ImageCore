@@ -1,7 +1,6 @@
 ﻿{
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "Microsoft.Services.Store.SDK": "10.1703.19001",
     "Microsoft.Toolkit.Uwp.UI.Controls": "1.3.1",
     "Prism.Unity": "6.2.0",
     "Prism.Windows": "6.0.2"

@@ -1,5 +1,4 @@
 ﻿using Get.the.solution.UWP.XAML;
-using Microsoft.Services.Store.Engagement;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Windows.AppModel;
@@ -17,12 +16,12 @@ namespace Get.the.solution.Image.Manipulation.Shell
     {
         protected readonly INavigationService _NavigationService;
         protected readonly IResourceLoader _ResourceLoader;
-        protected readonly StoreServicesCustomEventLogger _Logger;
+
         public MainPageViewModel(INavigationService navigationService, IResourceLoader resourceLoader)
         {
             _ResourceLoader = resourceLoader;
             _NavigationService = navigationService;
-            _Logger = StoreServicesCustomEventLogger.GetDefault();
+
             Items = new List<MenuItem>()
             {
                 new MenuItem () { Name = resourceLoader.GetString("AppName"), Icon = Symbol.Folder, PageType = typeof(ResizePage) },
@@ -44,7 +43,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
             if (clicked != null)
             {
-                _Logger.Log($"NavigateToCommand {clicked.Name}");
                 _NavigationService.Navigate(clicked.PageType.AssemblyQualifiedName, null);
             }
 
