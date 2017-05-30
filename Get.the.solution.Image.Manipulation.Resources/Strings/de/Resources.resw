@@ -139,7 +139,7 @@
     <value>Hilfe</value>
   </data>
   <data name="KeepAspectRatio.Content" xml:space="preserve">
-    <value>Seitenverhältnisse beibehalten</value>
+    <value>Seitenverhältnisse beibehalten (Nur bei einer ausgewählten Datei)</value>
   </data>
   <data name="No" xml:space="preserve">
     <value>Nein</value>
