@@ -452,7 +452,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                     {
                         Package.Properties.Description = $"{Package.Properties.Title } {GenerateResizedFileName(File)}";
                     }
-                    Package.Properties.Title = "Resized Images";
+                    Package.Properties.Title = _ResourceLoader.GetString("AppName");
                     //Package.SetDataProvider(StandardDataFormats.StorageItems, Share_DataProvider);
                     Package.Properties.ApplicationName = _ResourceLoader.GetString("AppName");
                     foreach (String Extension in _AllowedFileTyes)

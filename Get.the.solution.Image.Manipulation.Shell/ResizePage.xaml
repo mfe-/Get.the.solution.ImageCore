@@ -377,9 +377,9 @@
                     <Button Grid.Column="2" Name="ShareButton" x:Uid="/Get.the.solution.Image.Manipulation.Resources/Resources/Share" 
                             HorizontalAlignment="Right">
                         <Interactivity:Interaction.Behaviors>
-                            <Core:DataTriggerBehavior Binding="{Binding Path=Sharing,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                            <!--<Core:DataTriggerBehavior Binding="{Binding Path=Sharing,UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" />
-                            </Core:DataTriggerBehavior>
+                            </Core:DataTriggerBehavior>-->
                             <Core:DataTriggerBehavior Binding="{Binding Path=SharingProcess,UpdateSourceTrigger=PropertyChanged}" Value="False">
                                 <Core:ChangePropertyAction PropertyName="IsEnabled" Value="True" />
                             </Core:DataTriggerBehavior>
