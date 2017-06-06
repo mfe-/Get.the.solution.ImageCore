@@ -175,10 +175,10 @@
     <value>od</value>
   </data>
   <data name="SizeCustomHeight.Text" xml:space="preserve">
-    <value>zaslon)</value>
+    <value />
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>Prilagođeno (odgovara</value>
+    <value>Prilagođeno</value>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Srednje (odgovara zaslonu veličine 800 x 600)</value>

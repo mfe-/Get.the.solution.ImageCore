@@ -166,7 +166,7 @@
     <value>Selecciona un tamaño:</value>
   </data>
   <data name="Share.Content" xml:space="preserve">
-    <value>Compartir (Por email, por ejemplo)</value>
+    <value>Compartir (Por email)</value>
   </data>
   <data name="ShowLastFile" xml:space="preserve">
     <value>¿Quieres abrir el último archivo modificado?</value>
@@ -175,10 +175,10 @@
     <value>Por</value>
   </data>
   <data name="SizeCustomHeight.Text" xml:space="preserve">
-    <value>pantalla)</value>
+    <value />
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>Personalizado (encaja en</value>
+    <value>Personalizado</value>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Mediano (Encaja en una pantalla de 800 x 600)</value>
@@ -187,10 +187,10 @@
     <value>x</value>
   </data>
   <data name="SizePercentHeight.Text" xml:space="preserve">
-    <value>%)</value>
+    <value>%</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
-    <value>por ciento (</value>
+    <value>por ciento</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Pequeño (Encaja en una pantalla de 640 x 480)</value>

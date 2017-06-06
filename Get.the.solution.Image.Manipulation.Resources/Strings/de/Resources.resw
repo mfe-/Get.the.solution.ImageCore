@@ -175,10 +175,10 @@
     <value>x</value>
   </data>
   <data name="SizeCustomHeight.Text" xml:space="preserve">
-    <value>)</value>
+    <value />
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>Eigene Größe (</value>
+    <value>Eigene Größe </value>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Mittel (800 x 600 )</value>

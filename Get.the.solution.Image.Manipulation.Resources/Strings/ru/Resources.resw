@@ -208,10 +208,10 @@
     <value>x</value>
   </data>
   <data name="SizePercentHeight.Text" xml:space="preserve">
-    <value>%)</value>
+    <value>%</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
-    <value>В процентах (</value>
+    <value>В процентах</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Маленький (640 x 480 пикселей)</value>

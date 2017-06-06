@@ -190,13 +190,14 @@
     <value>Vuoi ricominciare dall'ultimo salvataggio?</value>
   </data>
   <data name="SizeCustomBy.Text" xml:space="preserve">
-    <value>con</value>
+    <value>x</value>
   </data>
   <data name="SizeCustomHeight.Text" xml:space="preserve">
-    <value>schermo)</value>
+    <value>)</value>
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>personalizzata (va bene per</value>
+    <value>personalizzata (</value>
+    <comment>Custom (fits a</comment>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Media (va bene per uno schermo 800 x 600)</value>
@@ -208,7 +209,7 @@
     <value>%)</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
-    <value>Percento (va bene per</value>
+    <value>Percento (</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Piccola (va bene per uno schermo 640 x 480)</value>

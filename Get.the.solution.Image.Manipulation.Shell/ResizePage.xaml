@@ -392,7 +392,7 @@
                             </Core:EventTriggerBehavior>
                             <Core:DataTriggerBehavior 
                                 Binding="{Binding Path=ActualWidth, ElementName=ShareButton,RelativeSource={RelativeSource Mode=Self}}" 
-                                ComparisonCondition="GreaterThan" Value="200">
+                                ComparisonCondition="GreaterThan" Value="160">
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Collapsed" TargetObject="{Binding ElementName=CancelButtonGridOne}" />
                                 <Core:ChangePropertyAction PropertyName="Visibility" Value="Visible" TargetObject="{Binding ElementName=CancelButtonGridTwo}" />
                             </Core:DataTriggerBehavior>

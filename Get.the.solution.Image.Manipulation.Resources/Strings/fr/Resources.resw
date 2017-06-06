@@ -199,16 +199,16 @@
     <value>Personnalisé</value>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
-    <value>Moyen  (800 x 600 pixels)</value>
+    <value>Moyen (800 x 600 pixels)</value>
   </data>
   <data name="SizePercentBy.Text" xml:space="preserve">
     <value>par</value>
   </data>
   <data name="SizePercentHeight.Text" xml:space="preserve">
-    <value>%)</value>
+    <value>%</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
-    <value>Pourcentage (</value>
+    <value>Pourcentage</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Petit (640 x 480 pixels</value>

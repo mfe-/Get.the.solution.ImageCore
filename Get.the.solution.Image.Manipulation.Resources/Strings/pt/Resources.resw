@@ -175,10 +175,10 @@
     <value>por</value>
   </data>
   <data name="SizeCustomHeight.Text" xml:space="preserve">
-    <value>)</value>
+    <value />
   </data>
   <data name="SizeCustomWidth.Text" xml:space="preserve">
-    <value>Personalizado (cabe nas dimensões</value>
+    <value>Personalizado</value>
   </data>
   <data name="SizeMedium.Content" xml:space="preserve">
     <value>Médio (cabe nas dimensões 800 x 600)</value>
@@ -187,10 +187,10 @@
     <value>de</value>
   </data>
   <data name="SizePercentHeight.Text" xml:space="preserve">
-    <value>%)</value>
+    <value>%</value>
   </data>
   <data name="SizePercentWidth.Text" xml:space="preserve">
-    <value>Por cento (</value>
+    <value>Por cento</value>
   </data>
   <data name="SizeSmall.Content" xml:space="preserve">
     <value>Pequeno (cabe nas dimensões 640 x 480)</value>
