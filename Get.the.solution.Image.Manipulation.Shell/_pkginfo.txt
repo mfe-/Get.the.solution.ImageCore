@@ -1,1 +1,1 @@
-C:\Users\mfe\Documents\Visual Studio 2017\Get.the.solution.Image\Get.the.solution.Image.Manipulation.Shell\bin\ARM\Release\Upload\Get.the.solution.Image.Manipulation.Shell_1.1.60.0\Get.the.solution.Image.Manipulation.Shell_1.1.60.0_x86_x64_arm.appxbundle
+C:\Users\mfe\Documents\Visual Studio 2017\Get.the.solution.Image\Get.the.solution.Image.Manipulation.Shell\bin\ARM\Release\Upload\Get.the.solution.Image.Manipulation.Shell_1.1.64.0\Get.the.solution.Image.Manipulation.Shell_1.1.64.0_x86_x64_arm.appxbundle
