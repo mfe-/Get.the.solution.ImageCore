@@ -104,6 +104,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <PRIResource Include="Strings\hi\Resources.resw" />
     <PRIResource Include="Strings\it-IT\Resources.resw" />
     <PRIResource Include="Strings\ru\Resources.resw" />
     <PRIResource Include="Strings\fr\Resources.resw" />
