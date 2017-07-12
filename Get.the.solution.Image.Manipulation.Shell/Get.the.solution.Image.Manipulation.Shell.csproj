@@ -33,7 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <EnableGatekeeperAnalysis>false</EnableGatekeeperAnalysis>
-    <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
+    <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -163,7 +163,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Projects\Get.the.solution.UWP.XAML\Core\Get.the.solution.UWP.XAML.csproj">
+    <ProjectReference Include="..\..\Get.the.solution.UWP.XAML\Core\Get.the.solution.UWP.XAML.csproj">
       <Project>{f2ae0bdb-f74a-4017-8064-93b7aef8ec25}</Project>
       <Name>Get.the.solution.UWP.XAML</Name>
     </ProjectReference>

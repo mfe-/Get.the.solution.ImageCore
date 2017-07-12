@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Get.the.solution.Image.Manipulation.Shell", "Get.the.solution.Image.Manipulation.Shell\Get.the.solution.Image.Manipulation.Shell.csproj", "{2837F837-CAFE-48A1-A1F3-9575E18524ED}"
 EndProject
@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Get.the.solution.Image.Mani
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Get.the.solution.Image.Manipulation", "Get.the.solution.Image.Manipulation\Get.the.solution.Image.Manipulation.csproj", "{4EF2D3BF-653D-4A57-A250-882E494F95B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Get.the.solution.UWP.XAML", "..\Projects\Get.the.solution.UWP.XAML\Core\Get.the.solution.UWP.XAML.csproj", "{F2AE0BDB-F74A-4017-8064-93B7AEF8EC25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Get.the.solution.UWP.XAML", "..\Get.the.solution.UWP.XAML\Core\Get.the.solution.UWP.XAML.csproj", "{F2AE0BDB-F74A-4017-8064-93B7AEF8EC25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

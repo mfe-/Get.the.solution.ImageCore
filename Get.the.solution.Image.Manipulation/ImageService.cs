@@ -1,5 +1,4 @@
 ﻿using ImageSharp;
-using ImageSharp.Formats;
 using ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
@@ -19,24 +18,17 @@ namespace Get.the.solution.Image.Manipulation
         {
             const int quality = 75;
 
-            Configuration.Default.AddImageFormat(new JpegFormat());
-
-            using (var input = inputStream)
+            //Configuration.Default.AddImageFormat(new JpegFormat());
+            
+            using (Image<Rgba32> image = ImageSharp.Image.Load(inputStream))
             {
+                var format = ImageSharp.Image.DetectFormat(inputStream);
                 var output = new MemoryStream();
-                {
-                    var image = new ImageSharp.Image(input)
-                        .Resize(new ResizeOptions
-                        {
-                            Size = new Size(width, height),
-                            Mode = ResizeMode.Max
-                        });
-                    //image.ExifProfile = null;
-                    //image.Quality = quality;
-                    image.Save(output);
-                    return output;
-                }
+                var resized = image.Resize(width, height);
+                resized.Save(output, format); // automatic encoder selected based on extension.
+                return output;
             }
+
         }
         public static byte[] ReadFully(Stream input)
         {
