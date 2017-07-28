@@ -1,9 +1,9 @@
 ﻿{
   "dependencies": {
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "Microsoft.Toolkit.Uwp.UI.Controls": "1.3.1",
-    "Prism.Unity": "6.2.0",
-    "Prism.Windows": "6.0.2"
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
+    "Microsoft.Toolkit.Uwp.UI.Controls": "1.5.1",
+    "Prism.Unity": "6.3.0",
+    "Prism.Windows": "6.3.0"
   },
   "frameworks": {
     "uap10.0": {}

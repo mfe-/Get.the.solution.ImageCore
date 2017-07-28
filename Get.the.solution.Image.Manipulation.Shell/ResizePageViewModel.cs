@@ -395,7 +395,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
             bool Result = await ResizeImages(Action);
-            await CancelCommand.Execute();
+            CancelCommand.Execute();
 
         }
         #endregion
@@ -481,9 +481,9 @@ namespace Get.the.solution.Image.Manipulation.Shell
 
         }
 
-        private async void Package_OperationCompleted1(DataPackage sender, OperationCompletedEventArgs args)
+        private void Package_OperationCompleted1(DataPackage sender, OperationCompletedEventArgs args)
         {
-            await CancelCommand.Execute();
+            CancelCommand.Execute();
         }
         #endregion 
 
@@ -577,7 +577,7 @@ namespace Get.the.solution.Image.Manipulation.Shell
                         Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("No")) { Id = 1 });
                         if ((int)(await Dialog.ShowAsync()).Id == 0)
                         {
-                            await OpenFileCommand.Execute(_LastFile);
+                            OpenFileCommand.Execute(_LastFile);
                         }
                     }
                 }

@@ -83,18 +83,6 @@ namespace Get.the.solution.Image.Manipulation.Shell
         {
             // Set up the list of known types for the SuspensionManager
         }
-        protected override void OnFileActivated(FileActivatedEventArgs args)
-        {
-            base.OnFileActivated(args);
-            //init prism bootstrap
-            OnActivated(args);
-        }
-        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
-        {
-            base.OnShareTargetActivated(args);
-            //init prism bootstrap
-            OnActivated(args);
-        }
 
         protected override Task OnInitializeAsync(IActivatedEventArgs args)
         {
