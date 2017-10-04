@@ -1,10 +1,9 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "ImageSharp": "1.0.0-alpha9-00171",
-    "ImageSharp.Drawing": "1.0.0-alpha9-00166",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "NETStandard.Library": "1.6.1"
+    "NETStandard.Library": "1.6.1",
+    "SixLabors.ImageSharp.Drawing": "1.0.0-ci0111"
   },
   "frameworks": {
     "netstandard1.4": {}

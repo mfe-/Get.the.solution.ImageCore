@@ -1,5 +1,7 @@
-﻿using ImageSharp;
-using ImageSharp.Processing;
+﻿
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,13 +21,13 @@ namespace Get.the.solution.Image.Manipulation
             const int quality = 75;
 
             //Configuration.Default.AddImageFormat(new JpegFormat());
-            
-            using (Image<Rgba32> image = ImageSharp.Image.Load(inputStream))
+
+            using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load(inputStream))
             {
-                var format = ImageSharp.Image.DetectFormat(inputStream);
+                var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
                 var output = new MemoryStream();
-                var resized = image.Resize(width, height);
-                resized.Save(output, format); // automatic encoder selected based on extension.
+                image.Mutate(x => x.Resize(width, height));
+                image.Save(output, format);
                 return output;
             }
 
