@@ -9,6 +9,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
     public interface IFilePicker
     {
         IList<String> FileTypeFilter { get; set; }
-        Task<IReadOnlyList<FileInfo>> PickMultipleFilesAsync();
+        Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync();
     }
 }

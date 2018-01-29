@@ -15,13 +15,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly IFilePicker _IFilePicker;
         protected readonly INavigation _NavigationService;
         protected readonly IResourceService _ResourceLoader;
-        protected readonly ObservableCollection<FileInfo> _SelectedFiles;
+        protected readonly ObservableCollection<ImageFile> _SelectedFiles;
         protected readonly bool _Sharing;
         //protected IStorageFile _LastFile;
         protected IEnumerable<String> _AllowedFileTyes = new List<String>() { ".jpg", ".png", ".gif", ".bmp" };
         protected int RadioOptions;
         //protected DataTransferManager _DataTransferManager;
-        public ResizePageViewModel(IFilePicker filePicker, IResourceService resourceLoader, ObservableCollection<FileInfo> selectedFiles, INavigation navigationService, TimeSpan sharing)
+        public ResizePageViewModel(IFilePicker filePicker, IResourceService resourceLoader, ObservableCollection<ImageFile> selectedFiles, INavigation navigationService, TimeSpan sharing)
         {
             //LocalSettings = ApplicationData.Current.LocalSettings;
             _IFilePicker = filePicker;
@@ -102,8 +102,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 //fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
 
-                IReadOnlyList<FileInfo> files = await _IFilePicker.PickMultipleFilesAsync();
-                ImageFiles = new ObservableCollection<FileInfo>(files);
+                IReadOnlyList<ImageFile> files = await _IFilePicker.PickMultipleFilesAsync();
+                ImageFiles = new ObservableCollection<ImageFile>(files);
             }
             finally
             {
@@ -114,9 +114,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         #endregion
 
         #region Images
-        private ObservableCollection<FileInfo> _ImageFiles;
+        private ObservableCollection<ImageFile> _ImageFiles;
 
-        public ObservableCollection<FileInfo> ImageFiles
+        public ObservableCollection<ImageFile> ImageFiles
         {
             get { return _ImageFiles; }
             set
@@ -130,6 +130,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 //OnPropertyChanged(nameof(SingleFile));
             }
         }
+        #endregion
 
         private void ImageFiles_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -137,7 +138,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             //OnPropertyChanged(nameof(CanOverwriteFiles));
             //OnPropertyChanged(nameof(SingleFile));
         }
-        #endregion
 
         private bool _Resizing;
 
