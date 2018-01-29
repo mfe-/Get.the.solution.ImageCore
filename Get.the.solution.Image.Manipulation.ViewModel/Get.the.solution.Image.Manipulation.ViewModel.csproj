@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Get.the.solution.Image.Manipulation.Contract\Get.the.solution.Image.Manipulation.Contract.csproj" />
+    <ProjectReference Include="..\Get.the.solution.Image.Manipulation\Get.the.solution.Image.Manipulation.csproj" />
   </ItemGroup>
 
 </Project>
