@@ -326,14 +326,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
                     //MessageDialog Dialog = new MessageDialog(message);
                     //await Dialog.ShowAsync();
-                    throw e;
                     return false;
                 }
 
             }
             Resizing = false;
-            //return true;
-            return await Task.FromResult<bool>(true);
+            return true;
         }
         private bool _Resizing;
 
