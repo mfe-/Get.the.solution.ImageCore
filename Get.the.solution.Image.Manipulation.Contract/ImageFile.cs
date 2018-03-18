@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Get.the.solution.Image.Manipulation.Contract
 {
-    public class ImageFile
+    public class ImageFile //: IDisposable
     {
         public ImageFile(Uri uri, Stream stream)
         {
