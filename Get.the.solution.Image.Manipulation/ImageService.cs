@@ -1,7 +1,7 @@
 ﻿
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Helpers;
+//using SixLabors.ImageSharp;
+//using SixLabors.ImageSharp.Processing;
+//using SixLabors.ImageSharp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,20 +20,20 @@ namespace Get.the.solution.Image.Manipulation
         {
             const int quality = 75;
 
-            //Configuration.Default.AddImageFormat(new JpegFormat());
-            if(inputStream.Length==inputStream.Position)
-            {
-                inputStream.Position = 0;
-            }
-            using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load(inputStream))
-            {
-                var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
-                var output = new MemoryStream();
-                image.Mutate(x => x.Resize(width, height));
-                image.Save(output, format);
-                return output;
-            }
-
+            ////Configuration.Default.AddImageFormat(new JpegFormat());
+            //if(inputStream.Length==inputStream.Position)
+            //{
+            //    inputStream.Position = 0;
+            //}
+            //using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load(inputStream))
+            //{
+            //    var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
+            //    var output = new MemoryStream();
+            //    image.Mutate(x => x.Resize(width, height));
+            //    image.Save(output, format);
+            //    return output;
+            //}
+            return null;
         }
         public static byte[] ReadFully(Stream input)
         {
