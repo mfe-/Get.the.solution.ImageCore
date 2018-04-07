@@ -1,7 +1,4 @@
 ﻿
-//using SixLabors.ImageSharp;
-//using SixLabors.ImageSharp.Processing;
-//using SixLabors.ImageSharp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,8 +17,8 @@ namespace Get.the.solution.Image.Manipulation
         {
             const int quality = 75;
 
-            ////Configuration.Default.AddImageFormat(new JpegFormat());
-            //if(inputStream.Length==inputStream.Position)
+            //////Configuration.Default.AddImageFormat(new JpegFormat());
+            //if (inputStream.Length == inputStream.Position)
             //{
             //    inputStream.Position = 0;
             //}
@@ -34,19 +31,6 @@ namespace Get.the.solution.Image.Manipulation
             //    return output;
             //}
             return null;
-        }
-        public static byte[] ReadFully(Stream input)
-        {
-            byte[] buffer = new byte[16 * 1024];
-            using (MemoryStream ms = new MemoryStream())
-            {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
-                return ms.ToArray();
-            }
         }
     }
 }
