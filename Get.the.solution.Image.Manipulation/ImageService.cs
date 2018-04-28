@@ -1,10 +1,8 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Transforms;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Get.the.solution.Image.Manipulation
 {
@@ -15,22 +13,18 @@ namespace Get.the.solution.Image.Manipulation
     {
         public static MemoryStream Resize(Stream inputStream, int width, int height)
         {
-            const int quality = 75;
-
-            //////Configuration.Default.AddImageFormat(new JpegFormat());
-            //if (inputStream.Length == inputStream.Position)
-            //{
-            //    inputStream.Position = 0;
-            //}
-            //using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load(inputStream))
-            //{
-            //    var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
-            //    var output = new MemoryStream();
-            //    image.Mutate(x => x.Resize(width, height));
-            //    image.Save(output, format);
-            //    return output;
-            //}
-            return null;
+            if (inputStream.Length == inputStream.Position)
+            {
+                inputStream.Position = 0;
+            }
+            using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load(inputStream))
+            {
+                var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
+                var output = new MemoryStream();
+                image.Mutate(x => x.Resize(width, height));
+                image.Save(output, format);
+                return output;
+            }
         }
     }
 }
