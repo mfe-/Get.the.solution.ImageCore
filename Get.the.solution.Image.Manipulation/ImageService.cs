@@ -20,9 +20,17 @@ namespace Get.the.solution.Image.Manipulation
             using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load(inputStream))
             {
                 var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
+
                 var output = new MemoryStream();
                 image.Mutate(x => x.Resize(width, height));
-                image.Save(output, format);
+                if (format == null)
+                {
+                    image.SaveAsJpeg(output);
+                }
+                else
+                {
+                    image.Save(output, format);
+                }
                 return output;
             }
         }
