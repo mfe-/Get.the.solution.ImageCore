@@ -7,22 +7,29 @@ namespace Get.the.solution.Image.Manipulation.Contract
 {
     public class ImageFile //: IDisposable
     {
-        public ImageFile(Uri uri, Stream stream)
+        public ImageFile(string path, Stream stream)
         {
-            Path = uri;
+            Path = path;
             Stream = stream;
         }
-        public ImageFile(Uri uri, Stream stream, int width, int height) : this(uri,stream)
+        public ImageFile(string path, Stream stream, int width, int height) : this(path,stream)
         {
             Width = width;
             Height = height;
         }
-        public ImageFile(Uri uri, Stream stream, int width, int height,FileInfo fileInfo) : 
-            this(uri, stream, width, height)
+        public ImageFile(string path, Stream stream, int width, int height,FileInfo fileInfo) : 
+            this(path, stream, width, height)
         {
             FileInfo = fileInfo;
         }
-        public Uri Path { get; set; }
+        public string Name { get; set; }
+        //
+        // Summary:
+        //     Gets the full file-system path of the item, if the item has a path.
+        //
+        // Returns:
+        //     The full path of the item, if the item has a path in the user's file-system.
+        public string Path { get; set; }
 
         public Stream Stream { get; set; }
 
