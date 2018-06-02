@@ -1,0 +1,49 @@
+﻿using Get.the.solution.Image.Manipulation.Contract;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Get.the.solution.Image.Manipulation.ViewModel.Service
+{
+    public abstract class LoggerBaseService : ILoggerService
+    {
+        public void LogException(string methodname, Exception e)
+        {
+            LogException(methodname, e, null);
+        }
+        public void LogException(string methodname, Exception e, IDictionary<string, string> data=null)
+        {
+            try
+            {
+                if(data==null)
+                {
+                    data = new Dictionary<String, String>();
+                }
+                if (!data.ContainsKey(nameof(methodname)))
+                {
+                    data.Add(nameof(methodname), methodname);
+                }
+            
+                data.Add(nameof(Exception.Data), $"{e?.Data}");
+                data.Add(nameof(Exception.HResult), $"{e?.HResult}");
+                data.Add(nameof(Exception.InnerException), $"{e?.InnerException}");
+                data.Add(nameof(Exception.Message), $"{e?.Message}");
+                data.Add(nameof(Exception.Source), $"{e?.Source}");
+                data.Add(nameof(Exception.StackTrace), $"{e?.StackTrace}");
+
+                LogEvent(nameof(Exception.Message), data);
+            }
+            catch(Exception)
+            {
+                //HockeyClient.Current.TrackException(ex);
+            }
+
+        }
+        public abstract void LogEvent(string eventName);
+        public abstract void LogEvent(string eventName, IDictionary<string, string> data);
+        public void LogEvent(string eventName, string value)
+        {
+            LogEvent(eventName, new Dictionary<string, string>() { { eventName, value } });
+        }
+    }
+}

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Get.the.solution.Image.Manipulation.Contract
 {
-    public class PropertySet : Dictionary<string, object>, IPropertySet
+    public interface IResizeService
     {
-
+        MemoryStream Resize(Stream inputStream, int width, int height);
     }
 }
