@@ -12,17 +12,24 @@ namespace Get.the.solution.Image.Manipulation.Contract
             Path = path;
             Stream = stream;
         }
-        public ImageFile(string path, Stream stream, int width, int height) : this(path,stream)
+        public ImageFile(string path, Stream stream, int width, int height) : this(path, stream)
         {
             Width = width;
             Height = height;
         }
-        public ImageFile(string path, Stream stream, int width, int height,FileInfo fileInfo) : 
+        public ImageFile(string path, Stream stream, int width, int height, FileInfo fileInfo) :
             this(path, stream, width, height)
         {
             FileInfo = fileInfo;
         }
-        public string Name { get; set; }
+
+        private String _Name;
+        public String Name
+        {
+            get { return FileInfo.Name; }
+            set { value = _Name; }
+        }
+
         //
         // Summary:
         //     Gets the full file-system path of the item, if the item has a path.

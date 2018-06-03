@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Get.the.solution.Image.Manipulation.Contract
 {
-    public interface IDialogService
+    public interface IShareService
     {
-
+         
     }
 }

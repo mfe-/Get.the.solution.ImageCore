@@ -17,7 +17,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly INavigation _NavigationService;
         protected readonly IResourceService _ResourceLoader;
         protected readonly ObservableCollection<ImageFile> _SelectedFiles;
-        protected readonly IDialogService _IPageDialogService;
         protected readonly ILocalSettings _ILocalSettings;
         protected readonly bool _Sharing;
         protected ImageFile _LastFile;
@@ -268,7 +267,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             Height = (int)ImageStoreage.Height * HeightPercent / 100;
                         }
                     }
-                    using (MemoryStream ImageFileStream = ImageService.Resize(ImageStoreage.Stream, Width, Height))
+                    using (MemoryStream ImageFileStream = null /*_resizeService.Resize(ImageStoreage.Stream, Width, Height)*/)
                     {
                         String SuggestedFileName = GenerateResizedFileName(ImageStoreage);
                         if (action.Equals(ImageAction.Save))
