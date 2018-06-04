@@ -5,6 +5,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
 {
     public interface IApplicationService
     {
+        string GetDeviceFormFactorType();
         String GetAppVersion();
         String GetLocalCacheFolder();
         String GetCulture();

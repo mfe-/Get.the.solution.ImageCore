@@ -47,5 +47,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         public FileInfo FileInfo { get; set; }
 
         public object Tag { get; set; }
+
+        public bool IsReadOnly { get; set; }
     }
 }

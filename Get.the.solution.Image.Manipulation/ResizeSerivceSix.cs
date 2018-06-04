@@ -3,6 +3,8 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Transforms;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Get.the.solution.Image.Manipulation
@@ -12,6 +14,11 @@ namespace Get.the.solution.Image.Manipulation
     /// </summary>
     public class ResizeSerivceSix : IResizeService
     {
+        protected ILoggerService _loggerService;
+        public ResizeSerivceSix(ILoggerService loggerService)
+        {
+            _loggerService = loggerService;
+        }
         public MemoryStream Resize(Stream inputStream, int width, int height)
         {
             if (inputStream.Length == inputStream.Position)
@@ -36,4 +43,5 @@ namespace Get.the.solution.Image.Manipulation
             }
         }
     }
+
 }
