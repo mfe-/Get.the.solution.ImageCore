@@ -1,0 +1,81 @@
+﻿using Get.the.solution.Image.Manipulation.Contract;
+using Prism.Commands;
+using Prism.Mvvm;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Get.the.solution.Image.Manipulation.ViewModel
+{
+    public class MainPageViewModel : BindableBase
+    {
+        protected readonly INavigation _NavigationService;
+        protected readonly IResourceService _ResourceLoader;
+        protected readonly ILoggerService _LoggerService;
+
+        public MainPageViewModel(INavigation navigationService, IResourceService resourceLoader, ILoggerService loggerService)
+        {
+            _ResourceLoader = resourceLoader;
+            _NavigationService = navigationService;
+            _LoggerService = loggerService;
+            Items = new List<MenuItem>()
+            {
+                //use symbols from namespace Windows.UI.Xaml.Controls.Symbol
+                new MenuItem () { Name = resourceLoader.GetString("AppName"), Icon = "Folder", PageType = typeof(ResizePageViewModel) },
+                new MenuItem () { Name = resourceLoader.GetString("Help") , Icon = "Help", PageType = typeof(HelpPageViewModel) },
+                new MenuItem () { Name = resourceLoader.GetString("Contact"),Icon = "Contact", PageType = typeof(AboutPageViewModel) }
+            };
+            SelectedMenuItem = Items.FirstOrDefault();
+            NavigateToCommand = new DelegateCommand<MenuItem>(OnNavigateToCommand);
+            _NavigationService.Navigate(SelectedMenuItem.PageType, null);
+        }
+
+
+        public DelegateCommand<MenuItem> NavigateToCommand { get; set; }
+
+        protected void OnNavigateToCommand(MenuItem param)
+        {
+            try
+            {
+                MenuItem clicked = param as MenuItem;
+
+                if (clicked != null)
+                {
+                    if (clicked.PageType == null)
+                    {
+                        clicked.PageType = typeof(AboutPageViewModel);
+                    }
+                    _LoggerService.LogEvent(nameof(NavigateToCommand),
+                        new Dictionary<String, String>() { { nameof(clicked.Name), clicked.Name } });
+                    _NavigationService.Navigate(clicked.PageType, null);
+                }
+            }
+            catch(Exception e)
+            {
+                _LoggerService.LogException(nameof(OnNavigateToCommand), e);
+            }
+
+        }
+
+        private MenuItem _SelectedMenuItem;
+
+        public MenuItem SelectedMenuItem
+        {
+            get { return _SelectedMenuItem; }
+            set
+            {
+                SetProperty(ref _SelectedMenuItem, value, nameof(SelectedMenuItem));
+                NavigateToCommand?.Execute(SelectedMenuItem);
+            }
+        }
+
+
+        private List<MenuItem> _Items;
+
+        public List<MenuItem> Items
+        {
+            get { return _Items; }
+            set { SetProperty(ref _Items, value, nameof(Items)); }
+        }
+    }
+}

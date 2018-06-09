@@ -1,63 +1,87 @@
-﻿using Get.the.solution.Image.Manipulation.Contract;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using Get.the.solution.Image.Manipulation.Contract;
 
 namespace Get.the.solution.Image.Manipulation.ViewModel
 {
     public class ResizePageViewModel : BindableBase
     {
-        protected readonly IImageFileService _IImageFileService;
+        protected readonly ILoggerService _loggerService;
         protected readonly INavigation _NavigationService;
         protected readonly IResourceService _ResourceLoader;
+        protected readonly IImageFileService _imageFileService;
+        protected readonly IApplicationService _applicationService;
+        protected readonly IProgressBarDialogService _progressBarDialogService;
+        protected readonly IShareService _shareService;
+        protected readonly ILocalSettings _LocalSettings;
+        protected readonly IPageDialogService _pageDialogService;
+        protected readonly IResizeService _resizeService;
+        protected readonly IDragDropService _dragDropService;
         protected readonly ObservableCollection<ImageFile> _SelectedFiles;
-        protected readonly ILocalSettings _ILocalSettings;
         protected readonly bool _Sharing;
         protected ImageFile _LastFile;
-        protected IEnumerable<String> _AllowedFileTyes = new List<String>() { ".jpg", ".png", ".gif", ".bmp" };
         protected int RadioOptions;
-        //protected DataTransferManager _DataTransferManager;
-        public ResizePageViewModel(IImageFileService filePicker, IResourceService resourceLoader, 
-            ObservableCollection<ImageFile> selectedFiles, INavigation navigationService, 
-            TimeSpan sharing, ILocalSettings localSettings)
+
+        public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService, IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar, IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings localSettings, ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles, INavigation navigationService, IResourceService resourceLoader, TimeSpan sharing)
         {
-            _ILocalSettings = localSettings;
-            _IImageFileService = filePicker;
-            _SelectedFiles = selectedFiles;
-            _ResourceLoader = resourceLoader;
-            _NavigationService = navigationService;
-            ImageFiles = new ObservableCollection<ImageFile>();
-            OpenFilePickerCommand = new DelegateCommand(OnOpenFilePickerCommand);
-            OkCommand = new DelegateCommand(OnOkCommand);
-            CancelCommand = new DelegateCommand(OnCancelCommand);
-            OpenFileCommand = new DelegateCommand<ImageFile>(OnOpenFileCommand);
-            DragOverCommand = new DelegateCommand<object>(OnDragOverCommand);
-            DropCommand = new DelegateCommand<object>(OnDropCommand);
-            ShareCommand = new DelegateCommand(OnShareCommand);
-            DeleteFileCommand = new DelegateCommand<ImageFile>(OnDeleteFile);
-
-            if (TimeSpan.MaxValue.Equals(sharing))
+            try
             {
-                _Sharing = true;
-            }
-            else
-            {
-                _Sharing = false;
-            }
+                _dragDropService = dragDrop;
+                _shareService = shareService;
+                _resizeService = resizeService;
+                _LocalSettings = localSettings;
+                _pageDialogService = pageDialogService;
+                _progressBarDialogService = progressBar;
+                _applicationService = applicationService;
+                _SelectedFiles = selectedFiles;
+                _ResourceLoader = resourceLoader;
+                _NavigationService = navigationService;
+                _loggerService = loggerService;
+                _imageFileService = imageFileService;
+                ImageFiles = new ObservableCollection<ImageFile>();
+                OpenFilePickerCommand = new DelegateCommand(OnOpenFilePickerCommand);
+                OkCommand = new DelegateCommand(OnOkCommand);
+                CancelCommand = new DelegateCommand(OnCancelCommand);
+                OpenFileCommand = new DelegateCommand<ImageFile>(OnOpenFileCommand);
+                DragOverCommand = new DelegateCommand<object>(OnDragOverCommand);
+                DropCommand = new DelegateCommand<object>(OnDropCommand);
+                ShareCommand = new DelegateCommand(OnShareCommand);
+                DeleteFileCommand = new DelegateCommand<ImageFile>(OnDeleteFile);
 
-            if (_SelectedFiles != null)
-            {
-                ImageFiles = _SelectedFiles;
-            }
-            //get settings
+                if (TimeSpan.MaxValue.Equals(sharing))
+                {
+                    _Sharing = true;
+                }
+                else
+                {
+                    _Sharing = false;
+                }
 
-            //RadioOptions = LocalSettings.Values[nameof(RadioOptions)] == null ? 1 : Int32.Parse(LocalSettings.Values[nameof(RadioOptions)].ToString());
+                if (_SelectedFiles != null)
+                {
+                    ImageFiles = _SelectedFiles;
+                }
+                //get settings
+                LoadSettings();
+                PropertyChanged += ResizePageViewModel_PropertyChanged;
+                _loggerService?.LogEvent(nameof(ResizePageViewModel));
+            }
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(ResizePageViewModel), e);
+            }
+        }
+        public void LoadSettings()
+        {
+            RadioOptions = _LocalSettings.Values[nameof(RadioOptions)] == null ? 1 : Int32.Parse(_LocalSettings.Values[nameof(RadioOptions)].ToString());
 
             if (RadioOptions == 1)
             {
@@ -76,21 +100,61 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SizePercentChecked = true;
             }
 
-            //OverwriteFiles = LocalSettings.Values[nameof(OverwriteFiles)] == null ? false : Boolean.Parse(LocalSettings.Values[nameof(OverwriteFiles)].ToString());
-            //Width = LocalSettings.Values[nameof(Width)] == null ? 1024 : Int32.Parse(LocalSettings.Values[nameof(Width)].ToString());
-            //Height = LocalSettings.Values[nameof(Height)] == null ? 768 : Int32.Parse(LocalSettings.Values[nameof(Height)].ToString());
+            OverwriteFiles = _LocalSettings.Values[nameof(OverwriteFiles)] == null ? false : Boolean.Parse(_LocalSettings.Values[nameof(OverwriteFiles)].ToString());
+            Width = _LocalSettings.Values[nameof(Width)] == null ? 1024 : Int32.Parse(_LocalSettings.Values[nameof(Width)].ToString());
+            Height = _LocalSettings.Values[nameof(Height)] == null ? 768 : Int32.Parse(_LocalSettings.Values[nameof(Height)].ToString());
 
-            //WidthPercent = LocalSettings.Values[nameof(WidthPercent)] == null ? 100 : Int32.Parse(LocalSettings.Values[nameof(WidthPercent)].ToString());
-            //HeightPercent = LocalSettings.Values[nameof(HeightPercent)] == null ? 100 : Int32.Parse(LocalSettings.Values[nameof(HeightPercent)].ToString());
+            WidthPercent = _LocalSettings.Values[nameof(WidthPercent)] == null ? 100 : Int32.Parse(_LocalSettings.Values[nameof(WidthPercent)].ToString());
+            HeightPercent = _LocalSettings.Values[nameof(HeightPercent)] == null ? 100 : Int32.Parse(_LocalSettings.Values[nameof(HeightPercent)].ToString());
 
-            //KeepAspectRatio = LocalSettings.Values[nameof(KeepAspectRatio)] == null ? false : Boolean.Parse(LocalSettings.Values[nameof(KeepAspectRatio)].ToString());
-            //PropertyChanged += ResizePageViewModel_PropertyChanged;
+            KeepAspectRatio = _LocalSettings.Values[nameof(KeepAspectRatio)] == null ? false : Boolean.Parse(_LocalSettings.Values[nameof(KeepAspectRatio)].ToString());
+
+        }
+        private void ResizePageViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            try
+            {
+                if ((SingleFile == true && KeepAspectRatio == true) &&
+                    (nameof(Width).Equals(e.PropertyName) || nameof(Height).Equals(e.PropertyName)))
+                {
+                    PropertyChanged -= ResizePageViewModel_PropertyChanged;
+                    if (SelectedFile == null && ImageFiles.Count > 0)
+                    {
+                        SelectedFile = ImageFiles.First() as ImageFile;
+                    }
+                    float R = (float)SelectedFile.Width / (float)SelectedFile.Height;
+                    if (SelectedFile != null && nameof(Width).Equals(e.PropertyName))
+                    {
+                        Height = (int)(Width / R);
+                    }
+                    else if (SelectedFile != null && nameof(Height).Equals(e.PropertyName))
+                    {
+                        Width = (int)(Height * R);
+                    }
+                    PropertyChanged += ResizePageViewModel_PropertyChanged;
+                }
+            }
+            catch (Exception ex)
+            {
+                _loggerService?.LogException(nameof(ResizePageViewModel), ex);
+            }
         }
 
-        /// <summary>
-        /// Access for app settings
-        /// </summary>
-        private ILocalSettings LocalSettings => _ILocalSettings;
+
+        private ICommand _CtrlOpen;
+        public ICommand CtrlOpenCommand => _CtrlOpen ?? (_CtrlOpen = new DelegateCommand<object>(OnCtrlOpen));
+
+        protected void OnCtrlOpen(object param)
+        {
+            _loggerService?.LogEvent(nameof(OnCtrlOpen));
+            if (param != null)
+            {
+                if (_applicationService.CtrlPressed(param))
+                {
+                    OpenFilePickerCommand.Execute();
+                }
+            }
+        }
 
         public bool ShowOpenFilePicker
         {
@@ -99,6 +163,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         }
 
         #region Selected File
+
         private ImageFile _SelectedFile;
 
         public ImageFile SelectedFile
@@ -123,15 +188,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             try
             {
                 Resizing = true;
-                if(_IImageFileService.FileTypeFilter.Count==0)
-                {
-                    foreach (String Filetypeextension in _AllowedFileTyes)
-                        _IImageFileService.FileTypeFilter.Add(Filetypeextension);
-                }
-                //fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
-
-                IReadOnlyList<ImageFile> files = await _IImageFileService.PickMultipleFilesAsync();
+                IReadOnlyList<ImageFile> files = await _imageFileService.PickMultipleFilesAsync();
                 ImageFiles = new ObservableCollection<ImageFile>(files);
+                _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count}" } });
+            }
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(OpenFilePicker), e);
             }
             finally
             {
@@ -156,7 +219,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 if (SizeSmallChecked == true)
                 {
-                    //LocalSettings.Values[nameof(RadioOptions)] = 1;
+                    _LocalSettings.Values[nameof(RadioOptions)] = 1;
                 }
 
             }
@@ -176,7 +239,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 if (SizeMediumChecked == true)
                 {
-                    //LocalSettings.Values[nameof(RadioOptions)] = 2;
+                    _LocalSettings.Values[nameof(RadioOptions)] = 2;
                 }
             }
         }
@@ -191,7 +254,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SetProperty(ref _SizeCustomChecked, value, nameof(SizeCustomChecked));
                 if (SizeCustomChecked == true)
                 {
-                    //LocalSettings.Values[nameof(RadioOptions)] = 3;
+                    _LocalSettings.Values[nameof(RadioOptions)] = 3;
                 }
             }
         }
@@ -208,7 +271,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SetProperty(ref _SizePercentChecked, value, nameof(SizePercentChecked));
                 if (SizePercentChecked == true)
                 {
-                    //LocalSettings.Values[nameof(RadioOptions)] = 4;
+                    _LocalSettings.Values[nameof(RadioOptions)] = 4;
                 }
             }
         }
@@ -232,7 +295,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 RaisePropertyChanged(nameof(SingleFile));
             }
         }
-        
 
         private void ImageFiles_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -242,96 +304,176 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         }
         #endregion
 
-        public async Task<bool> ResizeImages(ImageAction action, Action<ImageFile, String> ProcessedImage = null)
+        public async Task<bool> ResizeImages(ImageAction action, Action<ImageFile, String> ProcessedImageAction = null)
         {
-            Resizing = true;
-            //if no file is selected open file picker 
-            if (ImageFiles == null || ImageFiles.Count == 0)
+            IProgressBarDialogService progressBarDialog = _progressBarDialogService.ProgressBarDialogFactory();
+            try
             {
-                await OpenFilePicker();
-            }
-
-            foreach (ImageFile ImageStoreage in ImageFiles)
-            {
-                try
+                Resizing = true;
+                //if no file is selected open file picker 
+                if (ImageFiles == null || ImageFiles.Count == 0)
                 {
-                    //var RandomAccessStream = await Storeage.OpenReadAsync();
-                    //Stream ImageStream = RandomAccessStream.AsStreamForRead();
+                    await OpenFilePicker();
+                }
 
-                    if (SizePercentChecked == true)
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                progressBarDialog.StartAsync(ImageFiles.Count);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+                String SuggestedFileName = String.Empty;
+                String targetStorageFolder = String.Empty;
+                foreach (ImageFile ImageStoreage in ImageFiles)
+                {
+                    try
                     {
-                        //ImageProperties Properties = await (ImageStoreage as StorageFile)?.Properties.GetImagePropertiesAsync();
-                        //if (Properties != null)
+                        Stream ImageStream = ImageStoreage.Stream;
+                        if (SizePercentChecked == true)
                         {
                             Width = (int)ImageStoreage.Width * WidthPercent / 100;
                             Height = (int)ImageStoreage.Height * HeightPercent / 100;
                         }
-                    }
-                    using (MemoryStream ImageFileStream = null /*_resizeService.Resize(ImageStoreage.Stream, Width, Height)*/)
-                    {
-                        String SuggestedFileName = GenerateResizedFileName(ImageStoreage);
-                        if (action.Equals(ImageAction.Save))
+                        SuggestedFileName = _imageFileService.GenerateResizedFileName(ImageStoreage);
+                        progressBarDialog.CurrentItem = SuggestedFileName;
+                        using (MemoryStream ImageFileStream = _resizeService.Resize(ImageStream, Width, Height))
                         {
-                            try
+                            //log image size
+                            _loggerService?.LogEvent(nameof(ResizeSerivceSix.Resize), new Dictionary<String, String>()
                             {
-                                _IImageFileService.WriteBytesAsync(ImageStoreage, ImageFileStream.ToArray());
-                                //await FileIO.WriteBytesAsync(ImageStoreage, ImageFileStream.ToArray());
+                                { $"{nameof(ImageFile)}{nameof(Width)}", $"{ImageStoreage?.Width}" },
+                                { $"{nameof(ImageFile)}{nameof(Height)}", $"{ImageStoreage?.Height}" },
+                                { nameof(Width), $"{Width}" },
+                                { nameof(Height), $"{Height}" },
+                                //{ nameof(Storeage.Path), $"{Path.GetDirectoryName(Storeage.Path)}" }
+                            });
+
+                            //log action type
+                            _loggerService?.LogEvent(nameof(ResizeSerivceSix.Resize), new Dictionary<String, String>()
+                            {
+                                { nameof(ImageAction), $"{action}" }
+                            });
+                            //overwrite current ImageStoreage
+                            if (action.Equals(ImageAction.Save))
+                            {
+                                try
+                                {
+                                    await _imageFileService.WriteBytesAsync(ImageStoreage, ImageFileStream.ToArray());
+                                    _LastFile = ImageStoreage;
+                                }
+                                catch (Contract.Exceptions.UnauthorizedAccessException e)
+                                {
+                                    //log the UnauthorizedAccessException
+                                    _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
+                                    {
+                                        { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{e}" },
+                                    });
+                                    //we can't override the current file try for the next files saveAs
+                                    action = ImageAction.SaveAs;
+                                    await ShowPermissionDeniedDialog();
+                                    var File = await _imageFileService.PickSaveFileAsync(ImageStoreage.Path, SuggestedFileName);
+                                    if (null != File)
+                                    {
+                                        //try to apply the new storagefolder (if the user selected a new location)
+                                        targetStorageFolder = Path.GetDirectoryName(File.Path);
+
+                                        await _imageFileService.WriteBytesAsync(File, ImageFileStream.ToArray());
+                                        _LastFile = File;
+                                    }
+                                }
+                            } //create new ImageStoreage
+                            else if (action.Equals(ImageAction.SaveAs))
+                            {
+                                ImageFile File = null;
+                                try
+                                {
+                                    if (String.IsNullOrEmpty(targetStorageFolder))
+                                    {
+                                        //get default path
+                                        targetStorageFolder = Path.GetDirectoryName(ImageStoreage.Path);
+                                    }
+                                    //this operation can throw a UnauthorizedAccessException
+                                    await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, ImageStoreage, ImageFileStream.ToArray());
+                                }
+                                catch (Contract.Exceptions.UnauthorizedAccessException e)
+                                {
+                                    //log the UnauthorizedAccessException
+                                    _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
+                                    {
+                                        { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{e}" },
+                                    });
+                                    await ShowPermissionDeniedDialog();
+                                    //tell the user to save the file in an other location
+                                    File = await _imageFileService.PickSaveFileAsync(ImageStoreage.Path, SuggestedFileName);
+                                    //try to apply the new storagefolder (if the user selected a new location)
+                                    if (File != null && Path.GetDirectoryName(targetStorageFolder) != Path.GetDirectoryName(File.Path))
+                                    {
+                                        targetStorageFolder = Path.GetDirectoryName(File.Path);
+                                    }
+                                }
+                                if (null != File)
+                                {
+                                    await _imageFileService.WriteBytesAsync(File, ImageFileStream.ToArray());
+
+                                    _LastFile = File;
+                                    if (ImageFiles.Count == 1)
+                                    {
+                                        OpenFileCommand.Execute(_LastFile);
+                                    }
+                                }
+                                else
+                                {
+                                    _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
+                                        {
+                                            { nameof(ImageStoreage.Path), $"{ImageStoreage.Path}" }
+                                        });
+                                }
+
+                            }
+                            else if (action.Equals(ImageAction.Process))
+                            {
+                                String TempFolder = _applicationService.GetLocalCacheFolder();
+                                await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, ImageStoreage, ImageFileStream.ToArray());
                                 _LastFile = ImageStoreage;
+                                ProcessedImageAction?.Invoke(ImageStoreage, $"{SuggestedFileName}");
                             }
-                            catch (UnauthorizedAccessException e)
-                            {
-
-                            }
-
-
                         }
-                        else if (action.Equals(ImageAction.SaveAs))
+                        _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                         {
-                            if (ImageFiles.Count == 1)
-                            {
-                                //FileSavePicker FileSavePicker = new FileSavePicker();
-                                //FileSavePicker.DefaultFileExtension = ImageStoreage.FileType;
-                                //FileSavePicker.FileTypeChoices.Add(ImageStoreage.FileType, new List<string>() { ImageStoreage.FileType });
-                                ////FileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                                //// Default file name if the user does not type one in or select a file to replace
-                                //FileSavePicker.SuggestedFileName = SuggestedFileName;
-                                //StorageFile File = await FileSavePicker.PickSaveFileAsync();
-                                //if (null != File)
-                                //{
-                                //    await FileIO.WriteBytesAsync(File, ImageFileStream.ToArray());
-                                //    _LastFile = File;
-                                //}
-                            }
-                        }
-                        else if (action.Equals(ImageAction.Process))
-                        {
-                            //StorageFolder TempFolder = ApplicationData.Current.LocalCacheFolder;
-                            //StorageFile TempFile = await TempFolder.CreateFileAsync(SuggestedFileName, CreationCollisionOption.ReplaceExisting);
-
-                            //await FileIO.WriteBytesAsync(TempFile, ImageFileStream.ToArray());
-                            //_LastFile = TempFile;
-                            //ProcessedImage?.Invoke(TempFile, $"{SuggestedFileName}");
-                        }
+                            { nameof(action), $"{action}" }
+                        });
                     }
+                    catch (Exception e)
+                    {
+                        _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e);
+                        Resizing = false;
+                        String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), $"{e.Message} {e.InnerException}");
+                        return false;
+                    }
+                    progressBarDialog.ProcessedItems++;
                 }
-                catch (Exception e)
-                {
-                    Resizing = false;
-                    String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), $"{e.Message} {e.InnerException}");
-
-                    //DataPackage Package = new DataPackage() { RequestedOperation = DataPackageOperation.Copy };
-                    //Package.SetText(message);
-                    //Clipboard.SetContent(Package);
-
-                    //MessageDialog Dialog = new MessageDialog(message);
-                    //await Dialog.ShowAsync();
-                    return false;
-                }
-
+                Resizing = false;
             }
-            Resizing = false;
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(ResizeImages), e);
+            }
+            finally
+            {
+                progressBarDialog.Stop();
+                Resizing = false;
+            }
+            //log image size
+            _loggerService?.LogEvent(nameof(ResizeSerivceSix.Resize), new Dictionary<String, String>()
+            {
+                { "ResizeFinished","true" }
+            });
             return true;
         }
+
+        private async Task ShowPermissionDeniedDialog()
+        {
+            await _pageDialogService.ShowAsync(_ResourceLoader.GetString("NoWritePermissionDialog"));
+        }
+
         private bool _Resizing;
 
         public bool Resizing
@@ -343,28 +485,24 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
         }
 
-        private string GenerateResizedFileName(ImageFile storeage)
-        {
-            if (storeage != null)
-            {
-                //return $"{storeage.Name.Replace(storeage.FileType, String.Empty)}-{Width}x{Height}{storeage.FileType}";
-                return $"{storeage.FileInfo.Name.Replace(storeage.FileInfo.Extension, String.Empty)}-{Width}x{Height}{storeage.FileInfo.Extension}";
-            }
-            else
-            {
-                return String.Empty;
-            }
-        }
+
 
         #region OkCommand / Resize Images
         public DelegateCommand OkCommand { get; set; }
 
         protected async void OnOkCommand()
         {
-            ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
-            bool Result = await ResizeImages(Action);
-            CancelCommand.Execute();
-
+            try
+            {
+                _loggerService?.LogEvent(nameof(OnOkCommand));
+                ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
+                bool Result = await ResizeImages(Action);
+                CancelCommand.Execute();
+            }
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(OnOkCommand), e);
+            }
         }
         #endregion
 
@@ -383,77 +521,21 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         protected async void OnShareCommand()
         {
-            //try
-            //{
-            //    LocalCachedResizedImages = new List<IStorageItem>();
-            //    Action<IStorageFile, string> ProcessImage = new Action<IStorageFile, string>((ImageFileStream, FileName) =>
-            //    {
-            //        LocalCachedResizedImages.Add(ImageFileStream);
-            //    });
-            //    bool Result = await ResizeImages(ImageAction.Process, ProcessImage);
-            //    DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-            //    dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            //    DataTransferManager.ShowShareUI();
-
-            //}
-            //catch (Exception e)
-            //{
-            //    SharingProcess = false;
-            //}
+            try
+            {
+                _loggerService?.LogEvent(nameof(OnShareCommand));
+                await _shareService.StartShareAsync(ImageFiles, async (action) => await ResizeImages(ImageAction.Process, action), CancelCommand.Execute);
+            }
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(OnShareCommand), e);
+            }
+            finally
+            {
+                SharingProcess = false;
+            }
         }
-        //protected List<IStorageItem> LocalCachedResizedImages = new List<IStorageItem>();
-
-        //private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
-        //{
-        //DataRequest Request = args.Request;
-        //DataRequestDeferral Deferral = Request.GetDeferral();
-        //try
-        //{
-        //    if (ImageFiles != null && ImageFiles.Count != 0)
-        //    {
-        //        //our DataPackage we want to share
-        //        DataPackage Package = new DataPackage();
-        //        Package.OperationCompleted += Package_OperationCompleted1;
-        //        Package.Destroyed += Package_Destroyed;
-        //        Package.RequestedOperation = DataPackageOperation.Copy;
-        //        foreach (var File in ImageFiles)
-        //        {
-        //            Package.Properties.Description = $"{Package.Properties.Title } {GenerateResizedFileName(File)}";
-        //        }
-        //        Package.Properties.Title = _ResourceLoader.GetString("AppName");
-        //        //Package.SetDataProvider(StandardDataFormats.StorageItems, Share_DataProvider);
-        //        Package.Properties.ApplicationName = _ResourceLoader.GetString("AppName");
-        //        foreach (String Extension in _AllowedFileTyes)
-        //        {
-        //            Package.Properties.FileTypes.Add(Extension);
-        //        }
-        //        Package.SetStorageItems(LocalCachedResizedImages);
-        //        Request.Data = Package;
-        //        SharingProcess = false;
-        //    }
-        //    else
-        //    {
-        //        args.Request.FailWithDisplayText("Nothing to share");
-        //        SharingProcess = false;
-        //    }
-        //}
-        //finally
-        //{
-        //    Deferral.Complete();
-        //}
-
-        //}
-
-        //private void Package_Destroyed(DataPackage sender, object args)
-        //{
-
-        //}
-
-        //private void Package_OperationCompleted1(DataPackage sender, OperationCompletedEventArgs args)
-        //{
-        //    CancelCommand.Execute();
-        //}
-        #endregion
+        #endregion 
 
         #region Width & Height
         private int _Width;
@@ -464,7 +546,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _Width, value, nameof(Width));
-                //LocalSettings.Values[nameof(Width)] = _Width;
+                _LocalSettings.Values[nameof(Width)] = _Width;
             }
         }
 
@@ -477,11 +559,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _PercentWidth, value, nameof(WidthPercent));
-                //LocalSettings.Values[nameof(WidthPercent)] = _PercentWidth;
+                _LocalSettings.Values[nameof(WidthPercent)] = _PercentWidth;
                 if (KeepAspectRatio)
                 {
                     _PercentHeight = _PercentWidth;
-                    OnPropertyChanged(nameof(HeightPercent));
+                    RaisePropertyChanged(nameof(HeightPercent));
                 }
             }
         }
@@ -494,7 +576,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _Height, value, nameof(Height));
-                //LocalSettings.Values[nameof(Height)] = _Height;
+                _LocalSettings.Values[nameof(Height)] = _Height;
             }
         }
 
@@ -506,11 +588,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _PercentHeight, value, nameof(HeightPercent));
-                //LocalSettings.Values[nameof(HeightPercent)] = _PercentHeight;
+                _LocalSettings.Values[nameof(HeightPercent)] = _PercentHeight;
                 if (KeepAspectRatio)
                 {
                     _PercentWidth = _PercentHeight;
-                    OnPropertyChanged(nameof(WidthPercent));
+                    RaisePropertyChanged(nameof(WidthPercent));
                 }
             }
         }
@@ -521,38 +603,37 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         protected async void OnCancelCommand()
         {
-            if ((ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
+            try
             {
-                //if (Sharing == true)
-                //{
-                //    ShareOperation shareOperation = ServiceLocator.Current.GetInstance<ShareOperation>();
-                //    if (shareOperation != null)
-                //    {
-                //        shareOperation.ReportCompleted();
-                //    }
-                //}
-                //CoreApplication.Exit();
-            }
-            else
-            {
-                //if (_LastFile != null)
-                //{
-                //    //open the resized file on windows mobile
-                //    if (DeviceTypeHelper.GetDeviceFormFactorType() != DeviceFormFactorType.Desktop)
-                //    {
-                //        MessageDialog Dialog = new MessageDialog(_ResourceLoader.GetString("ShowLastFile"));
-                //        Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("Yes")) { Id = 0 });
-                //        Dialog.Commands.Add(new UICommand(_ResourceLoader.GetString("No")) { Id = 1 });
-                //        if ((int)(await Dialog.ShowAsync()).Id == 0)
-                //        {
-                //            OpenFileCommand.Execute(_LastFile);
-                //        }
-                //    }
-                //}
+                if ((ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
+                {
+                    _applicationService.Exit();
+                }
+                else
+                {
+                    if (_LastFile != null)
+                    {
+                        //open the resized file on windows mobile
+                        if (!"Desktop".Equals(_applicationService.GetDeviceFormFactorType()))
+                        {
+                            if (await _pageDialogService.ShowConfirmationAsync(
+                                _ResourceLoader.GetString("ShowLastFile"), _ResourceLoader.GetString("Yes"),
+                                _ResourceLoader.GetString("No")))
+                            {
+                                OpenFileCommand.Execute(_LastFile);
+                            }
+                        }
+                    }
 
-                ImageFiles = new ObservableCollection<ImageFile>();
-                _LastFile = null;
+                    ImageFiles = new ObservableCollection<ImageFile>();
+                    _LastFile = null;
+                }
             }
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(OnCancelCommand), e);
+            }
+            _loggerService?.LogEvent(nameof(OnCancelCommand));
         }
         #endregion
 
@@ -566,8 +647,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles));
-                //LocalSettings.Values[nameof(OverwriteFiles)] = _OverwriteFiles;
+                _LocalSettings.Values[nameof(OverwriteFiles)] = _OverwriteFiles;
                 RaisePropertyChanged(nameof(CanOverwriteFiles));
+                _loggerService?.LogEvent(nameof(OverwriteFiles), $"{OverwriteFiles}");
             }
         }
 
@@ -580,7 +662,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _KeepAspectRatio, value, nameof(KeepAspectRatio));
-                //LocalSettings.Values[nameof(KeepAspectRatio)] = _KeepAspectRatio;
+                _LocalSettings.Values[nameof(KeepAspectRatio)] = _KeepAspectRatio;
+                _loggerService?.LogEvent(nameof(KeepAspectRatio), $"{KeepAspectRatio}");
             }
         }
 
@@ -589,15 +672,18 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         protected async void OnOpenFileCommand(ImageFile file)
         {
-            if (file != null)
+            try
             {
-                // Launch the bug query file.
-                //bool sucess = await Windows.System.Launcher.LaunchFileAsync(file);
+                if (file != null)
+                {
+                    // Launch the bug query file.
+                    await _applicationService.LaunchFileAsync(file);
+                }
             }
-        }
-        protected bool CanOpenFileCommandExecuted(ImageFile file)
-        {
-            return true;
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(OnOpenFileCommand), e);
+            }
         }
         #endregion
 
@@ -610,32 +696,15 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         /// <param name="param">Provides event informations.</param>
         protected void OnDragOverCommand(object param)
         {
-            //DragEventArgs e = param as DragEventArgs;
-
-            //e.DragUIOverride.IsContentVisible = true;
-            //e.DragUIOverride.IsGlyphVisible = true;
-            //IReadOnlyList<IStorageItem> Items = e.DataView.GetStorageItemsAsync().GetAwaiter().GetResult();
-            ////Flag determine wether draged files are allowed
-            //bool CanDrop = true;
-            //foreach (var item in Items)
-            //{
-            //    if (item is IStorageFile)
-            //    {
-            //        if (item is StorageFile)
-            //        {
-            //            CanDrop = _AllowedFileTyes.Contains((item as StorageFile).FileType);
-            //        }
-            //    }
-            //    if (item is IStorageFolder && item is StorageFolder)
-            //    {
-            //        CanDrop = false;
-            //    }
-            //}
-
-            //if (CanDrop == false)
-            //{
-            //    e.AcceptedOperation = DataPackageOperation.None;
-            //}
+            try
+            {
+                _dragDropService.OnDragOverCommand(param);
+            }
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(OnDragOverCommand), e);
+            }
+            _loggerService?.LogEvent(nameof(OnDragOverCommand));
         }
         #endregion
 
@@ -646,36 +715,32 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         /// <param name="param"></param>
         protected void OnDropCommand(object param)
         {
-            //if (param != null && param as IReadOnlyList<IStorageItem> != null)
-            //{
-            //    if (ImageFiles == null)
-            //    {
-            //        ImageFiles = new ObservableCollection<IStorageFile>();
-            //    }
-            //    foreach (var item in param as IReadOnlyList<IStorageItem>)
-            //    {
-            //        if (item is IStorageFile)
-            //        {
-            //            if (item is StorageFile)
-            //            {
-            //                ImageFiles.Add(item as StorageFile);
-            //            }
-            //        }
-            //        //if (item is IStorageFolder && item is StorageFolder)
-            //        //{
-            //        //    OpenFolder(item as StorageFolder);
-            //        //}
-            //    }
-            //}
+            try
+            {
+                _dragDropService.OnDropCommandAsync(param, ImageFiles);
+            }
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(OnDropCommand), e);
+            }
+            _loggerService?.LogEvent(nameof(OnDropCommand));
         }
+
 
         public DelegateCommand<ImageFile> DeleteFileCommand { get; set; }
 
         protected void OnDeleteFile(ImageFile param)
         {
-            if (ImageFiles != null && param != null)
+            try
             {
-                ImageFiles.Remove(param);
+                if (ImageFiles != null && param != null)
+                {
+                    ImageFiles.Remove(param);
+                }
+            }
+            catch (Exception e)
+            {
+                _loggerService?.LogException(nameof(OnDeleteFile), e);
             }
         }
 
@@ -684,14 +749,21 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             get
             {
-                //bool can = ImageFiles?.Count(a => ((a as StorageFile)?.Attributes & Windows.Storage.FileAttributes.ReadOnly) != 0) == 0;
-                bool can = false;
-                if (can == false)
+                try
                 {
-                    OverwriteFiles = false;
-                }
-                return can;
+                    bool can = ImageFiles?.Count(a =>a.IsReadOnly) == 0;
 
+                    if (can == false)
+                    {
+                        OverwriteFiles = false;
+                    }
+                    return can;
+                }
+                catch (Exception e)
+                {
+                    _loggerService?.LogException(nameof(CanOverwriteFiles), e);
+                    return false;
+                }
             }
         }
         public bool SingleFile
