@@ -30,7 +30,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected ImageFile _LastFile;
         protected int RadioOptions;
 
-        public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService, IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar, IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings localSettings, ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles, INavigation navigationService, IResourceService resourceLoader, TimeSpan sharing)
+        public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService, 
+            IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar,
+            IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings localSettings,
+            ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles, 
+            INavigation navigationService, IResourceService resourceLoader, TimeSpan sharing)
         {
             try
             {
