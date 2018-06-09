@@ -10,6 +10,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
     //     interface to provide page navigation.
     public interface INavigation
     {
-        bool Navigate(string pageToken, object parameter);
+        bool Navigate(Type pageToken, object parameter);
     }
 }

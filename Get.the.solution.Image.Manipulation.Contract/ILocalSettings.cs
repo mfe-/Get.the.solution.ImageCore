@@ -6,6 +6,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
 {
     public interface ILocalSettings
     {
-        IPropertySet Values { get; }
+        IDictionary<string, object> Values { get; }
     }
 }

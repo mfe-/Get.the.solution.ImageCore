@@ -1,4 +1,5 @@
-﻿using SixLabors.ImageSharp;
+﻿using Get.the.solution.Image.Manipulation.Contract;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Transforms;
@@ -9,9 +10,14 @@ namespace Get.the.solution.Image.Manipulation
     /// <summary>
     /// https://blogs.msdn.microsoft.com/dotnet/2017/01/19/net-core-image-processing/
     /// </summary>
-    public class ImageService
+    public class ResizeSerivceSix : IResizeService
     {
-        public static MemoryStream Resize(Stream inputStream, int width, int height)
+        protected ILoggerService _loggerService;
+        public ResizeSerivceSix(ILoggerService loggerService)
+        {
+            _loggerService = loggerService;
+        }
+        public MemoryStream Resize(Stream inputStream, int width, int height)
         {
             if (inputStream.Length == inputStream.Position)
             {
@@ -35,4 +41,5 @@ namespace Get.the.solution.Image.Manipulation
             }
         }
     }
+
 }
