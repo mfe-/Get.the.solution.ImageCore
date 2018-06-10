@@ -14,6 +14,9 @@ namespace Get.the.solution.Image.Manipulation.Contract
         Task WriteBytesAsync(ImageFile file, byte[] buffer);
         Task WriteBytesAsync(string folderPath, string suggestedFileName, ImageFile file, byte[] buffer);
         Task<ImageFile> FileToImageFileConverter(object storageFile);
+
+        Task<IList<ImageFile>> GetFilesFromFolderAsync(string folderPath);
+        Task<ImageFile> LoadImageFileAsync(string filepath);
         string GenerateResizedFileName(ImageFile storeage);
     }
 }

@@ -57,6 +57,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     {
                         clicked.PageType = typeof(AboutPageViewModel);
                     }
+                    if(typeof(ImageViewPageViewModel).Equals( clicked.PageType))
+                    {
+                        IsExpanded = false;
+                    }
                     _LoggerService.LogEvent(nameof(NavigateToCommand),
                         new Dictionary<String, String>() { { nameof(clicked.Name), clicked.Name } });
                     _NavigationService.Navigate(clicked.PageType, null);
@@ -89,5 +93,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             get { return _Items; }
             set { SetProperty(ref _Items, value, nameof(Items)); }
         }
+
+
+        private bool _IsExpanded;
+        public bool IsExpanded
+        {
+            get { return _IsExpanded; }
+            set { SetProperty(ref _IsExpanded, value, nameof(IsExpanded)); }
+        }
+
     }
 }
