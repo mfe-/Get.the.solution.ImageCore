@@ -7,11 +7,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.Service
 {
     public abstract class LoggerBaseService : ILoggerService
     {
-        public void LogException(string methodname, Exception e)
+        public virtual void LogException(string methodname, Exception e)
         {
             LogException(methodname, e, null);
         }
-        public void LogException(string methodname, Exception e, IDictionary<string, string> data=null)
+        public virtual void LogException(string methodname, Exception e, IDictionary<string, string> data=null)
         {
             try
             {

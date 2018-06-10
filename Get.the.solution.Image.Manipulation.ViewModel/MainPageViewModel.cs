@@ -12,22 +12,34 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly INavigation _NavigationService;
         protected readonly IResourceService _ResourceLoader;
         protected readonly ILoggerService _LoggerService;
+        protected readonly IApplicationService _applicationService;
 
-        public MainPageViewModel(INavigation navigationService, IResourceService resourceLoader, ILoggerService loggerService)
+        public MainPageViewModel(INavigation navigationService, IResourceService resourceLoader,
+            ILoggerService loggerService, IApplicationService applicationService)
         {
             _ResourceLoader = resourceLoader;
             _NavigationService = navigationService;
             _LoggerService = loggerService;
+            _applicationService = applicationService;
             Items = new List<MenuItem>()
             {
                 //use symbols from namespace Windows.UI.Xaml.Controls.Symbol
                 new MenuItem () { Name = resourceLoader.GetString("AppName"), Icon = "Folder", PageType = typeof(ResizePageViewModel) },
                 new MenuItem () { Name = resourceLoader.GetString("Help") , Icon = "Help", PageType = typeof(HelpPageViewModel) },
-                new MenuItem () { Name = resourceLoader.GetString("Contact"),Icon = "Contact", PageType = typeof(AboutPageViewModel) }
+                new MenuItem () { Name = resourceLoader.GetString("Contact"),Icon = "Contact", PageType = typeof(AboutPageViewModel) },
+                new MenuItem () {Name = "Images", Icon= "Pictures", PageType= typeof(ImageViewPageViewModel)}
             };
             SelectedMenuItem = Items.FirstOrDefault();
             NavigateToCommand = new DelegateCommand<MenuItem>(OnNavigateToCommand);
-            _NavigationService.Navigate(SelectedMenuItem.PageType, null);
+            if (!String.IsNullOrEmpty(applicationService.ActivatedEventArgs))
+            {
+                _NavigationService.Navigate(typeof(ImageViewPageViewModel), applicationService.ActivatedEventArgs);
+            }
+            else
+            {
+                _NavigationService.Navigate(SelectedMenuItem.PageType, null);
+            }
+
         }
 
 
@@ -50,7 +62,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     _NavigationService.Navigate(clicked.PageType, null);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _LoggerService.LogException(nameof(OnNavigateToCommand), e);
             }

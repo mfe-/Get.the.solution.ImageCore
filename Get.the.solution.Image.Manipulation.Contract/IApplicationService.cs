@@ -5,6 +5,8 @@ namespace Get.the.solution.Image.Manipulation.Contract
 {
     public interface IApplicationService
     {
+        void SetActivatedEventArgs(String args);
+        string ActivatedEventArgs { get; }
         string GetDeviceFormFactorType();
         String GetAppVersion();
         String GetLocalCacheFolder();
