@@ -12,7 +12,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         String GetLocalCacheFolder();
         String GetCulture();
         bool CtrlPressed(object param);
-        Task LaunchFileAsync(ImageFile imageFile);
+        Task LaunchFileAsync(ImageFile imageFile, bool openWith = false);
         void Exit();
     }
 }

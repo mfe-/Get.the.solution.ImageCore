@@ -27,7 +27,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 new MenuItem () { Name = resourceLoader.GetString("AppName"), Icon = "Folder", PageType = typeof(ResizePageViewModel) },
                 new MenuItem () { Name = resourceLoader.GetString("Help") , Icon = "Help", PageType = typeof(HelpPageViewModel) },
                 new MenuItem () { Name = resourceLoader.GetString("Contact"),Icon = "Contact", PageType = typeof(AboutPageViewModel) },
-                new MenuItem () {Name = "Images", Icon= "Pictures", PageType= typeof(ImageViewPageViewModel)}
+                //new MenuItem () {Name = "Images", Icon= "Pictures", PageType= typeof(ImageViewPageViewModel)}
             };
             SelectedMenuItem = Items.FirstOrDefault();
             NavigateToCommand = new DelegateCommand<MenuItem>(OnNavigateToCommand);

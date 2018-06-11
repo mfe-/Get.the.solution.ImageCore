@@ -396,6 +396,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     }
                                     //this operation can throw a UnauthorizedAccessException
                                     await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, ImageStoreage, ImageFileStream.ToArray());
+                                    //File = await _imageFileService.LoadImageFileAsync($"{targetStorageFolder}{Path.DirectorySeparatorChar}{SuggestedFileName}");
                                 }
                                 catch (Contract.Exceptions.UnauthorizedAccessException e)
                                 {

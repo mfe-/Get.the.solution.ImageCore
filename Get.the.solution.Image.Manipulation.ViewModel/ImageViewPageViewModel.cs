@@ -38,7 +38,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         }
         public async System.Threading.Tasks.Task LoadImagesAsync()
         {
-            if(SelectedImage!=null)
+            if (SelectedImage != null)
             {
                 ImageFiles = await _imageFileService.GetFilesFromFolderAsync(SelectedImage.Path);
                 ImageFiles = ImageFiles.OrderBy(a => a.Path).ToList();
@@ -80,11 +80,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             SelectedImage = await _imageFileService.LoadImageFileAsync(SelectedImage.Path);
                         }
                     }
-                    else if(_applicationService.CtrlPressed(param))
+                    else if (_applicationService.CtrlPressed(param))
                     {
-                        SelectedImage = (await _imageFileService.PickMultipleFilesAsync())?.FirstOrDefault();
-                        await LoadImagesAsync();
+                        OpenImageCommand.Execute();
                     }
+                    await LoadImagesAsync();
                 }
                 catch (Exception e)
                 {
@@ -92,6 +92,38 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
             }
         }
+
+        private DelegateCommand _OpenWithCommand;
+        public DelegateCommand OpenWithCommand => _OpenWithCommand ?? (_OpenWithCommand = new DelegateCommand(OnOpenWithCommandAsync));
+
+        protected void OnOpenWithCommandAsync()
+        {
+            try
+            {
+                _applicationService.LaunchFileAsync(SelectedImage,true);
+            }
+            catch (Exception e)
+            {
+                _LoggerService?.LogException(nameof(OnOpenWithCommandAsync), e);
+            }
+        }
+
+        private DelegateCommand _OpenImageCommand;
+        public DelegateCommand OpenImageCommand => _OpenImageCommand ?? (_OpenImageCommand = new DelegateCommand(OnOpenImageCommandAsync));
+
+        protected async void OnOpenImageCommandAsync()
+        {
+            try
+            {
+                ImageFiles = (await _imageFileService.PickMultipleFilesAsync()).ToList();
+                SelectedImage = ImageFiles?.FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                _LoggerService.LogException(nameof(OnOpenImageCommandAsync), e);
+            }
+        }
+
         private IList<ImageFile> _ImageFiles;
         public IList<ImageFile> ImageFiles
         {
