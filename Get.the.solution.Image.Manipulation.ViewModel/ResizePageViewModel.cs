@@ -341,7 +341,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         using (MemoryStream ImageFileStream = _resizeService.Resize(ImageStream, Width, Height))
                         {
                             //log image size
-                            _loggerService?.LogEvent(nameof(ResizeSerivceSix.Resize), new Dictionary<String, String>()
+                            _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
                             {
                                 { $"{nameof(ImageFile)}{nameof(Width)}", $"{ImageStoreage?.Width}" },
                                 { $"{nameof(ImageFile)}{nameof(Height)}", $"{ImageStoreage?.Height}" },
@@ -351,7 +351,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             });
 
                             //log action type
-                            _loggerService?.LogEvent(nameof(ResizeSerivceSix.Resize), new Dictionary<String, String>()
+                            _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
                             {
                                 { nameof(ImageAction), $"{action}" }
                             });
@@ -467,7 +467,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 Resizing = false;
             }
             //log image size
-            _loggerService?.LogEvent(nameof(ResizeSerivceSix.Resize), new Dictionary<String, String>()
+            _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
             {
                 { "ResizeFinished","true" }
             });

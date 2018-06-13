@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
+    <AssemblyName>Get.the.solution.Image.ResizeSerivceSix</AssemblyName>
+    <RootNamespace>Get.the.solution.Image.ResizeSerivceSix</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
