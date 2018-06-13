@@ -26,6 +26,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _ResourceLoader = resourceLoader;
                 _applicationService = applicationService;
                 _imageFileService = imageFileService;
+                ImageFiles = new List<ImageFile>();
                 SelectedImage = selectedFiles.FirstOrDefault();
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 LoadImagesAsync();
@@ -55,7 +56,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 try
                 {
                     ImageFile img = ImageFiles?.FirstOrDefault(a => a.Path == SelectedImage.Path);
-                    if (img != null && "left".Equals($"{param}".ToLower()) || "right".Equals($"{param}".ToLower()))
+                    if (img != null && ("left".Equals($"{param}".ToLower()) || "right".Equals($"{param}".ToLower())))
                     {
                         int index = ImageFiles.IndexOf(img);
                         if ("left".Equals($"{param}".ToLower()))
@@ -84,13 +85,30 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     {
                         OpenImageCommand.Execute();
                     }
-                    await LoadImagesAsync();
+                    //await LoadImagesAsync();
                 }
                 catch (Exception e)
                 {
                     _LoggerService.LogException(nameof(OnOnKeyDownCommandAsync), e);
                 }
             }
+        }
+
+
+        private DelegateCommand _NavigateToLeftImageCommand;
+        public DelegateCommand NavigateToLeftImageCommand => _NavigateToLeftImageCommand ?? (_NavigateToLeftImageCommand = new DelegateCommand(OnNavigateToLeftImageAsync));
+
+        protected void OnNavigateToLeftImageAsync()
+        {
+            OnOnKeyDownCommandAsync("left");
+        }
+
+        private DelegateCommand _NavigateToRightImageCommand;
+        public DelegateCommand NavigateToRightImageCommand => _NavigateToRightImageCommand ?? (_NavigateToRightImageCommand = new DelegateCommand(OnNavigateToRightImageAsync));
+
+        protected void OnNavigateToRightImageAsync()
+        {
+            OnOnKeyDownCommandAsync("right");
         }
 
         private DelegateCommand _OpenWithCommand;
@@ -100,12 +118,21 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             try
             {
-                _applicationService.LaunchFileAsync(SelectedImage,true);
+                _applicationService.LaunchFileAsync(SelectedImage, true);
             }
             catch (Exception e)
             {
                 _LoggerService?.LogException(nameof(OnOpenWithCommandAsync), e);
             }
+        }
+
+
+        private DelegateCommand _ResizeCommand;
+        public DelegateCommand ResizeCommand => _ResizeCommand ?? (_ResizeCommand = new DelegateCommand(OnResizeCommandAsync));
+
+        protected async void OnResizeCommandAsync()
+        {
+            await _applicationService.LaunchFileAsync("fileName", SelectedImage);
         }
 
         private DelegateCommand _OpenImageCommand;
