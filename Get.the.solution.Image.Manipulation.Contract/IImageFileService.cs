@@ -17,6 +17,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
 
         Task<IList<ImageFile>> GetFilesFromFolderAsync(string folderPath);
         Task<ImageFile> LoadImageFileAsync(string filepath);
-        string GenerateResizedFileName(ImageFile storeage);
+        string GenerateResizedFileName(ImageFile storeage, int? width, int? height);
     }
 }

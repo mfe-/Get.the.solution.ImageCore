@@ -30,10 +30,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected ImageFile _LastFile;
         protected int RadioOptions;
 
-        public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService, 
+        public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService,
             IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar,
             IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings localSettings,
-            ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles, 
+            ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles,
             INavigation navigationService, IResourceService resourceLoader, TimeSpan sharing)
         {
             try
@@ -336,7 +336,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             Width = (int)ImageStoreage.Width * WidthPercent / 100;
                             Height = (int)ImageStoreage.Height * HeightPercent / 100;
                         }
-                        SuggestedFileName = _imageFileService.GenerateResizedFileName(ImageStoreage);
+                        SuggestedFileName = _imageFileService.GenerateResizedFileName(ImageStoreage, Width, Height);
                         progressBarDialog.CurrentItem = SuggestedFileName;
                         using (MemoryStream ImageFileStream = _resizeService.Resize(ImageStream, Width, Height))
                         {
@@ -756,7 +756,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 try
                 {
-                    bool can = ImageFiles?.Count(a =>a.IsReadOnly) == 0;
+                    bool can = ImageFiles?.Count(a => a.IsReadOnly) == 0;
 
                     if (can == false)
                     {
