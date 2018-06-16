@@ -78,7 +78,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         SelectedImage = ImageFiles.ElementAt(index);
                         if (SelectedImage.Stream == null)
                         {
-                            SelectedImage = await _imageFileService.LoadImageFileAsync(SelectedImage.Path);
+                            SelectedImage.Stream = (await _imageFileService.LoadImageFileAsync(SelectedImage.Path))?.Stream;
                         }
                     }
                     else if (_applicationService.CtrlPressed(param))
