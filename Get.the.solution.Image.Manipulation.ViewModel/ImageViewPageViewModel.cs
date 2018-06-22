@@ -42,6 +42,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             if (SelectedImage != null)
             {
                 ImageFiles = await _imageFileService.GetFilesFromFolderAsync(SelectedImage.Path);
+                ImageFile img = ImageFiles?.FirstOrDefault(a => a.Name.ToLowerInvariant() == SelectedImage.Name.ToLowerInvariant());
+                if(img==null)
+                {
+                    ImageFiles.Add(SelectedImage);
+                }
                 ImageFiles = ImageFiles.OrderBy(a => a.Path).ToList();
             }
         }
@@ -55,7 +60,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 try
                 {
-                    ImageFile img = ImageFiles?.FirstOrDefault(a => a.Path == SelectedImage.Path);
+                    ImageFile img = ImageFiles?.FirstOrDefault(a => a.Name.ToLowerInvariant() == SelectedImage.Name.ToLowerInvariant());
                     if (img != null && ("left".Equals($"{param}".ToLower()) || "right".Equals($"{param}".ToLower())))
                     {
                         int index = ImageFiles.IndexOf(img);

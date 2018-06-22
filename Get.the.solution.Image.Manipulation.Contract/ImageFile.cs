@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
 namespace Get.the.solution.Image.Manipulation.Contract
 {
+    [DebuggerDisplay("Name={Name},Width={Width},Height={Height}")]
     public class ImageFile //: IDisposable
     {
         public ImageFile(string path, Stream stream)
