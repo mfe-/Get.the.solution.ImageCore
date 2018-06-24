@@ -460,6 +460,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             catch (Exception e)
             {
                 _loggerService?.LogException(nameof(ResizeImages), e);
+                _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
+            {
+                { "ResizeFinished","false" }
+            });
             }
             finally
             {
