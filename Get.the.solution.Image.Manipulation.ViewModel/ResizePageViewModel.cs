@@ -441,10 +441,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 ProcessedImageAction?.Invoke(ImageStoreage, $"{SuggestedFileName}");
                             }
                         }
-                        _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
-                        {
-                            { nameof(action), $"{action}" }
-                        });
                     }
                     catch (Exception e)
                     {
@@ -461,9 +457,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 _loggerService?.LogException(nameof(ResizeImages), e);
                 _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
-            {
-                { "ResizeFinished","false" }
-            });
+                {
+                    { "ResizeFinished","false" }
+                });
             }
             finally
             {
