@@ -8,20 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="SixLabors.Core" Version="1.0.0-ci0007" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-dev001631" />
     <PackageReference Include="System.Memory" Version="4.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Get.the.solution.Image.Manipulation.Contract\Get.the.solution.Image.Manipulation.Contract.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="SixLabors.ImageSharp">
-      <HintPath>assemblies\SixLabors.ImageSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="SixLabors.ImageSharp.Drawing">
-      <HintPath>assemblies\SixLabors.ImageSharp.Drawing.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 

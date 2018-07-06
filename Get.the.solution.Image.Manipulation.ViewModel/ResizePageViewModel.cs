@@ -27,7 +27,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly IDragDropService _dragDropService;
         protected readonly ObservableCollection<ImageFile> _SelectedFiles;
         protected readonly bool _Sharing;
-        protected ImageFile _LastFile;
         protected int RadioOptions;
 
         public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService,
@@ -361,7 +360,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 try
                                 {
                                     await _imageFileService.WriteBytesAsync(ImageStoreage, ImageFileStream.ToArray());
-                                    _LastFile = ImageStoreage;
+                                    LastFile = ImageStoreage;
                                 }
                                 catch (Contract.Exceptions.UnauthorizedAccessException e)
                                 {
@@ -380,7 +379,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                         targetStorageFolder = Path.GetDirectoryName(File.Path);
 
                                         await _imageFileService.WriteBytesAsync(File, ImageFileStream.ToArray());
-                                        _LastFile = File;
+                                        LastFile = File;
                                     }
                                 }
                             } //create new ImageStoreage
@@ -418,10 +417,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 {
                                     await _imageFileService.WriteBytesAsync(File, ImageFileStream.ToArray());
 
-                                    _LastFile = File;
+                                    LastFile = File;
                                     if (ImageFiles.Count == 1)
                                     {
-                                        OpenFileCommand.Execute(_LastFile);
+                                        OpenFileCommand.Execute(LastFile);
                                     }
                                 }
                                 else
@@ -437,7 +436,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             {
                                 String TempFolder = _applicationService.GetLocalCacheFolder();
                                 await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, ImageStoreage, ImageFileStream.ToArray());
-                                _LastFile = ImageStoreage;
+                                LastFile = ImageStoreage;
                                 ProcessedImageAction?.Invoke(ImageStoreage, $"{SuggestedFileName}");
                             }
                         }
@@ -616,7 +615,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 else
                 {
-                    if (_LastFile != null)
+                    if (LastFile != null)
                     {
                         //open the resized file on windows mobile
                         if (!"Desktop".Equals(_applicationService.GetDeviceFormFactorType()))
@@ -625,13 +624,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 _ResourceLoader.GetString("ShowLastFile"), _ResourceLoader.GetString("Yes"),
                                 _ResourceLoader.GetString("No")))
                             {
-                                OpenFileCommand.Execute(_LastFile);
+                                OpenFileCommand.Execute(LastFile);
                             }
                         }
                     }
 
                     ImageFiles = new ObservableCollection<ImageFile>();
-                    _LastFile = null;
+                    LastFile = null;
                 }
             }
             catch (Exception e)
@@ -730,7 +729,18 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
             _loggerService?.LogEvent(nameof(OnDropCommand));
         }
-
+        protected ImageFile _LastFile;
+        public ImageFile LastFile
+        {
+            get
+            {
+                return _LastFile;
+            }
+            set
+            {
+                SetProperty(ref _LastFile, value, nameof(LastFile));
+            }
+        }
 
         public DelegateCommand<ImageFile> DeleteFileCommand { get; set; }
 
