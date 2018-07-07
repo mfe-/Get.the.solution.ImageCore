@@ -33,6 +33,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 SetProperty(ref _EnableImageViewer, value, nameof(EnableImageViewer));
                 _localSettings.Values[nameof(EnableImageViewer)] = _EnableImageViewer;
+                _LoggerService?.LogEvent(nameof(EnableImageViewer), $"{EnableImageViewer}");
             }
         }
     }
