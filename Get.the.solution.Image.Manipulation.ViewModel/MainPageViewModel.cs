@@ -13,25 +13,30 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly IResourceService _ResourceLoader;
         protected readonly ILoggerService _LoggerService;
         protected readonly IApplicationService _applicationService;
+        protected readonly ILocalSettings _localSettings;
 
         public MainPageViewModel(INavigation navigationService, IResourceService resourceLoader,
-            ILoggerService loggerService, IApplicationService applicationService)
+            ILoggerService loggerService, IApplicationService applicationService, ILocalSettings localSettings)
         {
             _ResourceLoader = resourceLoader;
             _NavigationService = navigationService;
             _LoggerService = loggerService;
             _applicationService = applicationService;
+            _localSettings = localSettings;
             Items = new List<MenuItem>()
             {
                 //use symbols from namespace Windows.UI.Xaml.Controls.Symbol
                 new MenuItem () { Name = resourceLoader.GetString("AppName"), Icon = "Folder", PageType = typeof(ResizePageViewModel) },
                 new MenuItem () { Name = resourceLoader.GetString("Help") , Icon = "Help", PageType = typeof(HelpPageViewModel) },
                 new MenuItem () { Name = resourceLoader.GetString("Contact"),Icon = "Contact", PageType = typeof(AboutPageViewModel) },
+                new MenuItem () { Name = resourceLoader.GetString("Setting"),Icon = "Setting", PageType = typeof(SettingsPageViewModel) },
+
                 //new MenuItem () {Name = "Images", Icon= "Pictures", PageType= typeof(ImageViewPageViewModel)}
             };
             SelectedMenuItem = Items.FirstOrDefault();
             NavigateToCommand = new DelegateCommand<MenuItem>(OnNavigateToCommand);
-            if (!String.IsNullOrEmpty(applicationService.ActivatedEventArgs))
+            bool EnableImageViewer = _localSettings.Values[nameof(EnableImageViewer)] == null ? false : Boolean.Parse(_localSettings.Values[nameof(EnableImageViewer)].ToString());
+            if (EnableImageViewer & !String.IsNullOrEmpty(applicationService.ActivatedEventArgs))
             {
                 _NavigationService.Navigate(typeof(ImageViewPageViewModel), applicationService.ActivatedEventArgs);
             }
