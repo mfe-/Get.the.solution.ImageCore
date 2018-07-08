@@ -2,6 +2,8 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Processors.Transforms;
+using SixLabors.Primitives;
 using System.IO;
 
 namespace Get.the.solution.Image.Manipulation
@@ -18,6 +20,18 @@ namespace Get.the.solution.Image.Manipulation
         }
         public MemoryStream Resize(Stream inputStream, int width, int height)
         {
+            //int usedWidth = 0;
+            //int usedHeight = 0;
+            //if (height < width)
+            //{
+            //    usedWidth = height;
+            //    usedHeight = width;
+            //}
+            //else
+            //{
+            //    usedHeight = width;
+            //    usedWidth = height;
+            //}
             if (inputStream.Length == inputStream.Position)
             {
                 inputStream.Position = 0;
@@ -27,7 +41,7 @@ namespace Get.the.solution.Image.Manipulation
                 var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
 
                 var output = new MemoryStream();
-                image.Mutate(x => x.Resize(width, height));
+                image.Mutate((x) => x.AutoOrient().Resize(width, height));
                 if (format == null)
                 {
                     image.SaveAsJpeg(output);

@@ -333,6 +333,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     try
                     {
+                        SelectedFile = currentImage;
                         Stream ImageStream = currentImage.Stream;
                         if (SizePercentChecked == true)
                         {
