@@ -117,10 +117,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             try
             {
-                if ((SingleFile == true && KeepAspectRatio == true) &&
-                    (nameof(Width).Equals(e.PropertyName) || nameof(Height).Equals(e.PropertyName)))
+                PropertyChanged -= ResizePageViewModel_PropertyChanged;
+                if (KeepAspectRatio == true && (nameof(Width).Equals(e.PropertyName) || nameof(Height).Equals(e.PropertyName)))
                 {
-                    PropertyChanged -= ResizePageViewModel_PropertyChanged;
                     if (SelectedFile == null && ImageFiles.Count > 0)
                     {
                         SelectedFile = ImageFiles.First() as ImageFile;
@@ -134,12 +133,17 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     {
                         Width = (int)(Height * R);
                     }
-                    PropertyChanged += ResizePageViewModel_PropertyChanged;
+                    
                 }
             }
             catch (Exception ex)
             {
                 _loggerService?.LogException(nameof(ResizePageViewModel), ex);
+            }
+            finally
+            {
+                PropertyChanged -= ResizePageViewModel_PropertyChanged;
+                PropertyChanged += ResizePageViewModel_PropertyChanged;
             }
         }
 
@@ -325,25 +329,25 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
                 String SuggestedFileName = String.Empty;
                 String targetStorageFolder = String.Empty;
-                foreach (ImageFile ImageStoreage in ImageFiles)
+                foreach (ImageFile currentImage in ImageFiles)
                 {
                     try
                     {
-                        Stream ImageStream = ImageStoreage.Stream;
+                        Stream ImageStream = currentImage.Stream;
                         if (SizePercentChecked == true)
                         {
-                            Width = (int)ImageStoreage.Width * WidthPercent / 100;
-                            Height = (int)ImageStoreage.Height * HeightPercent / 100;
+                            Width = currentImage.Width * WidthPercent / 100;
+                            Height = currentImage.Height * HeightPercent / 100;
                         }
-                        SuggestedFileName = _imageFileService.GenerateResizedFileName(ImageStoreage, Width, Height);
+                        SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, Width, Height);
                         progressBarDialog.CurrentItem = SuggestedFileName;
                         using (MemoryStream ImageFileStream = _resizeService.Resize(ImageStream, Width, Height))
                         {
                             //log image size
                             _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
                             {
-                                { $"{nameof(ImageFile)}{nameof(Width)}", $"{ImageStoreage?.Width}" },
-                                { $"{nameof(ImageFile)}{nameof(Height)}", $"{ImageStoreage?.Height}" },
+                                { $"{nameof(ImageFile)}{nameof(Width)}", $"{currentImage?.Width}" },
+                                { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
                                 { nameof(Width), $"{Width}" },
                                 { nameof(Height), $"{Height}" },
                                 //{ nameof(Storeage.Path), $"{Path.GetDirectoryName(Storeage.Path)}" }
@@ -359,8 +363,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             {
                                 try
                                 {
-                                    await _imageFileService.WriteBytesAsync(ImageStoreage, ImageFileStream.ToArray());
-                                    LastFile = ImageStoreage;
+                                    await _imageFileService.WriteBytesAsync(currentImage, ImageFileStream.ToArray());
+                                    LastFile = currentImage;
                                 }
                                 catch (Contract.Exceptions.UnauthorizedAccessException e)
                                 {
@@ -372,7 +376,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     //we can't override the current file try for the next files saveAs
                                     action = ImageAction.SaveAs;
                                     await ShowPermissionDeniedDialog();
-                                    var File = await _imageFileService.PickSaveFileAsync(ImageStoreage.Path, SuggestedFileName);
+                                    var File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
                                     if (null != File)
                                     {
                                         //try to apply the new storagefolder (if the user selected a new location)
@@ -391,10 +395,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     if (String.IsNullOrEmpty(targetStorageFolder))
                                     {
                                         //get default path
-                                        targetStorageFolder = Path.GetDirectoryName(ImageStoreage.Path);
+                                        targetStorageFolder = Path.GetDirectoryName(currentImage.Path);
                                     }
                                     //this operation can throw a UnauthorizedAccessException
-                                    await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, ImageStoreage, ImageFileStream.ToArray());
+                                    await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
                                     //File = await _imageFileService.LoadImageFileAsync($"{targetStorageFolder}{Path.DirectorySeparatorChar}{SuggestedFileName}");
                                 }
                                 catch (Contract.Exceptions.UnauthorizedAccessException e)
@@ -406,7 +410,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     });
                                     await ShowPermissionDeniedDialog();
                                     //tell the user to save the file in an other location
-                                    File = await _imageFileService.PickSaveFileAsync(ImageStoreage.Path, SuggestedFileName);
+                                    File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
                                     //try to apply the new storagefolder (if the user selected a new location)
                                     if (File != null && Path.GetDirectoryName(targetStorageFolder) != Path.GetDirectoryName(File.Path))
                                     {
@@ -427,7 +431,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 {
                                     _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                         {
-                                            { nameof(ImageStoreage.Path), $"{ImageStoreage.Path}" }
+                                            { nameof(currentImage.Path), $"{currentImage.Path}" }
                                         });
                                 }
 
@@ -435,9 +439,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             else if (action.Equals(ImageAction.Process))
                             {
                                 String TempFolder = _applicationService.GetLocalCacheFolder();
-                                await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, ImageStoreage, ImageFileStream.ToArray());
-                                LastFile = ImageStoreage;
-                                ProcessedImageAction?.Invoke(ImageStoreage, $"{SuggestedFileName}");
+                                await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
+                                LastFile = currentImage;
+                                ProcessedImageAction?.Invoke(currentImage, $"{SuggestedFileName}");
                             }
                         }
                     }
