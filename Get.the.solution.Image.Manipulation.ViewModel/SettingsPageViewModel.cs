@@ -16,7 +16,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _LoggerService = loggerService;
                 //_applicationService = applicationService;
                 _localSettings = localSettings;
-                EnableImageViewer = _localSettings.Values[nameof(EnableImageViewer)] == null ? false : Boolean.Parse(_localSettings.Values[nameof(EnableImageViewer)].ToString());
+                
                 _LoggerService?.LogEvent(nameof(SettingsPageViewModel));
             }
             catch (Exception e)
@@ -24,17 +24,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _LoggerService?.LogException(nameof(AboutPageViewModel), e);
             }
         }
-
-        protected bool _EnableImageViewer;
-        public bool EnableImageViewer
-        {
-            get { return _EnableImageViewer; }
-            set
-            {
-                SetProperty(ref _EnableImageViewer, value, nameof(EnableImageViewer));
-                _localSettings.Values[nameof(EnableImageViewer)] = _EnableImageViewer;
-                _LoggerService?.LogEvent(nameof(EnableImageViewer), $"{EnableImageViewer}");
-            }
-        }
+        public ILocalSettings LocalSettings => _localSettings;
     }
 }

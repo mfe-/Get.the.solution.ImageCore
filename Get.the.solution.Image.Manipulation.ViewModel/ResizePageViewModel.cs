@@ -372,7 +372,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     //log the UnauthorizedAccessException
                                     _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                     {
-                                        { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{e}" },
+                                        { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
                                     });
                                     //we can't override the current file try for the next files saveAs
                                     action = ImageAction.SaveAs;
@@ -400,6 +400,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     }
                                     //this operation can throw a UnauthorizedAccessException
                                     await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
+                                    //if(SingleFile && _LocalSettings.EnabledOpenSingleFileAfterResize)
+                                    //{
+                                    //    ImageFile imageFile =  await _imageFileService.LoadImageFileAsync(Path.Combine(targetStorageFolder, SuggestedFileName));
+                                    //    _applicationService.LaunchFileAsync(imageFile);
+                                    //}
                                     //File = await _imageFileService.LoadImageFileAsync($"{targetStorageFolder}{Path.DirectorySeparatorChar}{SuggestedFileName}");
                                 }
                                 catch (Contract.Exceptions.UnauthorizedAccessException e)
@@ -407,7 +412,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     //log the UnauthorizedAccessException
                                     _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                     {
-                                        { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{e}" },
+                                        { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
                                     });
                                     await ShowPermissionDeniedDialog();
                                     //tell the user to save the file in an other location

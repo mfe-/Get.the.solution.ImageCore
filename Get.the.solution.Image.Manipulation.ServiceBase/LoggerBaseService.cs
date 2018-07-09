@@ -1,9 +1,8 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Get.the.solution.Image.Manipulation.ViewModel.Service
+namespace Get.the.solution.Image.Manipulation.ServiceBase
 {
     public abstract class LoggerBaseService : ILoggerService
     {
