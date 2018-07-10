@@ -133,7 +133,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     {
                         Width = (int)(Height * R);
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -448,6 +448,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
                                 LastFile = currentImage;
                                 ProcessedImageAction?.Invoke(currentImage, $"{SuggestedFileName}");
+                            }
+                            //open resized image depending whether only one image is resized and the user enabled this option
+                            if (SingleFile && LastFile != null && action != ImageAction.Process &&
+                                _LocalSettings.EnabledOpenSingleFileAfterResize)
+                            {
+                                await _applicationService.LaunchFileAsync(LastFile);
                             }
                         }
                     }
