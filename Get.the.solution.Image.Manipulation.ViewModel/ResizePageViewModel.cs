@@ -396,10 +396,16 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     if (String.IsNullOrEmpty(targetStorageFolder))
                                     {
                                         //get default path
-                                        targetStorageFolder = Path.GetDirectoryName(currentImage.Path);
+                                        File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
+                                        targetStorageFolder = Path.GetDirectoryName(File.Path);
+                                        await _imageFileService.WriteBytesAsync(File, ImageFileStream.ToArray());
+                                        LastFile = File;
+                                    }
+                                    else
+                                    {
+                                        await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
                                     }
                                     //this operation can throw a UnauthorizedAccessException
-                                    await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
                                     //if(SingleFile && _LocalSettings.EnabledOpenSingleFileAfterResize)
                                     //{
                                     //    ImageFile imageFile =  await _imageFileService.LoadImageFileAsync(Path.Combine(targetStorageFolder, SuggestedFileName));
