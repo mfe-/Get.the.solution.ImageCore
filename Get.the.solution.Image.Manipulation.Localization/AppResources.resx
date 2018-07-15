@@ -132,6 +132,9 @@
   <data name="Description" xml:space="preserve">
     <value>Easy Resize Images Resize Image by starting the app. Select the image you want to resize. Or Right click on image file, select open with Image Resizer. Support for .jpg, .png, .gif, .bmp You also can send the resized image via email, by sharing the image.</value>
   </data>
+  <data name="DisableImageViewer" xml:space="preserve">
+    <value>Enable ImageViewer. If "resize image" is your default app for images, it will open pictures with an image viewer instead of the resize dialog.</value>
+  </data>
   <data name="ExceptionOnResize" xml:space="preserve">
     <value>We are sorry but something unexpected happend :(. We added the error to the Clipboard (Get it with CTR+V) Please send us the error exception. Exception: {0}</value>
   </data>
@@ -182,6 +185,12 @@
   </data>
   <data name="SelectSize" xml:space="preserve">
     <value>Select a size:</value>
+  </data>
+  <data name="Setting" xml:space="preserve">
+    <value>Setting</value>
+  </data>
+  <data name="SettingOpenSingleFilesAfterResize" xml:space="preserve">
+    <value>Open the resized image after it was processed</value>
   </data>
   <data name="Share" xml:space="preserve">
     <value>Share (e.g for Email)</value>

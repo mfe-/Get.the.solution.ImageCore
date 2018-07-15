@@ -107,6 +107,15 @@ namespace Get.the.solution.Image.Manipulation.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable ImageViewer. If &quot;resize image&quot; is your default app for images, it will open pictures with an image viewer instead of the resize dialog..
+        /// </summary>
+        public static string DisableImageViewer {
+            get {
+                return ResourceManager.GetString("DisableImageViewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to We are sorry but something unexpected happend :(. We added the error to the Clipboard (Get it with CTR+V) Please send us the error exception. Exception: {0}.
         /// </summary>
         public static string ExceptionOnResize {
@@ -256,6 +265,24 @@ namespace Get.the.solution.Image.Manipulation.Localization {
         public static string SelectSize {
             get {
                 return ResourceManager.GetString("SelectSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Setting.
+        /// </summary>
+        public static string Setting {
+            get {
+                return ResourceManager.GetString("Setting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open the resized image after it was processed.
+        /// </summary>
+        public static string SettingOpenSingleFilesAfterResize {
+            get {
+                return ResourceManager.GetString("SettingOpenSingleFilesAfterResize", resourceCulture);
             }
         }
         
