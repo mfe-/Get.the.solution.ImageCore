@@ -62,6 +62,15 @@ namespace Get.the.solution.Image.Manipulation.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image Resizer.
         /// </summary>
         public static string AppName {
@@ -121,6 +130,15 @@ namespace Get.the.solution.Image.Manipulation.Localization {
         public static string ExceptionOnResize {
             get {
                 return ResourceManager.GetString("ExceptionOnResize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
             }
         }
         

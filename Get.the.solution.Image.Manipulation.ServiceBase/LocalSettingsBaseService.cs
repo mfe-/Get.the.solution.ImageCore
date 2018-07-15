@@ -37,6 +37,13 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
                 _loggerService?.LogEvent(nameof(EnabledOpenSingleFileAfterResize), $"{EnabledOpenSingleFileAfterResize}");
             }
         }
+
+        protected bool _EnableAddImageToGallery;
+        public bool EnableAddImageToGallery
+        {
+            get { return _EnableAddImageToGallery; }
+            set { SetProperty(ref _EnableAddImageToGallery, value, nameof(EnableAddImageToGallery)); }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
