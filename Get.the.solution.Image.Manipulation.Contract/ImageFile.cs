@@ -7,7 +7,7 @@ using System.Text;
 namespace Get.the.solution.Image.Manipulation.Contract
 {
     [DebuggerDisplay("Name={Name},Width={Width},Height={Height}")]
-    public class ImageFile //: IDisposable
+    public class ImageFile : IDisposable
     {
         public ImageFile(string path, Stream stream)
         {
@@ -51,5 +51,10 @@ namespace Get.the.solution.Image.Manipulation.Contract
         public object Tag { get; set; }
 
         public bool IsReadOnly { get; set; }
+
+        public void Dispose()
+        {
+            Stream?.Dispose();
+        }
     }
 }

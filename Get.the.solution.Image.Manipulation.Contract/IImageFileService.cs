@@ -12,7 +12,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync();
         Task<ImageFile> PickSaveFileAsync(String preferredSaveLocation, String SuggestedFileName);
         Task WriteBytesAsync(ImageFile file, byte[] buffer);
-        Task WriteBytesAsync(string folderPath, string suggestedFileName, ImageFile file, byte[] buffer);
+        Task<ImageFile> WriteBytesAsync(string folderPath, string suggestedFileName, ImageFile file, byte[] buffer);
         Task<ImageFile> FileToImageFileConverter(object storageFile);
 
         Task<IList<ImageFile>> GetFilesFromFolderAsync(string folderPath);

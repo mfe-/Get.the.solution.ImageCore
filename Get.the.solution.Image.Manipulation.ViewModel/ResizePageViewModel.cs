@@ -451,9 +451,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             else if (action.Equals(ImageAction.Process))
                             {
                                 String TempFolder = _applicationService.GetLocalCacheFolder();
-                                await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
-                                LastFile = currentImage;
-                                ProcessedImageAction?.Invoke(currentImage, $"{SuggestedFileName}");
+                                ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
+                                ProcessedImageAction?.Invoke(temp, $"{SuggestedFileName}");
                             }
                             //open resized image depending whether only one image is resized and the user enabled this option
                             if (SingleFile && LastFile != null && action != ImageAction.Process &&
@@ -468,6 +467,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e);
                         Resizing = false;
                         String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), $"{e.Message} {e.InnerException}");
+                        await _pageDialogService.ShowAsync(message);
                         return false;
                     }
                     progressBarDialog.ProcessedItems++;
@@ -485,6 +485,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             finally
             {
                 progressBarDialog.Stop();
+                progressBarDialog = null;
                 Resizing = false;
             }
             //log image size
@@ -549,8 +550,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             try
             {
+                SharingProcess = true;
                 _loggerService?.LogEvent(nameof(OnShareCommand));
-                await _shareService.StartShareAsync(ImageFiles, async (action) => await ResizeImages(ImageAction.Process, action), CancelCommand.Execute);
+                await _shareService.StartShareAsync(ImageFiles, async (action) => await ResizeImages(ImageAction.Process, action), OnCancelCommand);
             }
             catch (Exception e)
             {
@@ -560,6 +562,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 SharingProcess = false;
             }
+            SharingProcess = false;
         }
         #endregion 
 
@@ -627,30 +630,17 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         #region CancelCommand
         public DelegateCommand CancelCommand { get; set; }
 
-        protected async void OnCancelCommand()
+        protected void OnCancelCommand()
         {
             try
             {
+                SharingProcess = false;
                 if ((ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
                 {
                     _applicationService.Exit();
                 }
                 else
                 {
-                    if (LastFile != null)
-                    {
-                        //open the resized file on windows mobile
-                        if (!"Desktop".Equals(_applicationService.GetDeviceFormFactorType()))
-                        {
-                            if (await _pageDialogService.ShowConfirmationAsync(
-                                _ResourceLoader.GetString("ShowLastFile"), _ResourceLoader.GetString("Yes"),
-                                _ResourceLoader.GetString("No")))
-                            {
-                                OpenFileCommand.Execute(LastFile);
-                            }
-                        }
-                    }
-
                     ImageFiles = new ObservableCollection<ImageFile>();
                     LastFile = null;
                 }
@@ -814,17 +804,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 //    KeepAspectRatio = false;
                 //}
                 return single;
-            }
-        }
-
-        /// <summary>
-        /// Returns a flag which indicates whether the app is used as share target
-        /// </summary>
-        public bool Sharing
-        {
-            get
-            {
-                return _Sharing;
             }
         }
 
