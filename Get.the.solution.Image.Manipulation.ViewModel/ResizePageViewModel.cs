@@ -227,6 +227,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 if (SizeSmallChecked == true)
                 {
                     _LocalSettings.Values[nameof(RadioOptions)] = 1;
+                    SizeMediumChecked = false;
+                    SizeCustomChecked = false;
+                    SizePercentChecked = false;
                 }
 
             }
@@ -247,6 +250,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 if (SizeMediumChecked == true)
                 {
                     _LocalSettings.Values[nameof(RadioOptions)] = 2;
+                    SizeSmallChecked = false;
+                    SizeCustomChecked = false;
+                    SizePercentChecked = false;
                 }
             }
         }
@@ -262,6 +268,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 if (SizeCustomChecked == true)
                 {
                     _LocalSettings.Values[nameof(RadioOptions)] = 3;
+                    SizeSmallChecked = false;
+                    SizeMediumChecked = false;
+                    SizePercentChecked = false;
                 }
             }
         }
@@ -279,6 +288,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 if (SizePercentChecked == true)
                 {
                     _LocalSettings.Values[nameof(RadioOptions)] = 4;
+                    SizeSmallChecked = false;
+                    SizeMediumChecked = false;
+                    SizeCustomChecked = false;
+
                 }
             }
         }
