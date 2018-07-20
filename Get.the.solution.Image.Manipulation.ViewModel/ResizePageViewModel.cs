@@ -444,8 +444,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 }
                                 if (null != File)
                                 {
-                                    await _imageFileService.WriteBytesAsync(File, ImageFileStream.ToArray());
-
                                     LastFile = File;
                                     if (ImageFiles.Count == 1)
                                     {
@@ -494,6 +492,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     { "ResizeFinished","false" }
                 });
+                return false;
             }
             finally
             {
