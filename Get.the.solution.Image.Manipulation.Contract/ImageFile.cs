@@ -9,6 +9,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
     [DebuggerDisplay("Name={Name},Width={Width},Height={Height}")]
     public class ImageFile : IDisposable
     {
+        protected Func<ImageFile, Stream> _openStreamFunction;
         public ImageFile(string path, Stream stream)
         {
             Path = path;
@@ -23,6 +24,12 @@ namespace Get.the.solution.Image.Manipulation.Contract
             this(path, stream, width, height)
         {
             FileInfo = fileInfo;
+        }
+        public ImageFile(string path, int width, int height, FileInfo fileInfo, Func<ImageFile, Stream> funcStreamCallBack) :
+            this(path, null, width, height)
+        {
+            FileInfo = fileInfo;
+            _openStreamFunction = funcStreamCallBack;
         }
 
         private String _Name;
@@ -40,7 +47,20 @@ namespace Get.the.solution.Image.Manipulation.Contract
         //     The full path of the item, if the item has a path in the user's file-system.
         public string Path { get; set; }
 
-        public Stream Stream { get; set; }
+
+        private Stream _Stream;
+        public Stream Stream
+        {
+            get
+            {
+                if (_Stream == null)
+                {
+                    Stream = _openStreamFunction(this);
+                }
+                return _Stream;
+            }
+            set { _Stream = value; }
+        }
 
         public int Width { get; set; }
 
