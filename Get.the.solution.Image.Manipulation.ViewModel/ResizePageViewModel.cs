@@ -653,7 +653,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 else
                 {
-                    ImageFiles = new ObservableCollection<ImageFile>();
+                    foreach (var imagefile in ImageFiles)
+                    {
+                        imagefile?.Stream?.Dispose();
+                        imagefile.Stream = null;
+                    }
+                    ImageFiles.Clear();
+                    LastFile?.Stream?.Dispose();
                     LastFile = null;
                 }
             }
