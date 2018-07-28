@@ -347,7 +347,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     try
                     {
                         SelectedFile = currentImage;
-                        Stream ImageStream = currentImage.Stream;
                         if (SizePercentChecked == true)
                         {
                             Width = currentImage.Width * WidthPercent / 100;
@@ -355,7 +354,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         }
                         SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, Width, Height);
                         progressBarDialog.CurrentItem = SuggestedFileName;
-                        using (MemoryStream ImageFileStream = _resizeService.Resize(ImageStream, Width, Height))
+                        using (MemoryStream ImageFileStream = _resizeService.Resize(currentImage.Stream, Width, Height))
                         {
                             //log image size
                             _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
@@ -364,7 +363,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
                                 { nameof(Width), $"{Width}" },
                                 { nameof(Height), $"{Height}" },
-                                //{ nameof(Storeage.Path), $"{Path.GetDirectoryName(Storeage.Path)}" }
+                                { nameof(ImageFile.Path), $"{Path.GetDirectoryName(currentImage.Path)}" }
                             });
 
                             //log action type
@@ -472,6 +471,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 await _applicationService.LaunchFileAsync(LastFile);
                             }
                         }
+
+                        currentImage.Stream.Dispose();
                     }
                     catch (Exception e)
                     {
