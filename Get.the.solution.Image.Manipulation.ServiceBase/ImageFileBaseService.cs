@@ -12,6 +12,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
         {
             _loggerService = loggerService;
         }
+        public IList<string> FileTypeFilter { get; set; } = new List<String>() { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
         public string GenerateResizedFileName(ImageFile storeage, int? width, int? height)
         {
             try
