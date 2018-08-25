@@ -199,6 +199,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 ImageFiles = new ObservableCollection<ImageFile>(files);
                 _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count}" } });
             }
+            catch (Contract.Exceptions.PermissionDeniedException e)
+            {
+                _loggerService?.LogException(nameof(ResizeImages), e);
+                await _pageDialogService.ShowAsync(nameof(Contract.Exceptions.PermissionDeniedException));
+            }
             catch (Exception e)
             {
                 _loggerService?.LogException(nameof(OpenFilePicker), e);
@@ -486,6 +491,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 Resizing = false;
             }
+            catch (Contract.Exceptions.PermissionDeniedException e)
+            {
+                throw e;
+            }
             catch (Exception e)
             {
                 _loggerService?.LogException(nameof(ResizeImages), e);
@@ -537,7 +546,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _loggerService?.LogEvent(nameof(OnOkCommand));
                 ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
                 bool Result = await ResizeImages(Action);
-                CancelCommand.Execute();
+                if(ImageFiles?.Count != 0)
+                {
+                    CancelCommand?.Execute();
+                }
+
             }
             catch (Exception e)
             {
