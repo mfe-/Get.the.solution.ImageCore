@@ -477,7 +477,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             }
                         }
 
-                        currentImage.Stream.Dispose();
+                        currentImage?.Stream?.Dispose();
                     }
                     catch (Exception e)
                     {
