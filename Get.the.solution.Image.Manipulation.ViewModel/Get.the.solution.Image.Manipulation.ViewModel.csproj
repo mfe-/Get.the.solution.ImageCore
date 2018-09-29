@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Prism.Core" Version="7.0.0.30-ci" />
+    <PackageReference Include="Prism.Core" Version="7.1.0.345-ci" />
   </ItemGroup>
 
   <ItemGroup>
