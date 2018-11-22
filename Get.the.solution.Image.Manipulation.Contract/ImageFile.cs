@@ -66,6 +66,10 @@ namespace Get.the.solution.Image.Manipulation.Contract
 
         public int Height { get; set; }
 
+        public int NewWidth { get; set; }
+
+        public int NewHeight { get; set; }
+
         public FileInfo FileInfo { get; set; }
 
         public object Tag { get; set; }

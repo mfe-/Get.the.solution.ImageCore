@@ -363,15 +363,17 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         }
                         SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, Width, Height);
                         progressBarDialog.CurrentItem = SuggestedFileName;
-                        using (MemoryStream ImageFileStream = _resizeService.Resize(currentImage.Stream, Width, Height))
+                        using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, Width, Height))
                         {
+                            currentImage.NewHeight = Height;
+                            currentImage.NewWidth = Width;
                             //log image size
                             _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
                             {
                                 { $"{nameof(ImageFile)}{nameof(Width)}", $"{currentImage?.Width}" },
                                 { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
-                                { nameof(Width), $"{Width}" },
-                                { nameof(Height), $"{Height}" },
+                                { nameof(Width), $"{currentImage.NewHeight }" },
+                                { nameof(Height), $"{currentImage.NewHeight}" },
                                 { nameof(ImageFile.Path), $"{Path.GetDirectoryName(currentImage.Path)}" }
                             });
 
@@ -385,7 +387,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             {
                                 try
                                 {
-                                    await _imageFileService.WriteBytesAsync(currentImage, ImageFileStream.ToArray());
+                                    await _imageFileService.WriteBytesAsync(currentImage, resizedImageFileStream.ToArray());
                                     LastFile = currentImage;
                                 }
                                 catch (Contract.Exceptions.UnauthorizedAccessException e)
@@ -404,7 +406,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                         //try to apply the new storagefolder (if the user selected a new location)
                                         targetStorageFolder = Path.GetDirectoryName(File.Path);
 
-                                        await _imageFileService.WriteBytesAsync(File, ImageFileStream.ToArray());
+                                        await _imageFileService.WriteBytesAsync(File, resizedImageFileStream.ToArray());
                                         LastFile = File;
                                     }
                                 }
@@ -419,12 +421,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                         //get default path
                                         File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
                                         targetStorageFolder = Path.GetDirectoryName(File.Path);
-                                        await _imageFileService.WriteBytesAsync(File, ImageFileStream.ToArray());
+                                        await _imageFileService.WriteBytesAsync(File, resizedImageFileStream.ToArray());
                                         LastFile = File;
                                     }
                                     else
                                     {
-                                        await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
+                                        await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
                                     }
                                     //this operation can throw a UnauthorizedAccessException
                                     //if(SingleFile && _LocalSettings.EnabledOpenSingleFileAfterResize)
@@ -470,7 +472,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             else if (action.Equals(ImageAction.Process))
                             {
                                 String TempFolder = _applicationService.GetLocalCacheFolder();
-                                ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, ImageFileStream.ToArray());
+                                ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
                                 ProcessedImageAction?.Invoke(temp, $"{SuggestedFileName}");
                             }
                             //open resized image depending whether only one image is resized and the user enabled this option
