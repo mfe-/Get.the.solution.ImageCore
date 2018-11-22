@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using Get.the.solution.Image.Manipulation.Contract;
+using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Get.the.solution.Image.Manipulation.Contract;
 
 namespace Get.the.solution.Image.Manipulation.ViewModel
 {
@@ -102,6 +102,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 SizePercentChecked = true;
             }
+            _loggerService?.LogEvent(nameof(LoadSettings), new Dictionary<string, string>()
+            {
+                { nameof(RadioOptions),$"{RadioOptions}"}
+            });
 
             OverwriteFiles = _LocalSettings.Values[nameof(OverwriteFiles)] == null ? false : Boolean.Parse(_LocalSettings.Values[nameof(OverwriteFiles)].ToString());
             Width = _LocalSettings.Values[nameof(Width)] == null ? 1024 : Int32.Parse(_LocalSettings.Values[nameof(Width)].ToString());
@@ -546,7 +550,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _loggerService?.LogEvent(nameof(OnOkCommand));
                 ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
                 bool Result = await ResizeImages(Action);
-                if(ImageFiles?.Count != 0)
+                if (ImageFiles?.Count != 0)
                 {
                     CancelCommand?.Execute();
                 }
