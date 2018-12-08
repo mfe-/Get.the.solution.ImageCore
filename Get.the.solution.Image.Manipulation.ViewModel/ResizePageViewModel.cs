@@ -50,15 +50,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _loggerService = loggerService;
                 _imageFileService = imageFileService;
                 ImageFiles = new ObservableCollection<ImageFile>();
-                OpenFilePickerCommand = new DelegateCommand(OnOpenFilePickerCommand);
-                OkCommand = new DelegateCommand(OnOkCommand);
-                CancelCommand = new DelegateCommand(OnCancelCommand);
-                OpenFileCommand = new DelegateCommand<ImageFile>(OnOpenFileCommand);
-                DragOverCommand = new DelegateCommand<object>(OnDragOverCommand);
-                DropCommand = new DelegateCommand<object>(OnDropCommand);
-                ShareCommand = new DelegateCommand(OnShareCommand);
-                DeleteFileCommand = new DelegateCommand<ImageFile>(OnDeleteFile);
-
                 if (TimeSpan.MaxValue.Equals(sharing))
                 {
                     _Sharing = true;
@@ -74,6 +65,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 //get settings
                 LoadSettings();
+                //update preview
+                ApplyPreviewDimensions();
                 PropertyChanged += ResizePageViewModel_PropertyChanged;
                 _loggerService?.LogEvent(nameof(ResizePageViewModel));
             }
@@ -82,6 +75,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _loggerService?.LogException(nameof(ResizePageViewModel), e);
             }
         }
+        /// <summary>
+        /// Apply settings to viewmodel
+        /// </summary>
         public void LoadSettings()
         {
             RadioOptions = _LocalSettings.Values[nameof(RadioOptions)] == null ? 1 : Int32.Parse(_LocalSettings.Values[nameof(RadioOptions)].ToString());
@@ -122,22 +118,36 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             try
             {
                 PropertyChanged -= ResizePageViewModel_PropertyChanged;
-                if (KeepAspectRatio == true && (nameof(Width).Equals(e.PropertyName) || nameof(Height).Equals(e.PropertyName)))
+                if (KeepAspectRatio == true &&
+                    (nameof(Width).Equals(e.PropertyName) || nameof(Height).Equals(e.PropertyName)))
                 {
                     if (SelectedFile == null && ImageFiles.Count > 0)
                     {
-                        SelectedFile = ImageFiles.First() as ImageFile;
+                        SelectedFile = ImageFiles?.First() as ImageFile;
                     }
-                    float R = (float)SelectedFile.Width / (float)SelectedFile.Height;
-                    if (SelectedFile != null && nameof(Width).Equals(e.PropertyName))
+                    if (SelectedFile != null)
                     {
-                        Height = (int)(Width / R);
+                        float R = (float)SelectedFile.Width / (float)SelectedFile.Height;
+                        if (SelectedFile != null && nameof(Width).Equals(e.PropertyName))
+                        {
+                            Height = (int)(Width / R);
+                        }
+                        else if (SelectedFile != null && nameof(Height).Equals(e.PropertyName))
+                        {
+                            Width = (int)(Height * R);
+                        }
                     }
-                    else if (SelectedFile != null && nameof(Height).Equals(e.PropertyName))
-                    {
-                        Width = (int)(Height * R);
-                    }
-
+                }
+                if (e.PropertyName.Equals(nameof(SizeSmallChecked)) ||
+                    e.PropertyName.Equals(nameof(SizeMediumChecked)) ||
+                     e.PropertyName.Equals(nameof(SizeCustomChecked)) ||
+                      e.PropertyName.Equals(nameof(SizePercentChecked)) ||
+                      e.PropertyName.Equals(nameof(HeightPercent)) ||
+                      e.PropertyName.Equals(nameof(WidthPercent)) ||
+                      e.PropertyName.Equals(nameof(Width)) ||
+                      e.PropertyName.Equals(nameof(Height)))
+                {
+                    ApplyPreviewDimensions();
                 }
             }
             catch (Exception ex)
@@ -149,6 +159,55 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 PropertyChanged -= ResizePageViewModel_PropertyChanged;
                 PropertyChanged += ResizePageViewModel_PropertyChanged;
             }
+        }
+        public ResizeMode ResizeMode
+        {
+            get
+            {
+                if (SizeSmallChecked) return ResizeMode.SizeSmallChecked;
+                if (SizeMediumChecked) return ResizeMode.SizeMediumChecked;
+                if (SizeCustomChecked) return ResizeMode.SizeCustomChecked;
+                if (SizePercentChecked) return ResizeMode.SizePercentChecked;
+                return 0;
+            }
+        }
+
+        public void ApplyPreviewDimensions()
+        {
+            foreach (ImageFile currentImage in ImageFiles)
+            {
+                Tuple<int, int> dimension = PreviewDimensions(ResizeMode, currentImage.Width, currentImage.Height, Width, Height, WidthPercent, HeightPercent, KeepAspectRatio);
+                currentImage.NewWidth = dimension.Item1;
+                currentImage.NewHeight = dimension.Item2;
+            }
+        }
+        public Tuple<int, int> PreviewDimensions(ResizeMode resizeMode, int widthimagefile, int heightimagefile, int entertedWidth, int entertedheight, int widthPercentage, int heightPercentage, bool keepAspect)
+        {
+            //consider aspect only for custom and percent
+            int newWidth = 0;
+            int newHeight = 0;
+
+            if (resizeMode == ResizeMode.SizeSmallChecked)
+            {
+                newWidth = 640;
+                newHeight = 480;
+            }
+            else if (resizeMode == ResizeMode.SizeMediumChecked)
+            {
+                newWidth = 1024;
+                newHeight = 768;
+            }
+            else if (resizeMode == ResizeMode.SizePercentChecked)
+            {
+                newWidth = widthimagefile * widthPercentage / 100;
+                newHeight = heightimagefile * heightPercentage / 100;
+            }
+            else
+            {
+                newWidth = entertedWidth;
+                newHeight = entertedheight;
+            }
+            return new Tuple<int, int>(newWidth, newHeight);
         }
 
 
@@ -162,7 +221,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 if (_applicationService.CtrlPressed(param))
                 {
-                    OpenFilePickerCommand.Execute();
+                    OpenFilePickerCommand.Execute(param);
                 }
             }
         }
@@ -188,7 +247,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         #endregion Selected File
 
         #region FilePickerCommand
-        public DelegateCommand OpenFilePickerCommand { get; set; }
+        private ICommand _OpenFilePickerCommand;
+        public ICommand OpenFilePickerCommand => _OpenFilePickerCommand ?? (_OpenFilePickerCommand = new DelegateCommand(OnOpenFilePickerCommand));
 
         protected async void OnOpenFilePickerCommand()
         {
@@ -201,6 +261,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 Resizing = true;
                 IReadOnlyList<ImageFile> files = await _imageFileService.PickMultipleFilesAsync();
                 ImageFiles = new ObservableCollection<ImageFile>(files);
+                ApplyPreviewDimensions();
                 _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count}" } });
             }
             catch (Contract.Exceptions.PermissionDeniedException e)
@@ -356,17 +417,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     try
                     {
                         SelectedFile = currentImage;
-                        if (SizePercentChecked == true)
-                        {
-                            Width = currentImage.Width * WidthPercent / 100;
-                            Height = currentImage.Height * HeightPercent / 100;
-                        }
-                        SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, Width, Height);
+                        SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, currentImage.NewWidth, currentImage.NewHeight);
                         progressBarDialog.CurrentItem = SuggestedFileName;
-                        using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, Width, Height))
+                        using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight))
                         {
-                            currentImage.NewHeight = Height;
-                            currentImage.NewWidth = Width;
                             //log image size
                             _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
                             {
@@ -543,7 +597,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
 
         #region OkCommand / Resize Images
-        public DelegateCommand OkCommand { get; set; }
+        private ICommand _OkCommand;
+        public ICommand OkCommand => _OkCommand ?? (_OkCommand = new DelegateCommand(OnOkCommand));
 
         protected async void OnOkCommand()
         {
@@ -554,7 +609,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 bool Result = await ResizeImages(Action);
                 if (ImageFiles?.Count != 0)
                 {
-                    CancelCommand?.Execute();
+                    CancelCommand?.Execute(ImageFiles);
                 }
 
             }
@@ -576,8 +631,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             get { return _SharingProcess; }
             set { SetProperty(ref _SharingProcess, value, nameof(SharingProcess)); }
         }
-        public DelegateCommand ShareCommand { get; set; }
 
+        private ICommand _ShareCommand;
+        public ICommand ShareCommand => _ShareCommand ?? (_ShareCommand = new DelegateCommand(OnShareCommand));
         protected async void OnShareCommand()
         {
             try
@@ -660,7 +716,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         #endregion
 
         #region CancelCommand
-        public DelegateCommand CancelCommand { get; set; }
+        private ICommand _CancelCommand;
+        public ICommand CancelCommand => _CancelCommand ?? (_CancelCommand = new DelegateCommand(OnCancelCommand));
 
         protected void OnCancelCommand()
         {
@@ -722,7 +779,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         }
 
         #region OpenFileCommand
-        public DelegateCommand<ImageFile> OpenFileCommand { get; set; }
+        private ICommand _OpenFileCommand;
+        public ICommand OpenFileCommand => _OpenFileCommand ?? (_OpenFileCommand = new DelegateCommand<ImageFile>(OnOpenFileCommand));
 
         protected async void OnOpenFileCommand(ImageFile file)
         {
@@ -742,7 +800,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         #endregion
 
         #region DragOver
-        public DelegateCommand<object> DragOverCommand { get; set; }
+        private ICommand _DragOverCommand;
+        public ICommand DragOverCommand => _DragOverCommand ?? (_DragOverCommand = new DelegateCommand<object>(OnDragOverCommand));
 
         /// <summary>
         /// Determine whether the draged file is a supported image.
@@ -762,7 +821,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         }
         #endregion
 
-        public DelegateCommand<object> DropCommand { get; set; }
+
+        private ICommand _DropCommand;
+        public ICommand DropCommand => _DropCommand ?? (_DropCommand = new DelegateCommand<object>(OnDropCommand));
         /// <summary>
         /// Add Dropped files to our <see cref="ImageFiles"/> list.
         /// </summary>
@@ -792,7 +853,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
         }
 
-        public DelegateCommand<ImageFile> DeleteFileCommand { get; set; }
+        private ICommand _DeleteFileCommand;
+        public ICommand DeleteFileCommand => _DeleteFileCommand ?? (_DeleteFileCommand = new DelegateCommand<ImageFile>(OnDeleteFile));
 
         protected void OnDeleteFile(ImageFile param)
         {
@@ -802,6 +864,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     ImageFiles.Remove(param);
                 }
+                _loggerService?.LogEvent(nameof(OnDeleteFile), new Dictionary<string, string>() { { nameof(ImageFile), param?.Name } });
             }
             catch (Exception e)
             {

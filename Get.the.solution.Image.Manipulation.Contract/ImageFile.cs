@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 namespace Get.the.solution.Image.Manipulation.Contract
 {
     [DebuggerDisplay("Name={Name},Width={Width},Height={Height}")]
-    public class ImageFile : IDisposable
+    public class ImageFile : IDisposable, INotifyPropertyChanged
     {
         protected Func<ImageFile, Stream> _openStreamFunction;
         public ImageFile(string path, Stream stream)
@@ -32,7 +32,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
             _openStreamFunction = funcStreamCallBack;
         }
 
-        private String _Name;
+        private readonly String _Name;
         public String Name
         {
             get { return FileInfo.Name; }
@@ -49,11 +49,12 @@ namespace Get.the.solution.Image.Manipulation.Contract
 
 
         private Stream _Stream;
+
         public Stream Stream
         {
             get
             {
-                if (_Stream == null)
+                if (_Stream == null && _openStreamFunction != null)
                 {
                     Stream = _openStreamFunction(this);
                 }
@@ -62,19 +63,62 @@ namespace Get.the.solution.Image.Manipulation.Contract
             set { _Stream = value; }
         }
 
-        public int Width { get; set; }
+        protected int _Width;
+        public int Width
+        {
+            get { return _Width; }
+            set { SetProperty(ref _Width, value, nameof(Width)); }
+        }
 
-        public int Height { get; set; }
+        protected int _Height;
+        public int Height
+        {
+            get { return _Height; }
+            set { SetProperty(ref _Height, value, nameof(Height)); }
+        }
 
-        public int NewWidth { get; set; }
+        protected int _NewWidth;
+        public int NewWidth
+        {
+            get { return _NewWidth; }
+            set { SetProperty(ref _NewWidth, value, nameof(NewWidth)); }
+        }
 
-        public int NewHeight { get; set; }
+        protected int _NewHeight;
+        public int NewHeight
+        {
+            get { return _NewHeight; }
+            set { SetProperty(ref _NewHeight, value, nameof(NewHeight)); }
+        }
 
         public FileInfo FileInfo { get; set; }
 
         public object Tag { get; set; }
 
-        public bool IsReadOnly { get; set; }
+        /// <summary>
+        /// Get or sets whether the image file could not be modified (an other proccess has opened the file already, or no write permissions)
+        /// </summary>
+        protected bool _IsReadOnly;
+        public bool IsReadOnly
+        {
+            get { return _IsReadOnly; }
+            set { SetProperty(ref _IsReadOnly, value, nameof(IsReadOnly)); }
+        }
+
+        #region INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        protected bool SetProperty<T>(ref T field, T value, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+        #endregion
 
         public void Dispose()
         {
