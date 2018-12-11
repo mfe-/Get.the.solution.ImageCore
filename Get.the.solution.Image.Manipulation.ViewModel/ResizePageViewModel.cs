@@ -723,8 +723,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             try
             {
-                SharingProcess = false;
-                if ((ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
+                //dont exit app on sharing
+                if ((SharingProcess != true) && (ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
                 {
                     _applicationService.Exit();
                 }
@@ -739,6 +739,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     LastFile?.Stream?.Dispose();
                     LastFile = null;
                 }
+                SharingProcess = false;
             }
             catch (Exception e)
             {
