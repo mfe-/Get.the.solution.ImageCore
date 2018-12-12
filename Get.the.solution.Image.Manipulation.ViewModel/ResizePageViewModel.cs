@@ -176,28 +176,28 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             foreach (ImageFile currentImage in ImageFiles)
             {
-                Tuple<int, int> dimension = PreviewDimensions(ResizeMode, currentImage.Width, currentImage.Height, Width, Height, WidthPercent, HeightPercent, KeepAspectRatio);
+                Tuple<int, int> dimension = PreviewDimensions(currentImage.Width, currentImage.Height, Width, Height, WidthPercent, HeightPercent, KeepAspectRatio);
                 currentImage.NewWidth = dimension.Item1;
                 currentImage.NewHeight = dimension.Item2;
             }
         }
-        public Tuple<int, int> PreviewDimensions(ResizeMode resizeMode, int widthimagefile, int heightimagefile, int entertedWidth, int entertedheight, int widthPercentage, int heightPercentage, bool keepAspect)
+        protected Tuple<int, int> PreviewDimensions(int widthimagefile, int heightimagefile, int entertedWidth, int entertedheight, int widthPercentage, int heightPercentage, bool keepAspect)
         {
             //consider aspect only for custom and percent
             int newWidth = 0;
             int newHeight = 0;
 
-            if (resizeMode == ResizeMode.SizeSmallChecked)
+            if (ResizeMode == ResizeMode.SizeSmallChecked)
             {
                 newWidth = 640;
                 newHeight = 480;
             }
-            else if (resizeMode == ResizeMode.SizeMediumChecked)
+            else if (ResizeMode == ResizeMode.SizeMediumChecked)
             {
                 newWidth = 1024;
                 newHeight = 768;
             }
-            else if (resizeMode == ResizeMode.SizePercentChecked)
+            else if (ResizeMode == ResizeMode.SizePercentChecked)
             {
                 newWidth = widthimagefile * widthPercentage / 100;
                 newHeight = heightimagefile * heightPercentage / 100;
