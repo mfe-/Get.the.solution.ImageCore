@@ -16,6 +16,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         bool CtrlPressed(object param);
         Task LaunchFileAsync(ImageFile imageFile, bool openWith = false);
         Task LaunchFileAsync(string protocol, object param);
+        void AddToClipboard(String content);
         void Exit();
     }
 }

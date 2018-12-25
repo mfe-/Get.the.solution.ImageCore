@@ -186,6 +186,9 @@
   <data name="SaveAs" xml:space="preserve">
     <value>Save As</value>
   </data>
+  <data name="SavingLocation" xml:space="preserve">
+    <value>Saving image(s) to {0} Folder</value>
+  </data>
   <data name="SelectImage" xml:space="preserve">
     <value>Select Image</value>
   </data>

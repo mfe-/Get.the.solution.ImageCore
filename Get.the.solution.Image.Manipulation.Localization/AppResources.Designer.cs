@@ -269,6 +269,15 @@ namespace Get.the.solution.Image.Manipulation.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Saving image(s) to {0} Folder.
+        /// </summary>
+        public static string SavingLocation {
+            get {
+                return ResourceManager.GetString("SavingLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select Image.
         /// </summary>
         public static string SelectImage {

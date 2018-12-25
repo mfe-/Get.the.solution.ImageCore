@@ -7,5 +7,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
         IDictionary<string, object> Values { get; }
         bool EnabledImageViewer { get; set; }
         bool EnabledOpenSingleFileAfterResize { get; set; }
+        bool EnableAddImageToGallery { get; set; }
     }
 }
