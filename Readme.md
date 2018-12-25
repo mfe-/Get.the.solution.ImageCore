@@ -1,9 +1,10 @@
 #About
 
 The name get.the.solution.image (aka resize image) of the project is kept general to cover other potential topics as well. Currently the main goal of the app is to resize images.
-
+#####UWP
 [![Build status](https://build.appcenter.ms/v0.1/apps/9f10628c-39c0-4311-bcb9-178f4e0e27cb/branches/master/badge)](https://appcenter.ms)
-
+#####XF
+[![Build status](https://femartin.visualstudio.com/Get.the.solution.Image/_apis/build/status/Get.the.solution.Image-Xamarin.Android-CI%20(1))](https://femartin.visualstudio.com/Get.the.solution.Image/_build/latest?definitionId=3)
 #History
 The project [filerenamer](https://www.mycsharp.de/wbb2/thread.php?threadid=115600) (done with WPF) is the predecessor of resize image. The idea of filerenamer was to rename mass images using the "date taken" attribute of the file. The next step was to resize images according to the users preferences.
 
