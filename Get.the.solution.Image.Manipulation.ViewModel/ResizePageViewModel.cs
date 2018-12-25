@@ -194,8 +194,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
             else if (ResizeMode == ResizeMode.SizeMediumChecked)
             {
-                newWidth = 1024;
-                newHeight = 768;
+                newWidth = 800;
+                newHeight = 600;
             }
             else if (ResizeMode == ResizeMode.SizePercentChecked)
             {
@@ -209,7 +209,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
             return new Tuple<int, int>(newWidth, newHeight);
         }
-
 
         private ICommand _CtrlOpen;
         public ICommand CtrlOpenCommand => _CtrlOpen ?? (_CtrlOpen = new DelegateCommand<object>(OnCtrlOpen));
@@ -428,12 +427,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
                                 { nameof(Width), $"{currentImage.NewHeight }" },
                                 { nameof(Height), $"{currentImage.NewHeight}" },
-                                { nameof(ImageFile.Path), $"{Path.GetDirectoryName(currentImage.Path)}" }
-                            });
-
-                            //log action type
-                            _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
-                            {
+                                { nameof(ImageFile.Path), $"{Path.GetDirectoryName(currentImage.Path)}" },
                                 { nameof(ImageAction), $"{action}" }
                             });
                             //overwrite current ImageStoreage
@@ -444,7 +438,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     await _imageFileService.WriteBytesAsync(currentImage, resizedImageFileStream.ToArray());
                                     LastFile = currentImage;
                                 }
-                                catch (Contract.Exceptions.UnauthorizedAccessException e)
+                                catch (Contract.Exceptions.UnauthorizedAccessException)
                                 {
                                     //log the UnauthorizedAccessException
                                     _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
@@ -454,7 +448,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     //we can't override the current file try for the next files saveAs
                                     action = ImageAction.SaveAs;
                                     await ShowPermissionDeniedDialog();
-                                    var File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
+                                    ImageFile File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
                                     if (null != File)
                                     {
                                         //try to apply the new storagefolder (if the user selected a new location)
@@ -482,15 +476,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     {
                                         await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
                                     }
-                                    //this operation can throw a UnauthorizedAccessException
-                                    //if(SingleFile && _LocalSettings.EnabledOpenSingleFileAfterResize)
-                                    //{
-                                    //    ImageFile imageFile =  await _imageFileService.LoadImageFileAsync(Path.Combine(targetStorageFolder, SuggestedFileName));
-                                    //    _applicationService.LaunchFileAsync(imageFile);
-                                    //}
-                                    //File = await _imageFileService.LoadImageFileAsync($"{targetStorageFolder}{Path.DirectorySeparatorChar}{SuggestedFileName}");
                                 }
-                                catch (Contract.Exceptions.UnauthorizedAccessException e)
+                                catch (Contract.Exceptions.UnauthorizedAccessException)
                                 {
                                     //log the UnauthorizedAccessException
                                     _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
@@ -509,19 +496,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 if (null != File)
                                 {
                                     LastFile = File;
-                                    if (ImageFiles.Count == 1)
-                                    {
-                                        OpenFileCommand.Execute(LastFile);
-                                    }
                                 }
-                                else
+                                _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                 {
-                                    _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
-                                        {
-                                            { nameof(currentImage.Path), $"{currentImage.Path}" }
-                                        });
-                                }
-
+                                    { nameof(currentImage.Path), $"{currentImage.Path}" }
+                                });
                             }
                             else if (action.Equals(ImageAction.Process))
                             {
@@ -533,18 +512,26 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             if (SingleFile && LastFile != null && action != ImageAction.Process &&
                                 _LocalSettings.EnabledOpenSingleFileAfterResize)
                             {
-                                await _applicationService.LaunchFileAsync(LastFile);
+                                OpenFileCommand.Execute(LastFile);
                             }
                         }
-
                         currentImage?.Stream?.Dispose();
                     }
                     catch (Exception e)
                     {
                         _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e);
+                        _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
+                        {
+                            { "ResizeFinished","false" }
+                        });
                         Resizing = false;
-                        String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), $"{e.Message} {e.InnerException}");
-                        await _pageDialogService.ShowAsync(message);
+                        String exceptionMessage = e?.ToString();
+                        if (!String.IsNullOrEmpty(exceptionMessage))
+                        {
+                            _applicationService.AddToClipboard(exceptionMessage);
+                            String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), exceptionMessage);
+                            await _pageDialogService.ShowAsync(message);
+                        }
                         return false;
                     }
                     progressBarDialog.ProcessedItems++;
@@ -562,6 +549,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     { "ResizeFinished","false" }
                 });
+                String exceptionMessage = e?.ToString();
+                if (!String.IsNullOrEmpty(exceptionMessage))
+                {
+                    _applicationService.AddToClipboard(exceptionMessage);
+                    String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), exceptionMessage);
+                    await _pageDialogService.ShowAsync(message);
+                }
                 return false;
             }
             finally
