@@ -8,5 +8,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
         bool EnabledImageViewer { get; set; }
         bool EnabledOpenSingleFileAfterResize { get; set; }
         bool EnableAddImageToGallery { get; set; }
+        bool ShowSuccessMessage { get; set; }
     }
 }

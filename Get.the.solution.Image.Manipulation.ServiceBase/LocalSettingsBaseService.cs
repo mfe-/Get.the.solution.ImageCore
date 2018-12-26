@@ -1,5 +1,4 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -35,6 +34,19 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
                 SetProperty(ref _EnableOpenSingleFileAfterResize, value, nameof(EnabledOpenSingleFileAfterResize));
                 Values[nameof(EnabledOpenSingleFileAfterResize)] = _EnableOpenSingleFileAfterResize;
                 _loggerService?.LogEvent(nameof(EnabledOpenSingleFileAfterResize), $"{EnabledOpenSingleFileAfterResize}");
+            }
+        }
+
+
+        protected bool _ShowSuccessMessage;
+        public bool ShowSuccessMessage
+        {
+            get { return _ShowSuccessMessage; }
+            set
+            {
+                SetProperty(ref _ShowSuccessMessage, value, nameof(ShowSuccessMessage));
+                Values[nameof(ShowSuccessMessage)] = _ShowSuccessMessage;
+                _loggerService?.LogEvent(nameof(ShowSuccessMessage), $"{ShowSuccessMessage}");
             }
         }
 

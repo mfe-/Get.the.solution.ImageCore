@@ -536,6 +536,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     }
                     progressBarDialog.ProcessedItems++;
                 }
+                if (_LocalSettings != null && _LocalSettings.ShowSuccessMessage && LastFile != null)
+                {
+                    await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
+                }
                 Resizing = false;
             }
             catch (Contract.Exceptions.PermissionDeniedException e)
