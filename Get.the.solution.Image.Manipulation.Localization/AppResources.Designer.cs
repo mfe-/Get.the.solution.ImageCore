@@ -314,7 +314,7 @@ namespace Get.the.solution.Image.Manipulation.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Share (e.g for Email).
+        ///   Looks up a localized string similar to Share (e.g Email).
         /// </summary>
         public static string Share {
             get {

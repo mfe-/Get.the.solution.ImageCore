@@ -202,7 +202,7 @@
     <value>Open the resized image after it was processed</value>
   </data>
   <data name="Share" xml:space="preserve">
-    <value>Share (e.g for Email)</value>
+    <value>Share (e.g Email)</value>
   </data>
   <data name="ShowLastFile" xml:space="preserve">
     <value>Would you like to open the last modified file?</value>
