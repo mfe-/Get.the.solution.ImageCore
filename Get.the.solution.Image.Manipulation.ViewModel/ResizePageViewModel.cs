@@ -468,9 +468,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     {
                                         //get default path
                                         File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
-                                        targetStorageFolder = Path.GetDirectoryName(File.Path);
-                                        await _imageFileService.WriteBytesAsync(File, resizedImageFileStream.ToArray());
-                                        LastFile = File;
+                                        //File can be null when user aborted picksavefile dialog
+                                        if (File != null)
+                                        {
+                                            targetStorageFolder = Path.GetDirectoryName(File.Path);
+                                            await _imageFileService.WriteBytesAsync(File, resizedImageFileStream.ToArray());
+                                            LastFile = File;
+                                        }
                                     }
                                     else
                                     {
@@ -529,7 +533,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         if (!String.IsNullOrEmpty(exceptionMessage))
                         {
                             _applicationService.AddToClipboard(exceptionMessage);
-                            String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), exceptionMessage);
+                            String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), e.Message);
                             await _pageDialogService.ShowAsync(message);
                         }
                         return false;
