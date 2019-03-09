@@ -25,18 +25,20 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly IPageDialogService _pageDialogService;
         protected readonly IResizeService _resizeService;
         protected readonly IDragDropService _dragDropService;
+        protected readonly IFileSystemPermissionDialogService _fileSystemPermissionDialogService;
         protected readonly ObservableCollection<ImageFile> _SelectedFiles;
         protected readonly bool _Sharing;
         protected int RadioOptions;
 
         public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService,
             IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar,
-            IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings localSettings,
+            IFileSystemPermissionDialogService fileSystemPermissionDialogService, IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings localSettings,
             ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles,
             INavigation navigationService, IResourceService resourceLoader, TimeSpan sharing)
         {
             try
             {
+                _fileSystemPermissionDialogService = fileSystemPermissionDialogService;
                 _dragDropService = dragDrop;
                 _shareService = shareService;
                 _resizeService = resizeService;
@@ -582,7 +584,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         private async Task ShowPermissionDeniedDialog()
         {
-            await _pageDialogService.ShowAsync(_ResourceLoader.GetString("NoWritePermissionDialog"));
+            //das wird ausgelöst wenn man z.b. unter windows - app settings - File permission nicht gibt!
+            //eigenes contentmessage wirft noch fehler meldung sonst soweit ok
+            await _fileSystemPermissionDialogService.ShowFileSystemAccessDialogAsync();
+            //await _pageDialogService.ShowAsync(_ResourceLoader.GetString("NoWritePermissionDialog"));
+            //zeige dialog mit -> file permission geben ms-settings:privacy-broadfilesystemaccess
+            await _applicationService.LaunchUriAsync("ms-settings:privacy-broadfilesystemaccess");
         }
 
         private bool _Resizing;
