@@ -265,10 +265,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 ApplyPreviewDimensions();
                 _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count}" } });
             }
-            catch (Contract.Exceptions.PermissionDeniedException e)
+            catch (Contract.Exceptions.UnauthorizedAccessException e)
             {
                 _loggerService?.LogException(nameof(ResizeImages), e);
-                await _pageDialogService.ShowAsync(nameof(Contract.Exceptions.PermissionDeniedException));
+                await _pageDialogService.ShowAsync(nameof(Contract.Exceptions.UnauthorizedAccessException));
             }
             catch (Exception e)
             {
@@ -408,7 +408,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                progressBarDialog.StartAsync(ImageFiles.Count);
+                progressBarDialog?.StartAsync(ImageFiles.Count);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
                 String SuggestedFileName = String.Empty;
@@ -419,7 +419,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     {
                         SelectedFile = currentImage;
                         SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, currentImage.NewWidth, currentImage.NewHeight);
-                        progressBarDialog.CurrentItem = SuggestedFileName;
+                        if (progressBarDialog != null)
+                        {
+                            progressBarDialog.CurrentItem = SuggestedFileName;
+                        }
                         using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight))
                         {
                             //log image size
@@ -449,7 +452,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     });
                                     //we can't override the current file try for the next files saveAs
                                     action = ImageAction.SaveAs;
-                                    await ShowPermissionDeniedDialog();
+                                    await ShowPermissionDeniedDialog(progressBarDialog);
                                     ImageFile File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
                                     if (null != File)
                                     {
@@ -490,7 +493,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     {
                                         { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
                                     });
-                                    await ShowPermissionDeniedDialog();
+                                    await ShowPermissionDeniedDialog(progressBarDialog);
                                     //tell the user to save the file in an other location
                                     File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
                                     //try to apply the new storagefolder (if the user selected a new location)
@@ -540,17 +543,16 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         }
                         return false;
                     }
-                    progressBarDialog.ProcessedItems++;
+                    if (progressBarDialog != null)
+                    {
+                        progressBarDialog.ProcessedItems++;
+                    }
                 }
                 if (_LocalSettings != null && _LocalSettings.ShowSuccessMessage && LastFile != null)
                 {
                     await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
                 }
                 Resizing = false;
-            }
-            catch (Contract.Exceptions.PermissionDeniedException e)
-            {
-                throw e;
             }
             catch (Exception e)
             {
@@ -570,8 +572,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
             finally
             {
-                progressBarDialog.Stop();
-                progressBarDialog = null;
+                progressBarDialog?.Stop();
                 Resizing = false;
             }
             //log image size
@@ -582,14 +583,15 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             return true;
         }
 
-        private async Task ShowPermissionDeniedDialog()
+        private async Task ShowPermissionDeniedDialog(IProgressBarDialogService progressBarDialogService)
         {
-            //das wird ausgelöst wenn man z.b. unter windows - app settings - File permission nicht gibt!
-            //eigenes contentmessage wirft noch fehler meldung sonst soweit ok
+            //uwp content dialog allows only one contentdialog so we need to stop the progressbar
+            progressBarDialogService.Stop();
             await _fileSystemPermissionDialogService.ShowFileSystemAccessDialogAsync();
-            //await _pageDialogService.ShowAsync(_ResourceLoader.GetString("NoWritePermissionDialog"));
-            //zeige dialog mit -> file permission geben ms-settings:privacy-broadfilesystemaccess
-            await _applicationService.LaunchUriAsync("ms-settings:privacy-broadfilesystemaccess");
+            //restart progressbar
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            progressBarDialogService.StartAsync(ImageFiles.Count);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         private bool _Resizing;
