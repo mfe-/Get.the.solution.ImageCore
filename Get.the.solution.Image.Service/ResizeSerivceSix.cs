@@ -1,4 +1,4 @@
-﻿using Get.the.solution.Image.Manipulation.Contract;
+﻿using Get.the.solution.Image.Contract;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;

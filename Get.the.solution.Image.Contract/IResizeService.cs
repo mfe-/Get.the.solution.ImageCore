@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Get.the.solution.Image.Manipulation.Contract
+namespace Get.the.solution.Image.Contract
 {
     public interface IResizeService
     {
