@@ -1,4 +1,6 @@
-#About
+# About
+
+https://github.com/mfe-/ResizeImage.UWP
 
 The name get.the.solution.image (aka resize image) of the project is kept general to cover other potential topics as well. Currently the main goal of the app is to resize images.
 #####UWP

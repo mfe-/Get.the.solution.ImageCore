@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28701.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Manipulation.Contract", "Get.the.solution.Image.Manipulation.Contract\Get.the.solution.Image.Manipulation.Contract.csproj", "{20796337-56F2-407E-AE6C-840C29715160}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Manipulation.Contract", "Image.Manipulation.Contract\Get.the.solution.Image.Manipulation.Contract.csproj", "{20796337-56F2-407E-AE6C-840C29715160}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Contract", "Get.the.solution.Image.Contract\Get.the.solution.Image.Contract.csproj", "{BCCDE32D-E0CD-4BF1-8D6E-A68918B90746}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Contract", "Image.Contract\Get.the.solution.Image.Contract.csproj", "{BCCDE32D-E0CD-4BF1-8D6E-A68918B90746}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Service", "Get.the.solution.Image.Service\Get.the.solution.Image.Service.csproj", "{C4FA9E13-5DFF-4057-9828-B2CD56AD4E00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Service", "Image.Service\Get.the.solution.Image.Service.csproj", "{C4FA9E13-5DFF-4057-9828-B2CD56AD4E00}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Manipulation.ViewModel", "Get.the.solution.Image.Manipulation.ViewModel\Get.the.solution.Image.Manipulation.ViewModel.csproj", "{6DE8A41E-20F7-4F0A-A92B-BE44142E4E92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Manipulation.ViewModel", "Image.Manipulation.ViewModel\Get.the.solution.Image.Manipulation.ViewModel.csproj", "{6DE8A41E-20F7-4F0A-A92B-BE44142E4E92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
