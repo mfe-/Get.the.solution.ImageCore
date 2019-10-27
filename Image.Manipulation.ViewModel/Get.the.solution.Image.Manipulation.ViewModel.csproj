@@ -9,8 +9,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Get.the.solution.Image.Contract\Get.the.solution.Image.Contract.csproj" />
-    <ProjectReference Include="..\Get.the.solution.Image.Manipulation.Contract\Get.the.solution.Image.Manipulation.Contract.csproj" />
+    <ProjectReference Include="..\Image.Contract\Get.the.solution.Image.Contract.csproj" />
+    <ProjectReference Include="..\Image.Manipulation.Contract\Get.the.solution.Image.Manipulation.Contract.csproj" />
   </ItemGroup>
 
 </Project>

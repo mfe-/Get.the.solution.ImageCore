@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Manipulation.ViewModel", "Image.Manipulation.ViewModel\Get.the.solution.Image.Manipulation.ViewModel.csproj", "{6DE8A41E-20F7-4F0A-A92B-BE44142E4E92}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Manipulation.ServiceBase", "Image.Manipulation.ServiceBase\Get.the.solution.Image.Manipulation.ServiceBase.csproj", "{D95F0B98-7511-4E60-A92F-7E2CC88A65E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{6DE8A41E-20F7-4F0A-A92B-BE44142E4E92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DE8A41E-20F7-4F0A-A92B-BE44142E4E92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DE8A41E-20F7-4F0A-A92B-BE44142E4E92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D95F0B98-7511-4E60-A92F-7E2CC88A65E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95F0B98-7511-4E60-A92F-7E2CC88A65E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95F0B98-7511-4E60-A92F-7E2CC88A65E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95F0B98-7511-4E60-A92F-7E2CC88A65E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
