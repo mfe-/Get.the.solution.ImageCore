@@ -433,7 +433,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
                                 { nameof(Width), $"{currentImage.NewHeight }" },
                                 { nameof(Height), $"{currentImage.NewHeight}" },
-                                { nameof(ImageFile.Path), $"{Path.GetDirectoryName(currentImage.Path)}" },
                                 { nameof(ImageAction), $"{action}" }
                             });
                             //overwrite current ImageStoreage
