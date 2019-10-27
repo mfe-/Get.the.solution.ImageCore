@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Mani
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Contract", "Image.Contract\Get.the.solution.Image.Contract.csproj", "{BCCDE32D-E0CD-4BF1-8D6E-A68918B90746}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Service", "Image.Service\Get.the.solution.Image.Service.csproj", "{C4FA9E13-5DFF-4057-9828-B2CD56AD4E00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.ResizeService", "Image.ResizeService\Get.the.solution.Image.ResizeService.csproj", "{C4FA9E13-5DFF-4057-9828-B2CD56AD4E00}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.the.solution.Image.Manipulation.ViewModel", "Image.Manipulation.ViewModel\Get.the.solution.Image.Manipulation.ViewModel.csproj", "{6DE8A41E-20F7-4F0A-A92B-BE44142E4E92}"
 EndProject

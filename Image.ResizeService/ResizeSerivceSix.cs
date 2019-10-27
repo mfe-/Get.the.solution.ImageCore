@@ -6,7 +6,7 @@ using SixLabors.ImageSharp.Processing.Processors.Transforms;
 using SixLabors.Primitives;
 using System.IO;
 
-namespace Get.the.solution.Image.Manipulation
+namespace Get.the.solution.Image.Manipulation.ResizeService
 {
     /// <summary>
     /// https://blogs.msdn.microsoft.com/dotnet/2017/01/19/net-core-image-processing/

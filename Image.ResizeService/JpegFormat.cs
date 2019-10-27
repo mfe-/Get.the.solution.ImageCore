@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Get.the.solution.Image.Manipulation
+namespace Get.the.solution.Image.Manipulation.ResizeService
 {
     // Copyright (c) Six Labors and contributors.
     // Licensed under the Apache License, Version 2.0.
