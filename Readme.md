@@ -1,6 +1,6 @@
 # About
 
-[Get.the.solution.ImageCore](https://github.com/mfe-/Get.the.solution.ImageCore) is used in the app "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)" and was outsourced to this repository to make most parts of the application open source. The name "ImageCore" is kept general to cover other potential topics (regarding image manipulation) as well. Common functionallity can be used by other "image manipulation" apps, according to the licence (GNU)
+[Get.the.solution.ImageCore](https://github.com/mfe-/Get.the.solution.ImageCore) is used in the app "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)" and was outsourced to this repository to make most parts of the application open source. The name "ImageCore" is kept general to cover other potential topics (regarding image manipulation) as well. Common functionallity can be used by other "image manipulation" apps, according to the licence (AGPL-3.0)
 
 This repository contains functionality which is required to load images into an application for diffrent platforms like UWP and android.
 
