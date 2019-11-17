@@ -1,15 +1,14 @@
 # About
 
-[Get.the.solution.ImageCore](https://github.com/mfe-/Get.the.solution.ImageCore) is used in the app "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)" and was outsourced to this repository to make most parts of the application public available. Common functionallity which can be used by other "image manipulation" apps can make use of it.
+[Get.the.solution.ImageCore](https://github.com/mfe-/Get.the.solution.ImageCore) is used in the app "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)" and was outsourced to this repository to make most parts of the application open source. The name "ImageCore" is kept general to cover other potential topics (regarding image manipulation) as well. Common functionallity can be used by other "image manipulation" apps, according to the licence (GNU)
 
-This repository contains functionality which are required to load images into an application for diffrent platforms like UWP and android.
+This repository contains functionality which is required to load images into an application for diffrent platforms like UWP and android.
 
 - read or write files on uwp or android
 - common image object which can be used on uwp or android
 - displaying dialogs
 - share service
 - drag and drop
-- resize service (using external lib depends on the platform)
 
 Another goal of this repository is to track issues regarding "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)".
 
@@ -29,6 +28,6 @@ Top to bottom
 
 The project [filerenamer](https://www.mycsharp.de/wbb2/thread.php?threadid=115600) (done with WPF) is the predecessor of resize image. The idea of filerenamer was to rename mass images using the "date taken" attribute of the file. The next step was to resize images according to the users preferences.
 
-At the time, the app was created, UWP was the new thing despite its restrictions (file system, file explorer integration). The app started with a single UWP project and grew over time. It took advantage of the new UWP features and the .NET Standard to make it easy to port the app to Xamarin.Forms.
+At the time the app was created, UWP was the new and popular despite its restrictions (file system, file explorer integration). The app started with a single UWP project and grew over time. It took advantage of the new UWP features and the .NET Standard to make it easy to port the app to Xamarin.Forms.
 
-The [FileRenamer](https://www.microsoft.com/de-at/p/file-renamer/9nblggh4rkqt?rtc=1) was ported meanwhile to UWP.
+Since then [FileRenamer](https://www.microsoft.com/de-at/p/file-renamer/9nblggh4rkqt?rtc=1) was ported to UWP.
