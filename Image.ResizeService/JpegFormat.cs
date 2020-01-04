@@ -1,7 +1,4 @@
 ﻿using SixLabors.ImageSharp.Formats;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Get.the.solution.Image.Manipulation.ResizeService
 {
@@ -9,7 +6,6 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
     // Licensed under the Apache License, Version 2.0.
 
     using System.Collections.Generic;
-    using SixLabors.ImageSharp.Formats.Jpeg.GolangPort;
 
 
     /// <summary>

@@ -40,7 +40,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
             return String.Empty;
         }
 
-        public abstract MemoryStream Resize(Stream inputStream, int width, int height);
+        public abstract MemoryStream Resize(Stream inputStream, int width, int height, string suggestedFileName = null);
 
     }
 }

@@ -2,9 +2,8 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Processors.Transforms;
-using SixLabors.Primitives;
 using System.IO;
+using System.Linq;
 
 namespace Get.the.solution.Image.Manipulation.ResizeService
 {
@@ -13,38 +12,51 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
     /// </summary>
     public class ResizeSerivceSix : IResizeService
     {
-        protected ILoggerService _loggerService;
+        protected readonly ILoggerService _loggerService;
+        protected readonly Configuration _configuration;
         public ResizeSerivceSix(ILoggerService loggerService)
         {
             _loggerService = loggerService;
+            //for some reason DetectFormat returns tga for images - so we use our own configuration
+            _configuration = new Configuration(
+                  new SixLabors.ImageSharp.Formats.Bmp.BmpConfigurationModule()
+                , new SixLabors.ImageSharp.Formats.Gif.GifConfigurationModule()
+                , new SixLabors.ImageSharp.Formats.Png.PngConfigurationModule()
+                , new SixLabors.ImageSharp.Formats.Jpeg.JpegConfigurationModule()
+                );
         }
-        public MemoryStream Resize(Stream inputStream, int width, int height)
+        public MemoryStream Resize(Stream inputStream, int width, int height, string suggestedFileName = null)
         {
-            //int usedWidth = 0;
-            //int usedHeight = 0;
-            //if (height < width)
-            //{
-            //    usedWidth = height;
-            //    usedHeight = width;
-            //}
-            //else
-            //{
-            //    usedHeight = width;
-            //    usedWidth = height;
-            //}
             if (inputStream.Length == inputStream.Position)
             {
                 inputStream.Position = 0;
             }
-            using (Image<Rgba32> image = SixLabors.ImageSharp.Image.Load(inputStream))
+
+            using (var image = SixLabors.ImageSharp.Image.Load(_configuration, inputStream))
             {
-                var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
+                var format = SixLabors.ImageSharp.Image.DetectFormat(_configuration, inputStream);
 
                 var output = new MemoryStream();
                 image.Mutate((x) => x.AutoOrient().Resize(width, height));
                 if (format == null)
                 {
-                    image.SaveAsJpeg(output);
+                    string extension = new FileInfo(suggestedFileName).Extension.ToLowerInvariant();
+                    if (".gif".Equals(extension))
+                    {
+                        image.SaveAsGif(output);
+                    }
+                    else if (".bmp".Equals(extension))
+                    {
+                        image.SaveAsBmp(output);
+                    }
+                    else if (".png".Equals(extension))
+                    {
+                        image.SaveAsPng(output);
+                    }
+                    else
+                    {
+                        image.SaveAsJpeg(output);
+                    }
                 }
                 else
                 {
