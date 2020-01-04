@@ -424,7 +424,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         {
                             progressBarDialog.CurrentItem = SuggestedFileName;
                         }
-                        using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight))
+                        using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName))
                         {
                             //log image size
                             _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
@@ -526,22 +526,15 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         }
                         currentImage?.Stream?.Dispose();
                     }
+                    catch (NotSupportedException e)
+                    {
+                        _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e,
+                            new Dictionary<string, string>() { { nameof(SuggestedFileName), SuggestedFileName } });
+                        await _pageDialogService?.ShowAsync(_ResourceLoader.GetString("ImageTypNotSupported"));
+                    }
                     catch (Exception e)
                     {
                         _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e);
-                        _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
-                        {
-                            { "ResizeFinished","false" }
-                        });
-                        Resizing = false;
-                        String exceptionMessage = e?.ToString();
-                        if (!String.IsNullOrEmpty(exceptionMessage))
-                        {
-                            _applicationService.AddToClipboard(exceptionMessage);
-                            String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), e.Message);
-                            await _pageDialogService.ShowAsync(message);
-                        }
-                        return false;
                     }
                     if (progressBarDialog != null)
                     {
