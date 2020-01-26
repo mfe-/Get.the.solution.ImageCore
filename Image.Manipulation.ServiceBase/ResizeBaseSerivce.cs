@@ -9,7 +9,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
     public abstract class ResizeBaseSerivce : IResizeService
     {
         protected ILoggerService _loggerService;
-        public ResizeBaseSerivce(ILoggerService loggerService)
+        protected ResizeBaseSerivce(ILoggerService loggerService)
         {
             _loggerService = loggerService;
         }
@@ -40,7 +40,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
             return String.Empty;
         }
 
-        public abstract MemoryStream Resize(Stream inputStream, int width, int height, string suggestedFileName = null);
+        public abstract MemoryStream Resize(Stream inputStream, int width, int height, string suggestedFileName = null, int quality = 75);
 
     }
 }

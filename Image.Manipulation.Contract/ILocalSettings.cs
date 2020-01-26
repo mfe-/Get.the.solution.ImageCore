@@ -9,5 +9,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         bool EnabledOpenSingleFileAfterResize { get; set; }
         bool EnableAddImageToGallery { get; set; }
         bool ShowSuccessMessage { get; set; }
+        int ImageQuality { get; set; }
+        bool ClearImageListAfterSuccess { get; set; }
     }
 }

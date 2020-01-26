@@ -16,9 +16,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public LocalSettingsService(ILoggerService loggerService) : base(loggerService)
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
-            EnabledImageViewer = Values?[nameof(EnabledImageViewer)] == null ? false : Boolean.Parse(Values[nameof(EnabledImageViewer)].ToString());
+            EnabledImageViewer = Values?[nameof(EnabledImageViewer)] == null ? false : bool.Parse(Values[nameof(EnabledImageViewer)].ToString());
             EnabledOpenSingleFileAfterResize = Values?[nameof(EnabledOpenSingleFileAfterResize)] == null ? false : Boolean.Parse(Values[nameof(EnabledOpenSingleFileAfterResize)].ToString());
-            ShowSuccessMessage = Values?[nameof(ShowSuccessMessage)] == null ? false : Boolean.Parse(Values[nameof(ShowSuccessMessage)].ToString());
+            ShowSuccessMessage = Values?[nameof(ShowSuccessMessage)] == null ? false : bool.Parse(Values[nameof(ShowSuccessMessage)].ToString());
+            ImageQuality = Values?[nameof(ImageQuality)] == null ? 75 : int.Parse(Values[nameof(ImageQuality)].ToString());
+            ClearImageListAfterSuccess = Values?[nameof(ClearImageListAfterSuccess)] == null ? true : bool.Parse(Values[nameof(ClearImageListAfterSuccess)].ToString());
         }
     }
 }

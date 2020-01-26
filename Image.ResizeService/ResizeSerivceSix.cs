@@ -3,7 +3,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System.IO;
-using System.Linq;
 
 namespace Get.the.solution.Image.Manipulation.ResizeService
 {
@@ -25,7 +24,7 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
                 , new SixLabors.ImageSharp.Formats.Jpeg.JpegConfigurationModule()
                 );
         }
-        public MemoryStream Resize(Stream inputStream, int width, int height, string suggestedFileName = null)
+        public MemoryStream Resize(Stream inputStream, int width, int height, string suggestedFileName = null, int quality = 75)
         {
             if (inputStream.Length == inputStream.Position)
             {
@@ -41,6 +40,8 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
                 if (format == null)
                 {
                     string extension = new FileInfo(suggestedFileName).Extension.ToLowerInvariant();
+                    _loggerService.LogEvent(
+                        $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is null. Using image extension", extension);
                     if (".gif".Equals(extension))
                     {
                         image.SaveAsGif(output);
@@ -55,11 +56,21 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
                     }
                     else
                     {
-                        image.SaveAsJpeg(output);
+                        if (quality != 100)
+                        {
+                            image.SaveAsJpeg(output, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = quality });
+                        }
+                        else
+                        {
+                            image.SaveAsJpeg(output);
+                        }
+
                     }
                 }
                 else
                 {
+                    _loggerService.LogEvent(
+                        $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is", format?.Name);
                     image.Save(output, format);
                 }
                 return output;

@@ -126,7 +126,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     if (SelectedFile == null && ImageFiles.Count > 0)
                     {
-                        SelectedFile = ImageFiles?.First() as ImageFile;
+                        SelectedFile = ImageFiles?.First();
                     }
                     if (SelectedFile != null)
                     {
@@ -424,7 +424,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         {
                             progressBarDialog.CurrentItem = SuggestedFileName;
                         }
-                        using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName))
+                        //if the stream is disposed CanSeek and CanRead is false
+                        if(!currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
+                        {
+                            currentImage.Stream = (await _imageFileService.LoadImageFileAsync(currentImage.Path)).Stream;
+                        }
+                        using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality))
                         {
                             //log image size
                             _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
@@ -611,7 +616,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _loggerService?.LogEvent(nameof(OnOkCommand));
                 ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
                 bool Result = await ResizeImages(Action);
-                if (ImageFiles?.Count != 0)
+                if (_LocalSettings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
                 {
                     CancelCommand?.Execute(ImageFiles);
                 }

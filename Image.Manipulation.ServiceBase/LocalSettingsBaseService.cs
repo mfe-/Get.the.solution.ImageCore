@@ -8,11 +8,37 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
     public abstract class LocalSettingsBaseService : ILocalSettings, INotifyPropertyChanged
     {
         protected ILoggerService _loggerService;
-        public LocalSettingsBaseService(ILoggerService loggerService)
+        protected LocalSettingsBaseService(ILoggerService loggerService)
         {
+            _loggerService?.LogEvent(nameof(ImageQuality), $"{ImageQuality}");
         }
 
         public abstract IDictionary<string, object> Values { get; }
+
+        protected int _ImageQuality;
+        public int ImageQuality
+        {
+            get { return _ImageQuality; }
+            set
+            {
+                SetProperty(ref _ImageQuality, value, nameof(ImageQuality));
+                Values[nameof(ImageQuality)] = _ImageQuality;
+            }
+        }
+
+
+        private bool _ClearImageListAfterSuccess;
+        public bool ClearImageListAfterSuccess
+        {
+            get { return _ClearImageListAfterSuccess; }
+            set
+            {
+                SetProperty(ref _ClearImageListAfterSuccess, value, nameof(ClearImageListAfterSuccess));
+                _loggerService?.LogEvent(nameof(ClearImageListAfterSuccess), $"{_ClearImageListAfterSuccess}");
+                Values[nameof(ClearImageListAfterSuccess)] = _ClearImageListAfterSuccess;
+            }
+        }
+
 
         protected bool _EnableImageViewer;
         public bool EnabledImageViewer

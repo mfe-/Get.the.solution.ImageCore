@@ -55,7 +55,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             try
             {
-                MenuItem clicked = param as MenuItem;
+                MenuItem clicked = param;
 
                 if (clicked != null)
                 {
