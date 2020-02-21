@@ -1,6 +1,5 @@
 ﻿using Get.the.solution.Image.Contract;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System.IO;
 
@@ -30,50 +29,55 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
             {
                 inputStream.Position = 0;
             }
-
-            using (var image = SixLabors.ImageSharp.Image.Load(_configuration, inputStream))
+            try
             {
-                var format = SixLabors.ImageSharp.Image.DetectFormat(_configuration, inputStream);
-
-                var output = new MemoryStream();
-                image.Mutate((x) => x.AutoOrient().Resize(width, height));
-                if (format == null)
+                using (var image = SixLabors.ImageSharp.Image.Load(_configuration, inputStream))
                 {
-                    string extension = new FileInfo(suggestedFileName).Extension.ToLowerInvariant();
-                    _loggerService.LogEvent(
-                        $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is null. Using image extension", extension);
-                    if (".gif".Equals(extension))
+                    var format = SixLabors.ImageSharp.Image.DetectFormat(_configuration, inputStream);
+
+                    var output = new MemoryStream();
+                    image.Mutate((x) => x.AutoOrient().Resize(width, height));
+                    if (format == null)
                     {
-                        image.SaveAsGif(output);
-                    }
-                    else if (".bmp".Equals(extension))
-                    {
-                        image.SaveAsBmp(output);
-                    }
-                    else if (".png".Equals(extension))
-                    {
-                        image.SaveAsPng(output);
-                    }
-                    else
-                    {
-                        if (quality != 100)
+                        string extension = new FileInfo(suggestedFileName).Extension.ToLowerInvariant();
+                        _loggerService.LogEvent(
+                            $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is null. Using image extension", extension);
+                        if (".gif".Equals(extension))
                         {
-                            image.SaveAsJpeg(output, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = quality });
+                            image.SaveAsGif(output);
+                        }
+                        else if (".bmp".Equals(extension))
+                        {
+                            image.SaveAsBmp(output);
+                        }
+                        else if (".png".Equals(extension))
+                        {
+                            image.SaveAsPng(output);
                         }
                         else
                         {
-                            image.SaveAsJpeg(output);
+                            if (quality != 100)
+                            {
+                                image.SaveAsJpeg(output, new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = quality });
+                            }
+                            else
+                            {
+                                image.SaveAsJpeg(output);
+                            }
                         }
-
                     }
+                    else
+                    {
+                        _loggerService.LogEvent(
+                            $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is", format?.Name);
+                        image.Save(output, format);
+                    }
+                    return output;
                 }
-                else
-                {
-                    _loggerService.LogEvent(
-                        $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is", format?.Name);
-                    image.Save(output, format);
-                }
-                return output;
+            }
+            catch(UnknownImageFormatException ui)
+            {
+                throw new Contract.Exceptions.UnknownImageFormatException(ui.Message, ui);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Get.the.solution.Image.Contract;
+using Get.the.solution.Image.Contract.Exceptions;
 using Get.the.solution.Image.Manipulation.Contract;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -83,7 +84,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         /// </summary>
         public void LoadSettings()
         {
-            RadioOptions = _LocalSettings.Values[nameof(RadioOptions)] == null ? 1 : Int32.Parse(_LocalSettings.Values[nameof(RadioOptions)].ToString());
+            RadioOptions = _LocalSettings.Values[nameof(RadioOptions)] == null ? 4 : Int32.Parse(_LocalSettings.Values[nameof(RadioOptions)].ToString());
 
             if (RadioOptions == 1)
             {
@@ -121,7 +122,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             try
             {
                 PropertyChanged -= ResizePageViewModel_PropertyChanged;
-                if (KeepAspectRatio == true &&
+                if (KeepAspectRatio &&
                     (nameof(Width).Equals(e.PropertyName) || nameof(Height).Equals(e.PropertyName)))
                 {
                     if (SelectedFile == null && ImageFiles.Count > 0)
@@ -263,7 +264,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 Resizing = true;
                 IReadOnlyList<ImageFile> files = await _imageFileService.PickMultipleFilesAsync();
                 ImageFiles = new ObservableCollection<ImageFile>(files);
-                ApplyPreviewDimensions();
                 _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count}" } });
             }
             catch (Contract.Exceptions.UnauthorizedAccessException e)
@@ -383,6 +383,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     ImageFiles.CollectionChanged += ImageFiles_CollectionChanged;
                 }
+                ApplyPreviewDimensions();
                 RaisePropertyChanged(nameof(ShowOpenFilePicker));
                 RaisePropertyChanged(nameof(SingleFile));
             }
@@ -393,6 +394,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             RaisePropertyChanged(nameof(ShowOpenFilePicker));
             RaisePropertyChanged(nameof(CanOverwriteFiles));
             RaisePropertyChanged(nameof(SingleFile));
+            ApplyPreviewDimensions();
         }
         #endregion
 
@@ -414,6 +416,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
                 String SuggestedFileName = String.Empty;
                 String targetStorageFolder = String.Empty;
+                Exception lastException = null;
                 foreach (ImageFile currentImage in ImageFiles)
                 {
                     try
@@ -425,7 +428,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             progressBarDialog.CurrentItem = SuggestedFileName;
                         }
                         //if the stream is disposed CanSeek and CanRead is false
-                        if(!currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
+                        if (!currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
                         {
                             currentImage.Stream = (await _imageFileService.LoadImageFileAsync(currentImage.Path)).Stream;
                         }
@@ -537,8 +540,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             new Dictionary<string, string>() { { nameof(SuggestedFileName), SuggestedFileName } });
                         await _pageDialogService?.ShowAsync(_ResourceLoader.GetString("ImageTypNotSupported"));
                     }
+                    catch(InvalidOperationException e)
+                    {
+                        //for example when enterted width and height is zero. 'Target width 0 and height 0 must be greater than zero.'
+                        lastException = e;
+                    }
                     catch (Exception e)
                     {
+                        lastException = e;
                         _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e);
                     }
                     if (progressBarDialog != null)
@@ -551,6 +560,22 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
                 }
                 Resizing = false;
+                if (lastException != null)
+                {
+                    if (lastException is InvalidOperationException)
+                    {
+                        await _pageDialogService.ShowAsync(lastException.Message);
+                    }
+                    if (lastException is UnknownImageFormatException)
+                    {
+                        String message = _ResourceLoader.GetString("UnknownImageFormatException");
+                        if (!String.IsNullOrEmpty(message))
+                        {
+                            message = String.Format(message, string.Join(", ", _imageFileService.FileTypeFilter));
+                            await _pageDialogService.ShowAsync(message);
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -559,13 +584,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     { "ResizeFinished","false" }
                 });
-                String exceptionMessage = e?.ToString();
-                if (!String.IsNullOrEmpty(exceptionMessage))
-                {
-                    _applicationService.AddToClipboard(exceptionMessage);
-                    String message = string.Format(_ResourceLoader.GetString("ExceptionOnResize"), exceptionMessage);
-                    await _pageDialogService.ShowAsync(message);
-                }
                 return false;
             }
             finally

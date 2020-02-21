@@ -43,9 +43,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     //todo save this tokens!!!
                     FutureAccessToken = StorageApplicationPermissions.FutureAccessList.Add(storageFolder);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-
+                    _loggerService.LogException(nameof(PickMultipleFilesAsync), e);
                 }
             }
 
@@ -85,9 +85,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return null;
         }
-        public async Task<ImageFile> FileToImageFileConverter(object storageFile)
+        public Task<ImageFile> FileToImageFileConverter(object storageFile)
         {
-            return await FileToImageFileConverter(storageFile as IStorageFile);
+            return FileToImageFileConverter(storageFile as IStorageFile);
         }
         public static async Task<ImageFile> FileToImageFile(IStorageFile storageFile, bool readStream = true)
         {
@@ -176,7 +176,10 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public override string GenerateSuccess(ImageFile imageFile)
         {
             string successMessage = _resourceService.GetString("SavedTo");
-            successMessage = String.Format(successMessage, imageFile.Path);
+            if(!String.IsNullOrEmpty(successMessage))
+            {
+                successMessage = String.Format(successMessage, imageFile.Path);
+            }
             return successMessage;
         }
     }
