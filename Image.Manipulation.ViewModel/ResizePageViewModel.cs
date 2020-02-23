@@ -545,6 +545,15 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         //for example when enterted width and height is zero. 'Target width 0 and height 0 must be greater than zero.'
                         lastException = e;
                     }
+                    catch(FileLoadException e)
+                    {
+                        //for example The process cannot access the file because it is being used by another process. 
+                        lastException = e;
+                    }
+                    catch(UnknownImageFormatException e)
+                    {
+                        lastException = e;
+                    }
                     catch (Exception e)
                     {
                         lastException = e;
@@ -562,7 +571,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 Resizing = false;
                 if (lastException != null)
                 {
-                    if (lastException is InvalidOperationException)
+                    if (lastException is InvalidOperationException || lastException is FileLoadException)
                     {
                         await _pageDialogService.ShowAsync(lastException.Message);
                     }
