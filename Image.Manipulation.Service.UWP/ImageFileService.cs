@@ -43,6 +43,10 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     //todo save this tokens!!!
                     FutureAccessToken = StorageApplicationPermissions.FutureAccessList.Add(storageFolder);
                 }
+                catch(UnauthorizedAccessException e)
+                {
+                    throw new Contract.Exceptions.UnauthorizedAccessException(e);
+                }
                 catch (Exception e)
                 {
                     _loggerService.LogException(nameof(PickMultipleFilesAsync), e);

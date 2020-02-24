@@ -266,10 +266,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 ImageFiles = new ObservableCollection<ImageFile>(files);
                 _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count}" } });
             }
-            catch (Contract.Exceptions.UnauthorizedAccessException e)
+            catch (Contract.Exceptions.UnauthorizedAccessException)
             {
-                _loggerService?.LogException(nameof(ResizeImages), e);
-                await _pageDialogService.ShowAsync(nameof(Contract.Exceptions.UnauthorizedAccessException));
+                _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
+                {
+                    { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
+                });
+                await ShowPermissionDeniedDialog();
             }
             catch (Exception e)
             {
@@ -540,17 +543,17 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             new Dictionary<string, string>() { { nameof(SuggestedFileName), SuggestedFileName } });
                         await _pageDialogService?.ShowAsync(_ResourceLoader.GetString("ImageTypNotSupported"));
                     }
-                    catch(InvalidOperationException e)
+                    catch (InvalidOperationException e)
                     {
                         //for example when enterted width and height is zero. 'Target width 0 and height 0 must be greater than zero.'
                         lastException = e;
                     }
-                    catch(FileLoadException e)
+                    catch (FileLoadException e)
                     {
                         //for example The process cannot access the file because it is being used by another process. 
                         lastException = e;
                     }
-                    catch(UnknownImageFormatException e)
+                    catch (UnknownImageFormatException e)
                     {
                         lastException = e;
                     }
@@ -608,14 +611,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             return true;
         }
 
-        private async Task ShowPermissionDeniedDialog(IProgressBarDialogService progressBarDialogService)
+        private async Task ShowPermissionDeniedDialog(IProgressBarDialogService progressBarDialogService = null)
         {
             //uwp content dialog allows only one contentdialog so we need to stop the progressbar
-            progressBarDialogService.Stop();
+            progressBarDialogService?.Stop();
             await _fileSystemPermissionDialogService.ShowFileSystemAccessDialogAsync();
             //restart progressbar
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            progressBarDialogService.StartAsync(ImageFiles.Count);
+            progressBarDialogService?.StartAsync(ImageFiles.Count);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
