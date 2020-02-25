@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -420,174 +421,178 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 String SuggestedFileName = String.Empty;
                 String targetStorageFolder = String.Empty;
                 Exception lastException = null;
-                foreach (ImageFile currentImage in ImageFiles)
+                if (ImageFiles != null)
                 {
-                    try
+                    foreach (ImageFile currentImage in ImageFiles)
                     {
-                        SelectedFile = currentImage;
-                        SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, currentImage.NewWidth, currentImage.NewHeight);
-                        if (progressBarDialog != null)
+                        try
                         {
-                            progressBarDialog.CurrentItem = SuggestedFileName;
-                        }
-                        //if the stream is disposed CanSeek and CanRead is false
-                        if (!currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
-                        {
-                            currentImage.Stream = (await _imageFileService.LoadImageFileAsync(currentImage.Path)).Stream;
-                        }
-                        using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality))
-                        {
-                            //log image size
-                            _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
+                            SelectedFile = currentImage;
+                            SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, currentImage.NewWidth, currentImage.NewHeight);
+                            if (progressBarDialog != null)
+                            {
+                                progressBarDialog.CurrentItem = SuggestedFileName;
+                            }
+                            //if the stream is disposed CanSeek and CanRead is false
+                            if (!currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
+                            {
+                                currentImage.Stream = (await _imageFileService.LoadImageFileAsync(currentImage.Path)).Stream;
+                            }
+                            using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality))
+                            {
+                                //log image size
+                                _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
                             {
                                 { $"{nameof(ImageFile)}{nameof(Width)}", $"{currentImage?.Width}" },
                                 { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
-                                { nameof(Width), $"{currentImage.NewHeight }" },
-                                { nameof(Height), $"{currentImage.NewHeight}" },
+                                { nameof(Width), $"{currentImage?.NewHeight }" },
+                                { nameof(Height), $"{currentImage?.NewHeight}" },
                                 { nameof(ImageAction), $"{action}" }
                             });
-                            //overwrite current ImageStoreage
-                            if (action.Equals(ImageAction.Save))
-                            {
-                                try
+                                //overwrite current ImageStoreage
+                                if (action.Equals(ImageAction.Save))
                                 {
-                                    await _imageFileService.WriteBytesAsync(currentImage, resizedImageFileStream.ToArray());
-                                    LastFile = currentImage;
-                                }
-                                catch (Contract.Exceptions.UnauthorizedAccessException)
-                                {
-                                    //log the UnauthorizedAccessException
-                                    _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
+                                    try
+                                    {
+                                        await _imageFileService.WriteBytesAsync(currentImage, resizedImageFileStream.ToArray());
+                                        LastFile = currentImage;
+                                    }
+                                    catch (Contract.Exceptions.UnauthorizedAccessException)
+                                    {
+                                        //log the UnauthorizedAccessException
+                                        _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                     {
                                         { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
                                     });
-                                    //we can't override the current file try for the next files saveAs
-                                    action = ImageAction.SaveAs;
-                                    await ShowPermissionDeniedDialog(progressBarDialog);
-                                    ImageFile File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
-                                    if (null != File)
-                                    {
-                                        //try to apply the new storagefolder (if the user selected a new location)
-                                        targetStorageFolder = Path.GetDirectoryName(File.Path);
-
-                                        await _imageFileService.WriteBytesAsync(File, resizedImageFileStream.ToArray());
-                                        LastFile = File;
-                                    }
-                                }
-                            } //create new ImageStoreage
-                            else if (action.Equals(ImageAction.SaveAs))
-                            {
-                                ImageFile File = null;
-                                try
-                                {
-                                    if (String.IsNullOrEmpty(targetStorageFolder))
-                                    {
-                                        //get default path
-                                        File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
-                                        //File can be null when user aborted picksavefile dialog
-                                        if (File != null)
+                                        //we can't override the current file try for the next files saveAs
+                                        action = ImageAction.SaveAs;
+                                        await ShowPermissionDeniedDialog(progressBarDialog);
+                                        ImageFile File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
+                                        if (null != File)
                                         {
+                                            //try to apply the new storagefolder (if the user selected a new location)
                                             targetStorageFolder = Path.GetDirectoryName(File.Path);
+
                                             await _imageFileService.WriteBytesAsync(File, resizedImageFileStream.ToArray());
                                             LastFile = File;
                                         }
                                     }
-                                    else
-                                    {
-                                        await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
-                                    }
-                                }
-                                catch (Contract.Exceptions.UnauthorizedAccessException)
+                                } //create new ImageStoreage
+                                else if (action.Equals(ImageAction.SaveAs))
                                 {
-                                    //log the UnauthorizedAccessException
-                                    _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
+                                    ImageFile File = null;
+                                    try
+                                    {
+                                        if (String.IsNullOrEmpty(targetStorageFolder))
+                                        {
+                                            //get default path
+                                            File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
+                                            //File can be null when user aborted picksavefile dialog
+                                            if (File != null)
+                                            {
+                                                targetStorageFolder = Path.GetDirectoryName(File.Path);
+                                                await _imageFileService.WriteBytesAsync(File, resizedImageFileStream.ToArray());
+                                                LastFile = File;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
+                                        }
+                                    }
+                                    catch (Contract.Exceptions.UnauthorizedAccessException)
+                                    {
+                                        //log the UnauthorizedAccessException
+                                        _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                     {
                                         { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
                                     });
-                                    await ShowPermissionDeniedDialog(progressBarDialog);
-                                    //tell the user to save the file in an other location
-                                    File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
-                                    //try to apply the new storagefolder (if the user selected a new location)
-                                    if (File != null && Path.GetDirectoryName(targetStorageFolder) != Path.GetDirectoryName(File.Path))
-                                    {
-                                        targetStorageFolder = Path.GetDirectoryName(File.Path);
+                                        await ShowPermissionDeniedDialog(progressBarDialog);
+                                        //tell the user to save the file in an other location
+                                        File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
+                                        //try to apply the new storagefolder (if the user selected a new location)
+                                        if (File != null && Path.GetDirectoryName(targetStorageFolder) != Path.GetDirectoryName(File.Path))
+                                        {
+                                            targetStorageFolder = Path.GetDirectoryName(File.Path);
+                                        }
                                     }
-                                }
-                                if (null != File)
-                                {
-                                    LastFile = File;
-                                }
-                                _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
+                                    if (null != File)
+                                    {
+                                        LastFile = File;
+                                    }
+                                    _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                 {
                                     { nameof(currentImage.Path), $"{currentImage.Path}" }
                                 });
+                                }
+                                else if (action.Equals(ImageAction.Process))
+                                {
+                                    String TempFolder = _applicationService.GetLocalCacheFolder();
+                                    ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
+                                    ProcessedImageAction?.Invoke(temp, $"{SuggestedFileName}");
+                                }
+                                //open resized image depending whether only one image is resized and the user enabled this option
+                                if (SingleFile && LastFile != null && action != ImageAction.Process &&
+                                    _LocalSettings.EnabledOpenSingleFileAfterResize)
+                                {
+                                    OpenFileCommand.Execute(LastFile);
+                                }
                             }
-                            else if (action.Equals(ImageAction.Process))
-                            {
-                                String TempFolder = _applicationService.GetLocalCacheFolder();
-                                ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
-                                ProcessedImageAction?.Invoke(temp, $"{SuggestedFileName}");
-                            }
-                            //open resized image depending whether only one image is resized and the user enabled this option
-                            if (SingleFile && LastFile != null && action != ImageAction.Process &&
-                                _LocalSettings.EnabledOpenSingleFileAfterResize)
-                            {
-                                OpenFileCommand.Execute(LastFile);
-                            }
+                            currentImage?.Stream?.Dispose();
                         }
-                        currentImage?.Stream?.Dispose();
-                    }
-                    catch (NotSupportedException e)
-                    {
-                        _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e,
-                            new Dictionary<string, string>() { { nameof(SuggestedFileName), SuggestedFileName } });
-                        await _pageDialogService?.ShowAsync(_ResourceLoader.GetString("ImageTypNotSupported"));
-                    }
-                    catch (InvalidOperationException e)
-                    {
-                        //for example when enterted width and height is zero. 'Target width 0 and height 0 must be greater than zero.'
-                        lastException = e;
-                    }
-                    catch (FileLoadException e)
-                    {
-                        //for example The process cannot access the file because it is being used by another process. 
-                        lastException = e;
-                    }
-                    catch (UnknownImageFormatException e)
-                    {
-                        lastException = e;
-                    }
-                    catch (Exception e)
-                    {
-                        lastException = e;
-                        _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e);
-                    }
-                    if (progressBarDialog != null)
-                    {
-                        progressBarDialog.ProcessedItems++;
-                    }
-                }
-                if (_LocalSettings != null && _LocalSettings.ShowSuccessMessage && LastFile != null)
-                {
-                    await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
-                }
-                Resizing = false;
-                if (lastException != null)
-                {
-                    if (lastException is InvalidOperationException || lastException is FileLoadException)
-                    {
-                        await _pageDialogService.ShowAsync(lastException.Message);
-                    }
-                    if (lastException is UnknownImageFormatException)
-                    {
-                        String message = _ResourceLoader.GetString("UnknownImageFormatException");
-                        if (!String.IsNullOrEmpty(message))
+                        catch (NotSupportedException e)
                         {
-                            message = String.Format(message, string.Join(", ", _imageFileService.FileTypeFilter));
-                            await _pageDialogService.ShowAsync(message);
+                            _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e,
+                                new Dictionary<string, string>() { { nameof(SuggestedFileName), SuggestedFileName } });
+                            await _pageDialogService?.ShowAsync(_ResourceLoader.GetString("ImageTypNotSupported"));
+                        }
+                        catch (InvalidOperationException e)
+                        {
+                            //for example when enterted width and height is zero. 'Target width 0 and height 0 must be greater than zero.'
+                            lastException = e;
+                        }
+                        catch (FileLoadException e)
+                        {
+                            //for example The process cannot access the file because it is being used by another process. 
+                            lastException = e;
+                        }
+                        catch (UnknownImageFormatException e)
+                        {
+                            lastException = e;
+                        }
+                        catch (Exception e)
+                        {
+                            lastException = e;
+                            _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e);
+                        }
+                        if (progressBarDialog != null)
+                        {
+                            progressBarDialog.ProcessedItems++;
+                        }
+                    }
+                    if (_LocalSettings != null && _LocalSettings.ShowSuccessMessage && LastFile != null)
+                    {
+                        await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
+                    }
+                    Resizing = false;
+                    if (lastException != null)
+                    {
+                        if (lastException is InvalidOperationException || lastException is FileLoadException)
+                        {
+                            await _pageDialogService.ShowAsync(lastException.Message);
+                        }
+                        if (lastException is UnknownImageFormatException)
+                        {
+                            String message = _ResourceLoader.GetString("UnknownImageFormatException");
+                            if (!String.IsNullOrEmpty(message))
+                            {
+                                message = String.Format(message, string.Join(", ", _imageFileService.FileTypeFilter));
+                                await _pageDialogService.ShowAsync(message);
+                            }
                         }
                     }
                 }
+
             }
             catch (Exception e)
             {
@@ -639,12 +644,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         private ICommand _OkCommand;
         public ICommand OkCommand => _OkCommand ?? (_OkCommand = new DelegateCommand(OnOkCommand));
 
+        protected readonly SemaphoreSlim _SemaphoreSlimOnOkCommand = new SemaphoreSlim(1, 1);
         protected async void OnOkCommand()
         {
             try
             {
+                await _SemaphoreSlimOnOkCommand.WaitAsync();
                 _loggerService?.LogEvent(nameof(OnOkCommand));
-                ImageAction Action = OverwriteFiles == true ? ImageAction.Save : ImageAction.SaveAs;
+                ImageAction Action = OverwriteFiles ? ImageAction.Save : ImageAction.SaveAs;
                 bool Result = await ResizeImages(Action);
                 if (_LocalSettings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
                 {
@@ -655,6 +662,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             catch (Exception e)
             {
                 _loggerService?.LogException(nameof(OnOkCommand), e);
+            }
+            finally
+            {
+                _SemaphoreSlimOnOkCommand.Release();
             }
         }
         #endregion
