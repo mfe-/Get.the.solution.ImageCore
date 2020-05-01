@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -438,7 +439,23 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             {
                                 currentImage.Stream = (await _imageFileService.LoadImageFileAsync(currentImage.Path)).Stream;
                             }
-                            using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality))
+                            TaskCompletionSource<MemoryStream> taskCompletionSource = new TaskCompletionSource<MemoryStream>();
+                            Thread thread = new Thread(() =>
+                            {
+                                try
+                                {
+                                    var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality);
+                                    taskCompletionSource.SetResult(ms);
+                                }
+                                catch(Exception e)
+                                {
+                                    taskCompletionSource.SetException(e);
+                                }
+                            });
+                            thread.IsBackground = true;
+                            thread.Priority = ThreadPriority.Normal;
+                            thread.Start();
+                            using (MemoryStream resizedImageFileStream = await taskCompletionSource.Task)
                             {
                                 //log image size
                                 _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
