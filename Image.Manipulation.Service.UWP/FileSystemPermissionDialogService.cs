@@ -8,9 +8,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public class FileSystemPermissionDialogService : IFileSystemPermissionDialogService
     {
-        protected ContentDialog _broadFileSytemAccessDialog;
-        IApplicationService _applicationService;
-        ILoggerService _loggerService;
+        private ContentDialog _broadFileSytemAccessDialog;
+        private readonly IApplicationService _applicationService;
+        private readonly ILoggerService _loggerService;
         public FileSystemPermissionDialogService(ILoggerService loggerService, IApplicationService applicationService, ContentDialog broadFileSytemAccessDialog)
         {
             _broadFileSytemAccessDialog = broadFileSytemAccessDialog;

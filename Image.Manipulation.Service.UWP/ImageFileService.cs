@@ -37,13 +37,13 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 try
                 {
-                    imageFiles.Add(await FileToImageFileConverter(storage));
+                    imageFiles.Add(await FileToImageFile(storage, false));
                     StorageApplicationPermissions.MostRecentlyUsedList.Add(storage);
                     StorageFolder storageFolder = await StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(storage.Path));
                     //todo save this tokens!!!
                     FutureAccessToken = StorageApplicationPermissions.FutureAccessList.Add(storageFolder);
                 }
-                catch(UnauthorizedAccessException e)
+                catch (UnauthorizedAccessException e)
                 {
                     throw new Contract.Exceptions.UnauthorizedAccessException(e);
                 }
@@ -101,7 +101,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 IRandomAccessStreamWithContentType RandomAccessStream = await storageFile?.OpenReadAsync();
                 ImageStream = RandomAccessStream?.AsStreamForWrite();
             }
-            ImageProperties imageProp = null;
+            ImageProperties imageProp;
             imageProp = await (storageFile as StorageFile)?.Properties.GetImagePropertiesAsync();
 
             FileInfo fileInfo = new FileInfo(storageFile.Path);
@@ -180,7 +180,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public override string GenerateSuccess(ImageFile imageFile)
         {
             string successMessage = _resourceService.GetString("SavedTo");
-            if(!String.IsNullOrEmpty(successMessage))
+            if (!String.IsNullOrEmpty(successMessage))
             {
                 successMessage = String.Format(successMessage, imageFile.Path);
             }
