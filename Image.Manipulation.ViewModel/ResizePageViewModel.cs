@@ -435,9 +435,19 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 progressBarDialog.CurrentItem = SuggestedFileName;
                             }
                             //if the stream is disposed CanSeek and CanRead is false
-                            if (!currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
+                            if (currentImage.Stream == null || !currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
                             {
-                                currentImage.Stream = (await _imageFileService.LoadImageFileAsync(currentImage.Path)).Stream;
+                                var imageFile = (await _imageFileService.LoadImageFileAsync(currentImage.Path));
+                                if (imageFile.Stream != null)
+                                {
+                                    currentImage.Stream = imageFile.Stream;
+                                }
+                                else
+                                {
+                                    //await ShowPermissionDeniedDialog(progressBarDialog); //todo file write/read test
+                                    _loggerService.LogEvent("Could not load stream.", new Dictionary<string, string>() { { nameof(currentImage.Path), currentImage.Path } });
+                                    continue;
+                                }
                             }
                             TaskCompletionSource<MemoryStream> taskCompletionSource = new TaskCompletionSource<MemoryStream>();
                             Thread thread = new Thread(() =>
@@ -447,7 +457,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality);
                                     taskCompletionSource.SetResult(ms);
                                 }
-                                catch(Exception e)
+                                catch (Exception e)
                                 {
                                     taskCompletionSource.SetException(e);
                                 }
