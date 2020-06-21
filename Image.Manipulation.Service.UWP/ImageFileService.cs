@@ -62,23 +62,14 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
             FileSavePicker.DefaultFileExtension = fileInfo.Extension;
             FileSavePicker.FileTypeChoices.Add(fileInfo.Extension, FileTypeFilter);
-            if (Path.GetDirectoryName(preferredSaveLocation).Contains(System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)))
-            {
+            //if (Path.GetDirectoryName(preferredSaveLocation).Contains(System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)))
+            //{
+            //    FileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            //}
+            //else
+            //{
                 FileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            }
-            else
-            {
-                try
-                {
-                    //dueo file system restriction this can throw an exception
-                    FileSavePicker.SuggestedStartLocation = PickerLocationId.Unspecified;
-                }
-                catch (ArgumentException)
-                {
-                    FileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                }
-
-            }
+            //}
             // Default file name if the user does not type one in or select a file to replace
             FileSavePicker.SuggestedFileName = SuggestedFileName;
             IStorageFile File = await FileSavePicker.PickSaveFileAsync();
@@ -102,11 +93,19 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 ImageStream = RandomAccessStream?.AsStreamForWrite();
             }
             ImageProperties imageProp;
-            imageProp = await (storageFile as StorageFile)?.Properties.GetImagePropertiesAsync();
-
+            int width = 0;
+            int height = 0;
+            if (storageFile is StorageFile sFile)
+            {
+                if (sFile.Properties != null)
+                {
+                    imageProp = await sFile.Properties.GetImagePropertiesAsync();
+                    width = (int)imageProp.Width;
+                    height = (int)imageProp.Height;
+                }
+            }
             FileInfo fileInfo = new FileInfo(storageFile.Path);
-
-            ImageFile imageFile = new ImageFile(storageFile.Path, ImageStream, (int)imageProp.Width, (int)imageProp.Height, fileInfo);
+            ImageFile imageFile = new ImageFile(storageFile.Path, ImageStream, width, height, fileInfo);
             imageFile.Tag = storageFile;
             imageFile.IsReadOnly = (Windows.Storage.FileAttributes.ReadOnly & storageFile.Attributes) == Windows.Storage.FileAttributes.ReadOnly;
             return imageFile;

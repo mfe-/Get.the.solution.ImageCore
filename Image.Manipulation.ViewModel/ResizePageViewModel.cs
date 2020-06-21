@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -31,14 +30,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly IDragDropService _dragDropService;
         protected readonly IFileSystemPermissionDialogService _fileSystemPermissionDialogService;
         protected readonly ObservableCollection<ImageFile> _SelectedFiles;
-        protected readonly bool _Sharing;
+
         protected int RadioOptions;
 
         public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService,
             IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar,
             IFileSystemPermissionDialogService fileSystemPermissionDialogService, IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings localSettings,
             ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles,
-            INavigation navigationService, IResourceService resourceLoader, TimeSpan sharing)
+            INavigation navigationService, IResourceService resourceLoader, AppStartType appStartType)
         {
             try
             {
@@ -56,14 +55,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _loggerService = loggerService;
                 _imageFileService = imageFileService;
                 ImageFiles = new ObservableCollection<ImageFile>();
-                if (TimeSpan.MaxValue.Equals(sharing))
-                {
-                    _Sharing = true;
-                }
-                else
-                {
-                    _Sharing = false;
-                }
 
                 if (_SelectedFiles != null)
                 {
@@ -79,6 +70,16 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             catch (Exception e)
             {
                 _loggerService?.LogException(nameof(ResizePageViewModel), e);
+            }
+
+            _appStartType = appStartType;
+        }
+        public bool IsShareTarget
+        {
+
+            get
+            {
+                return AppStartType.AppIsShareTarget.Equals(_appStartType);
             }
         }
         /// <summary>
@@ -405,7 +406,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         public async Task<bool> ResizeImages(ImageAction action, Action<ImageFile, String> ProcessedImageAction = null)
         {
-            IProgressBarDialogService progressBarDialog = _progressBarDialogService.ProgressBarDialogFactory();
+            IProgressBarDialogService progressBarDialog = !IsShareTarget ? _progressBarDialogService.ProgressBarDialogFactory() : null;
             try
             {
                 Resizing = true;
@@ -450,32 +451,41 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 }
                             }
                             TaskCompletionSource<MemoryStream> taskCompletionSource = new TaskCompletionSource<MemoryStream>();
-                            Thread thread = new Thread(() =>
+                            if (!IsShareTarget)
                             {
-                                try
+                                Thread thread = new Thread(() =>
                                 {
-                                    var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality);
-                                    taskCompletionSource.SetResult(ms);
-                                }
-                                catch (Exception e)
-                                {
-                                    taskCompletionSource.SetException(e);
-                                }
-                            });
-                            thread.IsBackground = true;
-                            thread.Priority = ThreadPriority.Normal;
-                            thread.Start();
+                                    try
+                                    {
+                                        var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality);
+                                        taskCompletionSource.SetResult(ms);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        taskCompletionSource.SetException(e);
+                                    }
+                                });
+                                thread.IsBackground = true;
+                                thread.Priority = ThreadPriority.Normal;
+                                thread.Start();
+                            }
+                            else
+                            {
+                                var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality);
+                                taskCompletionSource.SetResult(ms);
+                            }
                             using (MemoryStream resizedImageFileStream = await taskCompletionSource.Task)
+                            //using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality))
                             {
                                 //log image size
                                 _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
-                            {
-                                { $"{nameof(ImageFile)}{nameof(Width)}", $"{currentImage?.Width}" },
-                                { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
-                                { nameof(Width), $"{currentImage?.NewHeight }" },
-                                { nameof(Height), $"{currentImage?.NewHeight}" },
-                                { nameof(ImageAction), $"{action}" }
-                            });
+                                {
+                                    { $"{nameof(ImageFile)}{nameof(Width)}", $"{currentImage?.Width}" },
+                                    { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
+                                    { nameof(Width), $"{currentImage?.NewHeight }" },
+                                    { nameof(Height), $"{currentImage?.NewHeight}" },
+                                    { nameof(ImageAction), $"{action}" }
+                                });
                                 //overwrite current ImageStoreage
                                 if (action.Equals(ImageAction.Save))
                                 {
@@ -488,9 +498,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     {
                                         //log the UnauthorizedAccessException
                                         _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
-                                    {
-                                        { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
-                                    });
+                                        {
+                                            { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
+                                        });
                                         //we can't override the current file try for the next files saveAs
                                         action = ImageAction.SaveAs;
                                         await ShowPermissionDeniedDialog(progressBarDialog);
@@ -531,9 +541,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     {
                                         //log the UnauthorizedAccessException
                                         _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
-                                    {
-                                        { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
-                                    });
+                                        {
+                                            { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
+                                        });
                                         await ShowPermissionDeniedDialog(progressBarDialog);
                                         //tell the user to save the file in an other location
                                         File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
@@ -600,6 +610,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     if (_LocalSettings != null && _LocalSettings.ShowSuccessMessage && LastFile != null)
                     {
                         await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
+                    }
+                    if (IsShareTarget)
+                    {
+                        _shareService.EndShareTargetOperation();
                     }
                     Resizing = false;
                     if (lastException != null)
@@ -672,6 +686,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         public ICommand OkCommand => _OkCommand ?? (_OkCommand = new DelegateCommand(OnOkCommand));
 
         protected readonly SemaphoreSlim _SemaphoreSlimOnOkCommand = new SemaphoreSlim(1, 1);
+        private readonly AppStartType _appStartType;
+
         protected async void OnOkCommand()
         {
             try

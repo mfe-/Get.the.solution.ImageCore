@@ -125,5 +125,25 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        private ShareOperation _shareOperation = null;
+        public void StartShareTargetOperation(object shareOperation)
+        {
+            if(shareOperation is ShareOperation shareOperation1)
+            {
+                _shareOperation = shareOperation1;
+                _shareOperation.ReportDataRetrieved();
+            }
+            else
+            {
+                throw new ArgumentException($"Parameter {nameof(shareOperation)} must be of type {nameof(ShareOperation)}");
+            }
+
+        }
+        public void EndShareTargetOperation()
+        {
+            _shareOperation?.ReportCompleted();
+        }
+
     }
 }

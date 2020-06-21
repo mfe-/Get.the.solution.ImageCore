@@ -45,7 +45,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public bool IsAppUpdated { get; protected set; }
 
-        public async Task ShowIfAppropriateWhatsNewDisplayAsync()
+        public async Task<bool> ShowIfAppropriateWhatsNewDisplayAsync()
         {
             if (IsAppUpdated)
             {
@@ -59,6 +59,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     await dialog.ShowAsync();
                 }
             }
+            return IsAppUpdated;
         }
     }
 }

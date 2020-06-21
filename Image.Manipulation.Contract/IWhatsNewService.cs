@@ -4,6 +4,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
 {
     public interface IWhatsNewService
     {
-        Task ShowIfAppropriateWhatsNewDisplayAsync();
+        Task<bool> ShowIfAppropriateWhatsNewDisplayAsync();
     }
 }
