@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="SixLabors.Core" Version="1.0.0-dev000141" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-dev003165" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-rc0002" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 
