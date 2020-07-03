@@ -1,5 +1,4 @@
 ﻿using Get.the.solution.Image.Contract;
-using Get.the.solution.Image.Manipulation.Contract;
 using System;
 using System.Collections.Generic;
 
@@ -7,6 +6,10 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
 {
     public abstract class LoggerBaseService : ILoggerService
     {
+        public virtual void LogException(Exception e)
+        {
+            LogException("", e, null);
+        }
         public virtual void LogException(string methodname, Exception e)
         {
             LogException(methodname, e, null);

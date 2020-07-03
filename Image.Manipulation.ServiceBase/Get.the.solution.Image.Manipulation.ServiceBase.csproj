@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Private.DataContractSerialization" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Image.Contract\Get.the.solution.Image.Contract.csproj" />
     <ProjectReference Include="..\Image.Manipulation.Contract\Get.the.solution.Image.Manipulation.Contract.csproj" />
   </ItemGroup>
