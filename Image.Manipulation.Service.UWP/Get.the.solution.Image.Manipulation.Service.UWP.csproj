@@ -106,6 +106,8 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="MediaCaptureService.cs" />
+    <Compile Include="ImageFileServiceExtensions.cs" />
     <Compile Include="DragDropService.cs" />
     <Compile Include="FileSystemPermissionDialogService.cs" />
     <Compile Include="ImageFileService.cs" />
