@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -13,7 +11,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public static class ImageFileServiceExtensions
     {
-        public delegate void ActionRef<T>(ref T b, ref T g, ref T r, ref T a);
+        /// <summary>
+        /// Creates a <seealso cref="IRandomAccessStream"/> from <paramref name="softwareBitmap"/>.
+        /// </summary>
+        /// <param name="softwareBitmap">The bitmap which should be converted to a stream.</param>
+        /// <returns>The generatede stream</returns>
         public static async Task<IRandomAccessStream> SoftwareBitmapToRandomAccesStreamAsync(this SoftwareBitmap softwareBitmap)
         {
             var stream = new InMemoryRandomAccessStream();
@@ -35,6 +37,42 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             await encoder.FlushAsync();
             return stream;
         }
+        /// <summary>
+        /// Converts a Memorystream to a <seealso cref="SoftwareBitmap"/>
+        /// </summary>
+        /// <param name="memoryStream">The memorystream which contains the image</param>
+        /// <returns>The generated <seealso cref="SoftwareBitmap"/></returns>
+        public static async Task<SoftwareBitmap> MemoryStreamToSoftwareBitmapAsync(this MemoryStream memoryStream)
+        {
+            BitmapDecoder bitmapDecoder = await BitmapDecoder.CreateAsync(memoryStream.AsRandomAccessStream());
+            SoftwareBitmap softwareBitmap = await bitmapDecoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+            return softwareBitmap;
+        }
+        /// <summary>
+        /// Saves the <paramref name="softwareBitmap"/> to the overgiven <paramref name="storageFile"/>
+        /// </summary>
+        /// <param name="softwareBitmap">The picture to save</param>
+        /// <param name="storageFile">The file in which the pictures gets stored</param>
+        /// <returns></returns>
+        public static async Task SaveSoftwareBitmapToStorageFile(this SoftwareBitmap softwareBitmap, StorageFile storageFile)
+        {
+            using (IRandomAccessStream stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                using (IRandomAccessStream memoryStream = await softwareBitmap.SoftwareBitmapToRandomAccesStreamAsync())
+                {
+                    await RandomAccessStream.CopyAndCloseAsync(memoryStream, stream);
+                }
+            }
+        }
+        /// <summary>
+        /// Action with ref parameter for pixel operationss
+        /// </summary>
+        /// <typeparam name="T">Generic parameter for pixel</typeparam>
+        /// <param name="b">blue value</param>
+        /// <param name="g">green value</param>
+        /// <param name="r">red value</param>
+        /// <param name="a">alpha value</param>
+        public delegate void ActionRef<T>(ref T b, ref T g, ref T r, ref T a);
         /// <summary>
         /// Iterate over each pixel of <paramref name="bitmap"/> and passes the pixel values to <paramref name="currPixelAction"/>
         /// </summary>
