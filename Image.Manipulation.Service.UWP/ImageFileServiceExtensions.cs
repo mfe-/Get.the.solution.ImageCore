@@ -16,7 +16,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// </summary>
         /// <param name="softwareBitmap">The bitmap which should be converted to a stream.</param>
         /// <returns>The generatede stream</returns>
-        public static async Task<IRandomAccessStream> SoftwareBitmapToRandomAccesStreamAsync(this SoftwareBitmap softwareBitmap)
+        public static async Task<IRandomAccessStream> ToRandomAccesStreamAsync(this SoftwareBitmap softwareBitmap)
         {
             var stream = new InMemoryRandomAccessStream();
 
@@ -40,13 +40,18 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// <summary>
         /// Converts a Memorystream to a <seealso cref="SoftwareBitmap"/>
         /// </summary>
-        /// <param name="memoryStream">The memorystream which contains the image</param>
+        /// <param name="stream">The memorystream which contains the image</param>
         /// <returns>The generated <seealso cref="SoftwareBitmap"/></returns>
-        public static async Task<SoftwareBitmap> MemoryStreamToSoftwareBitmapAsync(this MemoryStream memoryStream)
+        public static async Task<SoftwareBitmap> ToSoftwareBitmapAsync(this Stream stream)
         {
-            BitmapDecoder bitmapDecoder = await BitmapDecoder.CreateAsync(memoryStream.AsRandomAccessStream());
+            BitmapDecoder bitmapDecoder = await BitmapDecoder.CreateAsync(stream.AsRandomAccessStream());
             SoftwareBitmap softwareBitmap = await bitmapDecoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
             return softwareBitmap;
+        }
+        public static async Task ToStorageFile(this Task<SoftwareBitmap> softwareBitmapTask, StorageFile storageFile)
+        {
+            var softwareBitmap = await softwareBitmapTask;
+            await softwareBitmap.ToStorageFile(storageFile);
         }
         /// <summary>
         /// Saves the <paramref name="softwareBitmap"/> to the overgiven <paramref name="storageFile"/>
@@ -54,11 +59,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// <param name="softwareBitmap">The picture to save</param>
         /// <param name="storageFile">The file in which the pictures gets stored</param>
         /// <returns></returns>
-        public static async Task SaveSoftwareBitmapToStorageFile(this SoftwareBitmap softwareBitmap, StorageFile storageFile)
+        public static async Task ToStorageFile(this SoftwareBitmap softwareBitmap, StorageFile storageFile)
         {
             using (IRandomAccessStream stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
             {
-                using (IRandomAccessStream memoryStream = await softwareBitmap.SoftwareBitmapToRandomAccesStreamAsync())
+                using (IRandomAccessStream memoryStream = await softwareBitmap.ToRandomAccesStreamAsync())
                 {
                     await RandomAccessStream.CopyAndCloseAsync(memoryStream, stream);
                 }
