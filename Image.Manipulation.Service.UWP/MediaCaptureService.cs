@@ -110,7 +110,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             if (_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview) is VideoEncodingProperties videoEncodingProperties)
             {
                 // Create a video frame in the desired format for the preview frame
-                VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Bgra8, (int)videoEncodingProperties.Width, (int)videoEncodingProperties.Height);
+                VideoFrame videoFrame = new VideoFrame(BitmapPixelFormat.Bgra8, (int)videoEncodingProperties.Width, (int)videoEncodingProperties.Height, BitmapAlphaMode.Ignore);
                 SoftwareBitmap bitmapBGRA8 = await TakePictureAsync(videoFrame, modifySoftwareBitmapAction);
                 return bitmapBGRA8;
             }

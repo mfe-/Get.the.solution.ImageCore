@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Get.the.solution.Image.Contract;
+using System;
 
 namespace Image.Operation
 {
-    public static class ImageOperations
+    public class ToGrayScaleOperator : IEditPixelOperator
     {
         /// <summary>
         /// Calculates for the current pixels of a,r,g,b a grayscale value.
@@ -30,30 +31,22 @@ namespace Image.Operation
             //a = a; ignore alpha channel
         }
         /// <summary>
-        /// Computes absolute differences between the two input pixels
+        /// Calculates for the current pixels of a,r,g,b a grayscale value.
+        /// This method needs to be called on every pixel of the image
         /// </summary>
-        /// <remarks>
-        /// https://homepages.inf.ed.ac.uk/rbf/HIPR2/pixsub.htm
-        /// </remarks>
-        /// <param name="b1">Blue first pixel</param>
-        /// <param name="g1">Green first pixel</param>
-        /// <param name="r1">Red first pixel</param>
-        /// <param name="a1">alpha first pixel</param>
-        /// <param name="b2">Blue second pixel</param>
-        /// <param name="g2">Green second pixel</param>
-        /// <param name="r2">Red second pixel</param>
-        /// <param name="a2">Alpha second pixel</param>
-        public static void Substract(ref byte b1, ref byte g1, ref byte r1, ref byte a1, ref byte b2, ref byte g2, ref byte r2, ref byte a2)
+        /// <remarks>http://www.imageprocessingbasics.com/rgb-to-grayscale/</remarks>
+        /// <param name="b1">Blue</param>
+        /// <param name="g1">Green</param>
+        /// <param name="r1">Red</param>
+        /// <param name="a1">alpha</param>
+        public void EditPixel(ref byte b1, ref byte g1, ref byte r1, ref byte a1)
         {
-            int b = Math.Abs(b1 - b2);
-            int g = Math.Abs(g1 - g2);
-            int r = Math.Abs(r1 - r2);
-            int a = Math.Abs(a1 - a2);
+            ToGrayScale(ref b1, ref g1, ref r1, ref a1);
+        }
 
-            b1 = (byte)b;
-            g1 = (byte)g;
-            r1 = (byte)r;
-            a1 = (byte)a;
+        public object SetResult()
+        {
+            return 0;
         }
     }
 }

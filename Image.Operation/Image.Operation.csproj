@@ -4,4 +4,8 @@
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Image.Contract\Get.the.solution.Image.Contract.csproj" />
+  </ItemGroup>
+
 </Project>

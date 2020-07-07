@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Get.the.solution.Image.Contract;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -70,34 +72,27 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 }
             }
         }
-        /// <summary>
-        /// Action with ref parameter for pixel operationss
-        /// </summary>
-        /// <typeparam name="T">Generic parameter for pixel</typeparam>
-        /// <param name="b">blue value</param>
-        /// <param name="g">green value</param>
-        /// <param name="r">red value</param>
-        /// <param name="a">alpha value</param>
-        public delegate void ActionRef<T>(ref T b, ref T g, ref T r, ref T a);
-        /// <summary>
-        /// Action with ref parameter for pixel operationss
-        /// </summary>
-        /// <typeparam name="T">Generic parameter for pixel</typeparam>
-        /// <param name="b">blue value</param>
-        /// <param name="g">green value</param>
-        /// <param name="r">red value</param>
-        /// <param name="a">alpha value</param>
-        public delegate void ActionRefs<T>(ref T b1, ref T g1, ref T r1, ref T a1,ref T b2, ref T g2, ref T r2, ref T a2);
+        public static unsafe void EditPixels(this SoftwareBitmap bitmap, IEnumerable<IEditPixelOperator> editPixelOperatorList)
+        {
+            EditPixels(bitmap, currPixelAction: null, editPixelOperatorList: editPixelOperatorList);
+        }
+        public static unsafe void EditPixels(this SoftwareBitmap bitmap, ActionRef<byte> currPixelAction = null)
+        {
+            EditPixels(bitmap, currPixelAction: currPixelAction, editPixelOperatorList: null);
+        }
         /// <summary>
         /// Iterate over each pixel of <paramref name="bitmap"/> and passes the pixel values to <paramref name="currPixelAction"/>
         /// </summary>
         /// <param name="bitmap">The bitmap to modify</param>
         /// <param name="currPixelAction">The pixel action which should be called</param>
-        public static unsafe void EditPixels(SoftwareBitmap bitmap, ActionRef<byte> currPixelAction)
+        /// <param name="editPixelOperatorList">A list of pixel operators which should be applied on each pixel</param>
+        private static unsafe void EditPixels(this SoftwareBitmap bitmap, ActionRef<byte> currPixelAction = null, IEnumerable<IEditPixelOperator> editPixelOperatorList = null)
         {
-            if (currPixelAction == null) throw new ArgumentException(nameof(currPixelAction));
             if (bitmap == null) throw new ArgumentException(nameof(currPixelAction));
             if (bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8) throw new ArgumentException(nameof(bitmap), $"{BitmapPixelFormat.Bgra8} expected");
+
+            if (editPixelOperatorList == null) editPixelOperatorList = new List<IEditPixelOperator>();
+
             // Effect is hard-coded to operate on BGRA8 format only
             if (bitmap.BitmapPixelFormat == BitmapPixelFormat.Bgra8)
             {
@@ -125,30 +120,57 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                             // Index of the current pixel in the buffer (defined by the next 4 bytes, BGRA8)
                             var currPixel = desc.StartIndex + desc.Stride * row + BYTES_PER_PIXEL * col;
 
-                            // Read the current pixel information into b,g,r channels (leave out alpha channel)
-                            currPixelAction.Invoke(
+                            // Read the current pixel information into b,g,r channels 
+                            currPixelAction?.Invoke(
                                 ref data[currPixel + 0],
                                 ref data[currPixel + 1],
                                 ref data[currPixel + 2],
-                                ref data[currPixel + 3]);
+                                ref data[currPixel + 3]
+                                );
+                            //iterate over pixel modification list
+                            foreach (IEditPixelOperator editPixel in editPixelOperatorList)
+                            {
+                                // Read the current pixel information into b,g,r channels and pass it to the pixeloperators
+                                editPixel.EditPixel(
+                                    ref data[currPixel + 0],
+                                    ref data[currPixel + 1],
+                                    ref data[currPixel + 2],
+                                    ref data[currPixel + 3]
+                                );
+                            }
+
                         }
+                    }
+                    //tell the editpixel interface that the pixel modification is completed
+                    foreach (IEditPixelOperator editPixel in editPixelOperatorList)
+                    {
+                        editPixel.SetResult();
                     }
                 }
             }
         }
-
+        public static unsafe void EditPixels(this SoftwareBitmap bitmap, SoftwareBitmap softwareBitmap, IEnumerable<IEditPixelOperator> editPixelOperatorsList)
+        {
+            EditPixels(bitmap, softwareBitmap, null, editPixelOperatorsList);
+        }
+        public static unsafe void EditPixels(this SoftwareBitmap bitmap, SoftwareBitmap softwareBitmap, ActionRefs<byte> currPixelAction)
+        {
+            EditPixels(bitmap, softwareBitmap, currPixelAction, null);
+        }
         /// <summary>
         /// Iterate over each pixel of <paramref name="bitmap"/> and passes the pixel values to <paramref name="currPixelAction"/>
         /// </summary>
         /// <param name="bitmap">The bitmap to modify</param>
-        /// <param name="softwareBitmap"></param>
+        /// <param name="softwareBitmap">the reference bitmap</param>
         /// <param name="currPixelAction">The pixel action which should be called</param>
-        public static unsafe void EditPixels(SoftwareBitmap bitmap, SoftwareBitmap softwareBitmap, ActionRefs<byte> currPixelAction)
+        /// <param name="editPixelOperatorsList">edit pixels instance</param>
+        public static unsafe void EditPixels(this SoftwareBitmap bitmap, SoftwareBitmap softwareBitmap, ActionRefs<byte> currPixelAction = null, IEnumerable<IEditPixelOperator> editPixelOperatorsList = null)
         {
-            if (currPixelAction == null) throw new ArgumentException(nameof(currPixelAction));
             if (bitmap == null) throw new ArgumentException(nameof(currPixelAction));
             if (bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8) throw new ArgumentException(nameof(bitmap), $"{BitmapPixelFormat.Bgra8} expected");
             if (softwareBitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8) throw new ArgumentException(nameof(softwareBitmap), $"{BitmapPixelFormat.Bgra8} expected");
+
+            if (editPixelOperatorsList == null) editPixelOperatorsList = new List<IEditPixelOperators>();
 
             // Effect is hard-coded to operate on BGRA8 format only
             if (bitmap.BitmapPixelFormat == BitmapPixelFormat.Bgra8 && softwareBitmap.BitmapPixelFormat == BitmapPixelFormat.Bgra8)
@@ -190,7 +212,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
 
                             // Read the current pixel information into b,g,r channels (leave out alpha channel)
-                            currPixelAction.Invoke(
+                            currPixelAction?.Invoke(
                                 //bitmap
                                 ref dataBitmap[currPixelBitmap + 0],
                                 ref dataBitmap[currPixelBitmap + 1],
@@ -203,7 +225,40 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                                 ref dataSoftwareBitmap[currPixelSoftwareBitmap + 2],
                                 ref dataSoftwareBitmap[currPixelSoftwareBitmap + 3]
                                 );
+
+                            foreach (IEditPixelOperator editPixelOperators in editPixelOperatorsList)
+                            {
+                                if (editPixelOperators is IEditPixelOperators pixelOperators)
+                                {
+                                    pixelOperators.EditPixels(
+                                    //bitmap
+                                    ref dataBitmap[currPixelBitmap + 0],
+                                    ref dataBitmap[currPixelBitmap + 1],
+                                    ref dataBitmap[currPixelBitmap + 2],
+                                    ref dataBitmap[currPixelBitmap + 3],
+
+                                    //softwareBitmap
+                                    ref dataSoftwareBitmap[currPixelSoftwareBitmap + 0],
+                                    ref dataSoftwareBitmap[currPixelSoftwareBitmap + 1],
+                                    ref dataSoftwareBitmap[currPixelSoftwareBitmap + 2],
+                                    ref dataSoftwareBitmap[currPixelSoftwareBitmap + 3]
+                                    );
+                                }
+                                else
+                                {
+                                    editPixelOperators.EditPixel(
+                                   //bitmap
+                                   ref dataBitmap[currPixelBitmap + 0],
+                                   ref dataBitmap[currPixelBitmap + 1],
+                                   ref dataBitmap[currPixelBitmap + 2],
+                                   ref dataBitmap[currPixelBitmap + 3]);
+                                }
+                            }
                         }
+                    }
+                    foreach (IEditPixelOperator editPixelOperators in editPixelOperatorsList)
+                    {
+                        editPixelOperators.SetResult();
                     }
                 }
             }
