@@ -167,6 +167,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public static unsafe void EditPixels(this SoftwareBitmap bitmap, SoftwareBitmap softwareBitmap, ActionRefs<byte> currPixelAction = null, IEnumerable<IEditPixelOperator> editPixelOperatorsList = null)
         {
             if (bitmap == null) throw new ArgumentException(nameof(currPixelAction));
+            if (softwareBitmap == null) throw new ArgumentException(nameof(softwareBitmap));
             if (bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8) throw new ArgumentException(nameof(bitmap), $"{BitmapPixelFormat.Bgra8} expected");
             if (softwareBitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8) throw new ArgumentException(nameof(softwareBitmap), $"{BitmapPixelFormat.Bgra8} expected");
 
