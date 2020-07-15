@@ -8,13 +8,9 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
     {
         public virtual void LogException(Exception e)
         {
-            LogException("", e, null);
+            LogException(nameof(Exception), e, null);
         }
-        public virtual void LogException(string methodname, Exception e)
-        {
-            LogException(methodname, e, null);
-        }
-        public virtual void LogException(string methodname, Exception e, IDictionary<string, string> data=null)
+        public virtual void LogException(string methodname, Exception e, IDictionary<string, string> data = null)
         {
             try
             {
@@ -38,7 +34,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
             }
             catch(Exception)
             {
-                //HockeyClient.Current.TrackException(ex);
+                //cant handle this exception
             }
 
         }

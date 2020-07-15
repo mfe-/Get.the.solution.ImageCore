@@ -32,11 +32,9 @@ namespace Get.the.solution.Image.Manipulation.Contract
             _openStreamFunction = funcStreamCallBack;
         }
 
-        private readonly String _Name;
         public String Name
         {
-            get { return FileInfo.Name; }
-            set { value = _Name; }
+            get { return FileInfo?.Name; }
         }
 
         //
@@ -46,7 +44,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
         // Returns:
         //     The full path of the item, if the item has a path in the user's file-system.
         public string Path { get; set; }
-
 
         private Stream _Stream;
 
@@ -122,7 +119,18 @@ namespace Get.the.solution.Image.Manipulation.Contract
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            // Cleanup
             Stream?.Dispose();
+        }
+        ~ImageFile()
+        {
+            Dispose(false);
         }
     }
 }

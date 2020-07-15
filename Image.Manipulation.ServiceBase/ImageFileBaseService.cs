@@ -9,7 +9,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
     public abstract class ImageFileBaseService
     {
         protected ILoggerService _loggerService;
-        public ImageFileBaseService(ILoggerService loggerService)
+        protected ImageFileBaseService(ILoggerService loggerService)
         {
             _loggerService = loggerService;
         }
@@ -29,7 +29,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
                 if (storeage != null)
                 {
                     string suggestedfilename = $"{storeage.FileInfo.Name.Replace(storeage.FileInfo.Extension, String.Empty)}-{width}x{height}{storeage.FileInfo.Extension}";
-                    //String suggestedfilename = $"{storeage.Name.Replace(storeage.FileType, String.Empty)}-{Width}x{Height}{storeage.FileType}";
+                    
                     _loggerService?.LogEvent(nameof(GenerateResizedFileName), new Dictionary<String, String>()
                         {
                             { nameof(suggestedfilename), $"{suggestedfilename}" },

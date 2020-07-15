@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Get.the.solution.Image.Contract;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,12 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
     {
         // MediaCapture and its state variables
         private MediaCapture _mediaCapture;
+        private readonly ILoggerService _loggerService;
+
+        public MediaCaptureService(ILoggerService loggerService)
+        {
+            _loggerService = loggerService;
+        }
 
         public MediaCapture MediaCapture
         {
@@ -31,7 +38,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 var cameraDevice = await FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Back);
                 if (cameraDevice == null)
                 {
-                    Debug.WriteLine("No camera device found!");
+                    _loggerService.LogEvent("No camera device found!");
                     throw new InvalidOperationException($"No camera device found! {nameof(cameraDevice)} is null");
                 }
 
@@ -55,14 +62,14 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 catch (UnauthorizedAccessException u)
                 {
                     //capability microphone and webcam is required
-                    Debug.WriteLine("The app was denied access to the camera");
+                    _loggerService.LogException("The app was denied access to the camera", u);
                     throw;
                 }
             }
         }
         private void MediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
         {
-            Debug.WriteLine($"{nameof(MediaCaptureService)} The app was denied access to the camera");
+            _loggerService.LogEvent("The app was denied access to the camera");
         }
         /// <summary>
         /// Queries the available video capture devices to try and find one mounted on the desired panel
@@ -128,7 +135,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                _loggerService.LogException(e);
             }
             return Task.CompletedTask;
         }

@@ -1,26 +1,37 @@
 ﻿using Get.the.solution.Image.Contract;
 using Get.the.solution.Image.Manipulation.ServiceBase;
 using System;
-using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
-    public class LocalSettingsService : LocalSettingsBaseService
+    public class LocalSettingsService<TSetting> : LocalSettingsBaseService<TSetting>
     {
-
-        public ApplicationDataContainer LocalSettings { get; }
-
-        public override IDictionary<string, object> Values => LocalSettings.Values;
-
-        public LocalSettingsService(ILoggerService loggerService) : base(loggerService)
+        public LocalSettingsService(string xmlFilePath, Func<TSetting> createDefaultTSettingFunc, ILoggerService loggerService)
+            : base(xmlFilePath, createDefaultTSettingFunc, loggerService)
         {
-            LocalSettings = ApplicationData.Current.LocalSettings;
-            EnabledImageViewer = Values?[nameof(EnabledImageViewer)] == null ? false : bool.Parse(Values[nameof(EnabledImageViewer)].ToString());
-            EnabledOpenSingleFileAfterResize = Values?[nameof(EnabledOpenSingleFileAfterResize)] == null ? false : Boolean.Parse(Values[nameof(EnabledOpenSingleFileAfterResize)].ToString());
-            ShowSuccessMessage = Values?[nameof(ShowSuccessMessage)] == null ? false : bool.Parse(Values[nameof(ShowSuccessMessage)].ToString());
-            ImageQuality = Values?[nameof(ImageQuality)] == null ? 75 : int.Parse(Values[nameof(ImageQuality)].ToString());
-            ClearImageListAfterSuccess = Values?[nameof(ClearImageListAfterSuccess)] == null ? true : bool.Parse(Values[nameof(ClearImageListAfterSuccess)].ToString());
+        }
+        public override async Task<Stream> GetStreamAsync(string path)
+        {
+            FileInfo fileInfo = new FileInfo(path);
+            string filename = fileInfo.Name;
+            IStorageItem storageItem = await ApplicationData.Current.LocalCacheFolder.TryGetItemAsync(filename);
+            if (storageItem == null)
+            {
+                storageItem = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(fileInfo.Name);
+                _loggerService?.LogEvent(nameof(GetStreamAsync), nameof(ApplicationData.Current.LocalCacheFolder.CreateFileAsync));
+            }
+            if (storageItem is StorageFile storageFile)
+            {
+                _loggerService?.LogEvent(nameof(GetStreamAsync), storageFile.Path);
+                return await storageFile.OpenStreamForWriteAsync();
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

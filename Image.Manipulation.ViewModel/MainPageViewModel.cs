@@ -14,10 +14,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly IResourceService _ResourceLoader;
         protected readonly ILoggerService _LoggerService;
         protected readonly IApplicationService _applicationService;
-        protected readonly ILocalSettings _localSettings;
+        protected readonly ILocalSettings<ResizeSettings> _localSettings;
 
         public MainPageViewModel(INavigation navigationService, IResourceService resourceLoader,
-            ILoggerService loggerService, IApplicationService applicationService, ILocalSettings localSettings)
+            ILoggerService loggerService, IApplicationService applicationService, ILocalSettings<ResizeSettings> localSettings)
         {
             _ResourceLoader = resourceLoader;
             _NavigationService = navigationService;
@@ -32,20 +32,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 new MenuItem () { Name = resourceLoader.GetString("Contact"),Icon = "Contact", PageType = typeof(AboutPageViewModel) },
                 new MenuItem () { Name = resourceLoader.GetString("Setting"),Icon = "Setting", PageType = typeof(SettingsPageViewModel) },
 
-                //new MenuItem () {Name = "Images", Icon= "Pictures", PageType= typeof(ImageViewPageViewModel)}
+#pragma warning disable S125 // Sections of code should not be commented out
+//new MenuItem () {Name = "Images", Icon= "Pictures", PageType= typeof(ImageViewPageViewModel)}
+#pragma warning restore S125 // Sections of code should not be commented out
             };
             SelectedMenuItem = Items.FirstOrDefault();
             NavigateToCommand = new DelegateCommand<MenuItem>(OnNavigateToCommand);
-            bool EnableImageViewer = _localSettings.Values[nameof(EnableImageViewer)] == null ? false : Boolean.Parse(_localSettings.Values[nameof(EnableImageViewer)].ToString());
-            if (EnableImageViewer & !String.IsNullOrEmpty(applicationService.ActivatedEventArgs))
-            {
-                _NavigationService.Navigate(typeof(ImageViewPageViewModel), applicationService.ActivatedEventArgs);
-            }
-            else
-            {
-                _NavigationService.Navigate(SelectedMenuItem.PageType, null);
-            }
-
+            _NavigationService.Navigate(SelectedMenuItem.PageType, null);
         }
 
 
@@ -63,7 +56,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     {
                         clicked.PageType = typeof(AboutPageViewModel);
                     }
-                    if(typeof(ImageViewPageViewModel).Equals( clicked.PageType))
+                    if (typeof(ImageViewPageViewModel).Equals(clicked.PageType))
                     {
                         IsExpanded = false;
                     }

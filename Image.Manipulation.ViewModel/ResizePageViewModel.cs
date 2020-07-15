@@ -24,7 +24,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly IApplicationService _applicationService;
         protected readonly IProgressBarDialogService _progressBarDialogService;
         protected readonly IShareService _shareService;
-        protected readonly ILocalSettings _LocalSettings;
+        protected readonly ILocalSettings<ResizeSettings> _LocalSettings;
         protected readonly IPageDialogService _pageDialogService;
         protected readonly IResizeService _resizeService;
         protected readonly IDragDropService _dragDropService;
@@ -35,7 +35,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         public ResizePageViewModel(IDragDropService dragDrop, IShareService shareService,
             IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar,
-            IFileSystemPermissionDialogService fileSystemPermissionDialogService, IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings localSettings,
+            IFileSystemPermissionDialogService fileSystemPermissionDialogService, IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings<ResizeSettings> localSettings,
             ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles,
             INavigation navigationService, IResourceService resourceLoader, AppStartType appStartType)
         {
@@ -87,8 +87,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         /// </summary>
         public void LoadSettings()
         {
-            RadioOptions = _LocalSettings.Values[nameof(RadioOptions)] == null ? 4 : Int32.Parse(_LocalSettings.Values[nameof(RadioOptions)].ToString());
-
+            RadioOptions = _LocalSettings.Settings.RadioOptions;
             if (RadioOptions == 1)
             {
                 SizeSmallChecked = true;
@@ -110,14 +109,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 { nameof(RadioOptions),$"{RadioOptions}"}
             });
 
-            OverwriteFiles = _LocalSettings.Values[nameof(OverwriteFiles)] == null ? false : Boolean.Parse(_LocalSettings.Values[nameof(OverwriteFiles)].ToString());
-            Width = _LocalSettings.Values[nameof(Width)] == null ? 1024 : Int32.Parse(_LocalSettings.Values[nameof(Width)].ToString());
-            Height = _LocalSettings.Values[nameof(Height)] == null ? 768 : Int32.Parse(_LocalSettings.Values[nameof(Height)].ToString());
+            OverwriteFiles = _LocalSettings.Settings.OverwriteFiles;
+            Width = _LocalSettings.Settings.WidthCustom;
+            Height = _LocalSettings.Settings.HeightCustom;
 
-            WidthPercent = _LocalSettings.Values[nameof(WidthPercent)] == null ? 100 : Int32.Parse(_LocalSettings.Values[nameof(WidthPercent)].ToString());
-            HeightPercent = _LocalSettings.Values[nameof(HeightPercent)] == null ? 100 : Int32.Parse(_LocalSettings.Values[nameof(HeightPercent)].ToString());
+            WidthPercent = _LocalSettings.Settings.WidthPercent;
+            HeightPercent = _LocalSettings.Settings.HeightPercent;
 
-            KeepAspectRatio = _LocalSettings.Values[nameof(KeepAspectRatio)] == null ? false : Boolean.Parse(_LocalSettings.Values[nameof(KeepAspectRatio)].ToString());
+            KeepAspectRatio = _LocalSettings.Settings.KeepAspectRatio;
 
         }
         private void ResizePageViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -167,17 +166,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 PropertyChanged += ResizePageViewModel_PropertyChanged;
             }
         }
-        public ResizeMode ResizeMode
-        {
-            get
-            {
-                if (SizeSmallChecked) return ResizeMode.SizeSmallChecked;
-                if (SizeMediumChecked) return ResizeMode.SizeMediumChecked;
-                if (SizeCustomChecked) return ResizeMode.SizeCustomChecked;
-                if (SizePercentChecked) return ResizeMode.SizePercentChecked;
-                return 0;
-            }
-        }
 
         public void ApplyPreviewDimensions()
         {
@@ -191,20 +179,20 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected Tuple<int, int> PreviewDimensions(int widthimagefile, int heightimagefile, int entertedWidth, int entertedheight, int widthPercentage, int heightPercentage, bool keepAspect)
         {
             //consider aspect only for custom and percent
-            int newWidth = 0;
-            int newHeight = 0;
+            int newWidth;
+            int newHeight;
 
-            if (ResizeMode == ResizeMode.SizeSmallChecked)
+            if (SizeSmallChecked)
             {
                 newWidth = 640;
                 newHeight = 480;
             }
-            else if (ResizeMode == ResizeMode.SizeMediumChecked)
+            else if (SizeMediumChecked)
             {
                 newWidth = 800;
                 newHeight = 600;
             }
-            else if (ResizeMode == ResizeMode.SizePercentChecked)
+            else if (SizePercentChecked)
             {
                 newWidth = widthimagefile * widthPercentage / 100;
                 newHeight = heightimagefile * heightPercentage / 100;
@@ -223,12 +211,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected void OnCtrlOpen(object param)
         {
             _loggerService?.LogEvent(nameof(OnCtrlOpen));
-            if (param != null)
+            if (param != null && _applicationService.CtrlPressed(param))
             {
-                if (_applicationService.CtrlPressed(param))
-                {
-                    OpenFilePickerCommand.Execute(param);
-                }
+                OpenFilePickerCommand.Execute(param);
             }
         }
 
@@ -302,9 +287,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     Width = 640; Height = 480;
                 }
-                if (SizeSmallChecked == true)
+                if (SizeSmallChecked)
                 {
-                    _LocalSettings.Values[nameof(RadioOptions)] = 1;
+                    _LocalSettings.Settings.RadioOptions = 1;
                     SizeMediumChecked = false;
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
@@ -325,9 +310,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     Width = 800; Height = 600;
                 }
-                if (SizeMediumChecked == true)
+                if (SizeMediumChecked)
                 {
-                    _LocalSettings.Values[nameof(RadioOptions)] = 2;
+                    _LocalSettings.Settings.RadioOptions = 2;
                     SizeSmallChecked = false;
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
@@ -343,9 +328,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _SizeCustomChecked, value, nameof(SizeCustomChecked));
-                if (SizeCustomChecked == true)
+                if (SizeCustomChecked)
                 {
-                    _LocalSettings.Values[nameof(RadioOptions)] = 3;
+                    _LocalSettings.Settings.RadioOptions = 3;
                     SizeSmallChecked = false;
                     SizeMediumChecked = false;
                     SizePercentChecked = false;
@@ -363,9 +348,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _SizePercentChecked, value, nameof(SizePercentChecked));
-                if (SizePercentChecked == true)
+                if (SizePercentChecked)
                 {
-                    _LocalSettings.Values[nameof(RadioOptions)] = 4;
+                    _LocalSettings.Settings.RadioOptions = 4;
                     SizeSmallChecked = false;
                     SizeMediumChecked = false;
                     SizeCustomChecked = false;
@@ -450,19 +435,20 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                     continue;
                                 }
                             }
-                            TaskCompletionSource<MemoryStream> taskCompletionSource = new TaskCompletionSource<MemoryStream>();
+                            TaskCompletionSource<MemoryStream> taskMemoryStreamCompletionSource = new TaskCompletionSource<MemoryStream>();
                             if (!IsShareTarget)
                             {
+                                //do the resizing in a seperate thread
                                 Thread thread = new Thread(() =>
                                 {
                                     try
                                     {
-                                        var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality);
-                                        taskCompletionSource.SetResult(ms);
+                                        var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.Settings.ImageQuality);
+                                        taskMemoryStreamCompletionSource.SetResult(ms);
                                     }
                                     catch (Exception e)
                                     {
-                                        taskCompletionSource.SetException(e);
+                                        taskMemoryStreamCompletionSource.SetException(e);
                                     }
                                 });
                                 thread.IsBackground = true;
@@ -471,11 +457,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             }
                             else
                             {
-                                var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality);
-                                taskCompletionSource.SetResult(ms);
+                                //do the resizing on the main thread in share target to avoid issues see #53
+                                var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.Settings.ImageQuality);
+                                taskMemoryStreamCompletionSource.SetResult(ms);
                             }
-                            using (MemoryStream resizedImageFileStream = await taskCompletionSource.Task)
-                            //using (MemoryStream resizedImageFileStream = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.ImageQuality))
+                            using (MemoryStream resizedImageFileStream = await taskMemoryStreamCompletionSource.Task)
                             {
                                 //log image size
                                 _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
@@ -570,7 +556,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 }
                                 //open resized image depending whether only one image is resized and the user enabled this option
                                 if (SingleFile && LastFile != null && action != ImageAction.Process &&
-                                    _LocalSettings.EnabledOpenSingleFileAfterResize)
+                                    _LocalSettings.Settings.EnabledOpenSingleFileAfterResize)
                                 {
                                     OpenFileCommand.Execute(LastFile);
                                 }
@@ -607,7 +593,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             progressBarDialog.ProcessedItems++;
                         }
                     }
-                    if (_LocalSettings != null && _LocalSettings.ShowSuccessMessage && LastFile != null)
+                    if (_LocalSettings != null && _LocalSettings.Settings.ShowSuccessMessage && LastFile != null)
                     {
                         await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
                     }
@@ -695,8 +681,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 await _SemaphoreSlimOnOkCommand.WaitAsync();
                 _loggerService?.LogEvent(nameof(OnOkCommand));
                 ImageAction Action = OverwriteFiles ? ImageAction.Save : ImageAction.SaveAs;
-                bool Result = await ResizeImages(Action);
-                if (_LocalSettings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
+                await ResizeImages(Action);
+                if (_LocalSettings.Settings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
                 {
                     CancelCommand?.Execute(ImageFiles);
                 }
@@ -756,7 +742,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _Width, value, nameof(Width));
-                _LocalSettings.Values[nameof(Width)] = _Width;
+                _LocalSettings.Settings.WidthCustom = _Width;
             }
         }
 
@@ -769,7 +755,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _PercentWidth, value, nameof(WidthPercent));
-                _LocalSettings.Values[nameof(WidthPercent)] = _PercentWidth;
+                _LocalSettings.Settings.WidthPercent = _PercentWidth;
                 if (KeepAspectRatio)
                 {
                     _PercentHeight = _PercentWidth;
@@ -786,7 +772,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _Height, value, nameof(Height));
-                _LocalSettings.Values[nameof(Height)] = _Height;
+                _LocalSettings.Settings.HeightCustom = _Height;
             }
         }
 
@@ -798,7 +784,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _PercentHeight, value, nameof(HeightPercent));
-                _LocalSettings.Values[nameof(HeightPercent)] = _PercentHeight;
+                _LocalSettings.Settings.HeightPercent = _PercentHeight;
                 if (KeepAspectRatio)
                 {
                     _PercentWidth = _PercentHeight;
@@ -817,7 +803,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             try
             {
                 //dont exit app on sharing
-                if ((SharingProcess != true) && (ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
+                if ((!SharingProcess) && (ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
                 {
                     _applicationService.Exit();
                 }
@@ -825,8 +811,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 {
                     foreach (var imagefile in ImageFiles)
                     {
-                        imagefile?.Stream?.Dispose();
-                        imagefile.Stream = null;
+                        if (imagefile != null)
+                        {
+                            imagefile.Stream?.Dispose();
+                            imagefile.Stream = null;
+                        }
+
                     }
                     ImageFiles.Clear();
                     LastFile?.Stream?.Dispose();
@@ -852,7 +842,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles));
-                _LocalSettings.Values[nameof(OverwriteFiles)] = _OverwriteFiles;
+                _LocalSettings.Settings.OverwriteFiles = _OverwriteFiles;
                 RaisePropertyChanged(nameof(CanOverwriteFiles));
                 _loggerService?.LogEvent(nameof(OverwriteFiles), $"{OverwriteFiles}");
             }
@@ -867,7 +857,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _KeepAspectRatio, value, nameof(KeepAspectRatio));
-                _LocalSettings.Values[nameof(KeepAspectRatio)] = _KeepAspectRatio;
+                _LocalSettings.Settings.KeepAspectRatio = _KeepAspectRatio;
                 _loggerService?.LogEvent(nameof(KeepAspectRatio), $"{KeepAspectRatio}");
             }
         }
@@ -957,8 +947,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 if (ImageFiles != null && param != null)
                 {
                     ImageFiles.Remove(param);
+                    _loggerService?.LogEvent(nameof(OnDeleteFile), new Dictionary<string, string>() { { nameof(ImageFile), param?.Name } });
                 }
-                _loggerService?.LogEvent(nameof(OnDeleteFile), new Dictionary<string, string>() { { nameof(ImageFile), param?.Name } });
             }
             catch (Exception e)
             {
@@ -974,8 +964,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 try
                 {
                     bool can = ImageFiles?.Count(a => a.IsReadOnly) == 0;
-
-                    if (can == false)
+                    if (!can)
                     {
                         OverwriteFiles = false;
                     }
@@ -993,14 +982,16 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             get
             {
                 bool single = ImageFiles?.Count == 1;
-
-                //if (single == false)
-                //{
-                //    KeepAspectRatio = false;
-                //}
                 return single;
             }
         }
 
+        public enum ImageAction
+        {
+            Save = 0,
+            SaveAs,
+            Share,
+            Process
+        }
     }
 }

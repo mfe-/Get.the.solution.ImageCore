@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Private.DataContractSerialization" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Serialization.Xml" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>

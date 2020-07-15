@@ -162,10 +162,6 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 {
                     imageFiles.Add(await FileToImageFile(item, false));
                 }
-                else
-                {
-
-                }
             }
 
             return imageFiles;

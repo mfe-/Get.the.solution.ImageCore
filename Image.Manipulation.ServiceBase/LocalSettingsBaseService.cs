@@ -1,96 +1,144 @@
 ﻿using Get.the.solution.Image.Contract;
 using Get.the.solution.Image.Manipulation.Contract;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Get.the.solution.Image.Manipulation.ServiceBase
 {
-    public abstract class LocalSettingsBaseService : ILocalSettings, INotifyPropertyChanged
+    public abstract class LocalSettingsBaseService<TSetting> : ILocalSettings<TSetting>, INotifyPropertyChanged
     {
         protected ILoggerService _loggerService;
-        protected LocalSettingsBaseService(ILoggerService loggerService)
+        private readonly string _xmlFilePath;
+        private readonly Func<TSetting> _createDefaultTSettingFunc;
+
+        protected LocalSettingsBaseService(string xmlFilePath, Func<TSetting> createDefaultTSettingFunc, ILoggerService loggerService)
         {
-            _loggerService?.LogEvent(nameof(ImageQuality), $"{ImageQuality}");
+            _xmlFilePath = xmlFilePath;
+            _createDefaultTSettingFunc = createDefaultTSettingFunc;
+            _loggerService = loggerService;
         }
+        public abstract Task<Stream> GetStreamAsync(string path);
 
-        public abstract IDictionary<string, object> Values { get; }
-
-        protected int _ImageQuality;
-        public int ImageQuality
+        /// <summary>
+        /// Load user settings which contains the user drugs
+        /// </summary>
+        /// <seealso cref="https://docs.microsoft.com/en-us/xamarin/essentials/preferences?tabs=android"/>
+        public async Task LoadSettingsAsync()
         {
-            get { return _ImageQuality; }
-            set
+            string xml;
+            using (Stream stream1 = await GetStreamAsync(_xmlFilePath))
             {
-                SetProperty(ref _ImageQuality, value, nameof(ImageQuality));
-                Values[nameof(ImageQuality)] = _ImageQuality;
+                using (StreamReader file = new StreamReader(stream1))
+                {
+                    xml = file.ReadToEnd();
+                }
+            }
+
+
+            if (!String.IsNullOrEmpty(xml))
+            {
+                using (Stream stream = new MemoryStream())
+                {
+                    byte[] data = Encoding.UTF8.GetBytes(xml);
+                    stream.Write(data, 0, data.Length);
+                    stream.Position = 0;
+                    DataContractSerializer deserializer = new DataContractSerializer(typeof(TSetting));
+                    var setting = deserializer.ReadObject(stream);
+                    if (setting is TSetting setting1)
+                    {
+                        Settings = setting1;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"We expected the generic type of {nameof(TSetting)}");
+                    }
+                }
+            }
+            else
+            {
+                Settings = _createDefaultTSettingFunc.Invoke();
             }
         }
 
-
-        private bool _ClearImageListAfterSuccess;
-        public bool ClearImageListAfterSuccess
+        private TSetting _Settings;
+        public TSetting Settings
         {
-            get { return _ClearImageListAfterSuccess; }
+            get
+            {
+                return _Settings;
+            }
             set
             {
-                SetProperty(ref _ClearImageListAfterSuccess, value, nameof(ClearImageListAfterSuccess));
-                _loggerService?.LogEvent(nameof(ClearImageListAfterSuccess), $"{_ClearImageListAfterSuccess}");
-                Values[nameof(ClearImageListAfterSuccess)] = _ClearImageListAfterSuccess;
+                SetProperty(ref _Settings, value, nameof(Settings));
+                if (_Settings is INotifyPropertyChanged notifyPropertyChanged)
+                {
+                    notifyPropertyChanged.PropertyChanged -= NotifyPropertyChanged_PropertyChanged;
+                    notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
+                }
             }
         }
 
-
-        protected bool _EnableImageViewer;
-        public bool EnabledImageViewer
+        private async void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            get { return _EnableImageViewer; }
-            set
+            try
             {
-                SetProperty(ref _EnableImageViewer, value, nameof(EnabledImageViewer));
-                Values[nameof(EnabledImageViewer)] = _EnableImageViewer;
-                _loggerService?.LogEvent(nameof(EnabledImageViewer), $"{EnabledImageViewer}");
+                await SaveSettingsAsync();
+            }
+            catch (Exception ex)
+            {
+                _loggerService.LogException(ex);
             }
         }
 
-        protected bool _EnableOpenSingleFileAfterResize;
-        public bool EnabledOpenSingleFileAfterResize
+        /// <summary>
+        /// Saves the user drugs to the user settings
+        /// </summary>
+        SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+        public async Task SaveSettingsAsync()
         {
-            get { return _EnableOpenSingleFileAfterResize; }
-            set
+            try
             {
-                SetProperty(ref _EnableOpenSingleFileAfterResize, value, nameof(EnabledOpenSingleFileAfterResize));
-                Values[nameof(EnabledOpenSingleFileAfterResize)] = _EnableOpenSingleFileAfterResize;
-                _loggerService?.LogEvent(nameof(EnabledOpenSingleFileAfterResize), $"{EnabledOpenSingleFileAfterResize}");
+                await semaphoreSlim.WaitAsync();
+                string serializedXml;
+                MemoryStream memStm = new MemoryStream();
+
+                var serializer = new DataContractSerializer(typeof(TSetting));
+                serializer.WriteObject(memStm, Settings);
+
+                memStm.Seek(0, SeekOrigin.Begin);
+
+                using (var streamReader = new StreamReader(memStm))
+                {
+                    serializedXml = streamReader.ReadToEnd();
+                }
+                using (Stream stream = await GetStreamAsync(_xmlFilePath))
+                {
+                    using (StreamWriter file = new StreamWriter(stream))
+                    {
+                        file.WriteLine(serializedXml);
+                    }
+                }
+            }
+            finally
+            {
+                semaphoreSlim.Release();
             }
         }
 
-
-        protected bool _ShowSuccessMessage;
-        public bool ShowSuccessMessage
-        {
-            get { return _ShowSuccessMessage; }
-            set
-            {
-                SetProperty(ref _ShowSuccessMessage, value, nameof(ShowSuccessMessage));
-                Values[nameof(ShowSuccessMessage)] = _ShowSuccessMessage;
-                _loggerService?.LogEvent(nameof(ShowSuccessMessage), $"{ShowSuccessMessage}");
-            }
-        }
-
-        protected bool _EnableAddImageToGallery;
-        public bool EnableAddImageToGallery
-        {
-            get { return _EnableAddImageToGallery; }
-            set { SetProperty(ref _EnableAddImageToGallery, value, nameof(EnableAddImageToGallery)); }
-        }
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        protected bool SetProperty<T>(ref T field, T value, string propertyName)
+        protected bool SetProperty<TProperty>(ref TProperty field, TProperty value, string propertyName)
         {
-            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            if (EqualityComparer<TProperty>.Default.Equals(field, value)) return false;
             field = value;
             OnPropertyChanged(propertyName);
             return true;

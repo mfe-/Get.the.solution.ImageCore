@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Get.the.solution.Image.Manipulation.Contract
 {
+    public interface ILocalSettings<TSetting>
+    {
+        Task LoadSettingsAsync();
+        TSetting Settings { get; set; }
+    }
     public interface ILocalSettings
     {
         IDictionary<string, object> Values { get; }
-        bool EnabledImageViewer { get; set; }
-        bool EnabledOpenSingleFileAfterResize { get; set; }
-        bool EnableAddImageToGallery { get; set; }
-        bool ShowSuccessMessage { get; set; }
-        int ImageQuality { get; set; }
-        bool ClearImageListAfterSuccess { get; set; }
     }
 }

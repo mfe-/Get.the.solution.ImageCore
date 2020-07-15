@@ -8,8 +8,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
     public class SettingsPageViewModel : BindableBase
     {
         protected readonly ILoggerService _LoggerService;
-        protected readonly ILocalSettings _localSettings;
-        public SettingsPageViewModel(ILoggerService loggerService, ILocalSettings localSettings)
+        protected readonly ILocalSettings<ResizeSettings> _localSettings;
+        public SettingsPageViewModel(ILoggerService loggerService, ILocalSettings<ResizeSettings> localSettings)
         {
             try
             {
@@ -22,6 +22,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _LoggerService?.LogException(nameof(AboutPageViewModel), e);
             }
         }
-        public ILocalSettings LocalSettings => _localSettings;
+        public ILocalSettings<ResizeSettings> LocalSettings => _localSettings;
     }
 }

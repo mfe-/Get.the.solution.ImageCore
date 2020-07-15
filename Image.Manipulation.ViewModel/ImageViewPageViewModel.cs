@@ -91,7 +91,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     {
                         OpenImageCommand.Execute();
                     }
-                    //await LoadImagesAsync();
                 }
                 catch (Exception e)
                 {
