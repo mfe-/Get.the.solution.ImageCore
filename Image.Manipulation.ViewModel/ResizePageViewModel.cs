@@ -18,18 +18,18 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
     public class ResizePageViewModel : BindableBase
     {
         protected readonly ILoggerService _loggerService;
-        protected readonly INavigation _NavigationService;
-        protected readonly IResourceService _ResourceLoader;
+        protected readonly INavigation _navigationService;
+        protected readonly IResourceService _resourceLoader;
         protected readonly IImageFileService _imageFileService;
         protected readonly IApplicationService _applicationService;
         protected readonly IProgressBarDialogService _progressBarDialogService;
         protected readonly IShareService _shareService;
-        protected readonly ILocalSettings<ResizeSettings> _LocalSettings;
+        protected readonly ILocalSettings<ResizeSettings> _localSettings;
         protected readonly IPageDialogService _pageDialogService;
         protected readonly IResizeService _resizeService;
         protected readonly IDragDropService _dragDropService;
         protected readonly IFileSystemPermissionDialogService _fileSystemPermissionDialogService;
-        protected readonly ObservableCollection<ImageFile> _SelectedFiles;
+        protected readonly ObservableCollection<ImageFile> _selectedFiles;
 
         protected int RadioOptions;
 
@@ -45,20 +45,20 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _dragDropService = dragDrop;
                 _shareService = shareService;
                 _resizeService = resizeService;
-                _LocalSettings = localSettings;
+                _localSettings = localSettings;
                 _pageDialogService = pageDialogService;
                 _progressBarDialogService = progressBar;
                 _applicationService = applicationService;
-                _SelectedFiles = selectedFiles;
-                _ResourceLoader = resourceLoader;
-                _NavigationService = navigationService;
+                _selectedFiles = selectedFiles;
+                _resourceLoader = resourceLoader;
+                _navigationService = navigationService;
                 _loggerService = loggerService;
                 _imageFileService = imageFileService;
                 ImageFiles = new ObservableCollection<ImageFile>();
 
-                if (_SelectedFiles != null)
+                if (_selectedFiles != null)
                 {
-                    ImageFiles = _SelectedFiles;
+                    ImageFiles = _selectedFiles;
                 }
                 //get settings
                 LoadSettings();
@@ -87,7 +87,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         /// </summary>
         public void LoadSettings()
         {
-            RadioOptions = _LocalSettings.Settings.RadioOptions;
+            RadioOptions = _localSettings.Settings.RadioOptions;
             if (RadioOptions == 1)
             {
                 SizeSmallChecked = true;
@@ -109,14 +109,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 { nameof(RadioOptions),$"{RadioOptions}"}
             });
 
-            OverwriteFiles = _LocalSettings.Settings.OverwriteFiles;
-            Width = _LocalSettings.Settings.WidthCustom;
-            Height = _LocalSettings.Settings.HeightCustom;
+            OverwriteFiles = _localSettings.Settings.OverwriteFiles;
+            Width = _localSettings.Settings.WidthCustom;
+            Height = _localSettings.Settings.HeightCustom;
 
-            WidthPercent = _LocalSettings.Settings.WidthPercent;
-            HeightPercent = _LocalSettings.Settings.HeightPercent;
+            WidthPercent = _localSettings.Settings.WidthPercent;
+            HeightPercent = _localSettings.Settings.HeightPercent;
 
-            KeepAspectRatio = _LocalSettings.Settings.KeepAspectRatio;
+            KeepAspectRatio = _localSettings.Settings.KeepAspectRatio;
 
         }
         private void ResizePageViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -220,22 +220,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         public bool ShowOpenFilePicker
         {
             get { return ImageFiles != null && ImageFiles.Count == 0; }
-            set { RaisePropertyChanged(nameof(ShowOpenFilePicker)); }
         }
 
-        #region Selected File
-
         private ImageFile _SelectedFile;
-
         public ImageFile SelectedFile
         {
             get { return _SelectedFile; }
-            set
-            {
-                SetProperty(ref _SelectedFile, value, nameof(SelectedFile));
-            }
+            set { SetProperty(ref _SelectedFile, value, nameof(SelectedFile)); }
         }
-        #endregion Selected File
 
         #region FilePickerCommand
         private ICommand _OpenFilePickerCommand;
@@ -289,7 +281,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 if (SizeSmallChecked)
                 {
-                    _LocalSettings.Settings.RadioOptions = 1;
+                    _localSettings.Settings.RadioOptions = 1;
                     SizeMediumChecked = false;
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
@@ -312,7 +304,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 if (SizeMediumChecked)
                 {
-                    _LocalSettings.Settings.RadioOptions = 2;
+                    _localSettings.Settings.RadioOptions = 2;
                     SizeSmallChecked = false;
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
@@ -330,7 +322,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SetProperty(ref _SizeCustomChecked, value, nameof(SizeCustomChecked));
                 if (SizeCustomChecked)
                 {
-                    _LocalSettings.Settings.RadioOptions = 3;
+                    _localSettings.Settings.RadioOptions = 3;
                     SizeSmallChecked = false;
                     SizeMediumChecked = false;
                     SizePercentChecked = false;
@@ -350,7 +342,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SetProperty(ref _SizePercentChecked, value, nameof(SizePercentChecked));
                 if (SizePercentChecked)
                 {
-                    _LocalSettings.Settings.RadioOptions = 4;
+                    _localSettings.Settings.RadioOptions = 4;
                     SizeSmallChecked = false;
                     SizeMediumChecked = false;
                     SizeCustomChecked = false;
@@ -405,7 +397,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 progressBarDialog?.StartAsync(ImageFiles.Count);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                String SuggestedFileName = String.Empty;
+                String suggestedFileName = String.Empty;
                 String targetStorageFolder = String.Empty;
                 Exception lastException = null;
                 if (ImageFiles != null)
@@ -415,10 +407,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         try
                         {
                             SelectedFile = currentImage;
-                            SuggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, currentImage.NewWidth, currentImage.NewHeight);
+                            suggestedFileName = _imageFileService.GenerateResizedFileName(currentImage, currentImage.NewWidth, currentImage.NewHeight);
                             if (progressBarDialog != null)
                             {
-                                progressBarDialog.CurrentItem = SuggestedFileName;
+                                progressBarDialog.CurrentItem = suggestedFileName;
                             }
                             //if the stream is disposed CanSeek and CanRead is false
                             if (currentImage.Stream == null || !currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
@@ -443,7 +435,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 {
                                     try
                                     {
-                                        var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.Settings.ImageQuality);
+                                        var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, suggestedFileName, _localSettings.Settings.ImageQuality);
                                         taskMemoryStreamCompletionSource.SetResult(ms);
                                     }
                                     catch (Exception e)
@@ -458,7 +450,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             else
                             {
                                 //do the resizing on the main thread in share target to avoid issues see #53
-                                var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, SuggestedFileName, _LocalSettings.Settings.ImageQuality);
+                                var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, suggestedFileName, _localSettings.Settings.ImageQuality);
                                 taskMemoryStreamCompletionSource.SetResult(ms);
                             }
                             using (MemoryStream resizedImageFileStream = await taskMemoryStreamCompletionSource.Task)
@@ -490,7 +482,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                         //we can't override the current file try for the next files saveAs
                                         action = ImageAction.SaveAs;
                                         await ShowPermissionDeniedDialog(progressBarDialog);
-                                        ImageFile File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
+                                        ImageFile File = await _imageFileService.PickSaveFileAsync(currentImage.Path, suggestedFileName);
                                         if (null != File)
                                         {
                                             //try to apply the new storagefolder (if the user selected a new location)
@@ -503,24 +495,31 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 } //create new ImageStoreage
                                 else if (action.Equals(ImageAction.SaveAs))
                                 {
-                                    ImageFile File = null;
+                                    ImageFile imageFile = null;
                                     try
                                     {
                                         if (String.IsNullOrEmpty(targetStorageFolder))
                                         {
-                                            //get default path
-                                            File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
-                                            //File can be null when user aborted picksavefile dialog
-                                            if (File != null)
+                                            if (SingleFile)
                                             {
-                                                targetStorageFolder = Path.GetDirectoryName(File.Path);
-                                                await _imageFileService.WriteBytesAsync(File, resizedImageFileStream.ToArray());
-                                                LastFile = File;
+                                                //get default path
+                                                imageFile = await _imageFileService.PickSaveFileAsync(currentImage.Path, suggestedFileName);
+                                            }
+                                            else
+                                            {
+                                                imageFile = await _imageFileService.PickSaveFolderAsync(currentImage.Path, suggestedFileName);
+                                            }
+                                            //File can be null when user aborted picksavefile dialog
+                                            if (imageFile != null)
+                                            {
+                                                targetStorageFolder = Path.GetDirectoryName(imageFile.Path);
+                                                await _imageFileService.WriteBytesAsync(imageFile, resizedImageFileStream.ToArray());
+                                                LastFile = imageFile;
                                             }
                                         }
                                         else
                                         {
-                                            await _imageFileService.WriteBytesAsync(targetStorageFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
+                                            await _imageFileService.WriteBytesAsync(targetStorageFolder, suggestedFileName, currentImage, resizedImageFileStream.ToArray());
                                         }
                                     }
                                     catch (Contract.Exceptions.UnauthorizedAccessException)
@@ -532,16 +531,16 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                         });
                                         await ShowPermissionDeniedDialog(progressBarDialog);
                                         //tell the user to save the file in an other location
-                                        File = await _imageFileService.PickSaveFileAsync(currentImage.Path, SuggestedFileName);
+                                        imageFile = await _imageFileService.PickSaveFileAsync(currentImage.Path, suggestedFileName);
                                         //try to apply the new storagefolder (if the user selected a new location)
-                                        if (File != null && Path.GetDirectoryName(targetStorageFolder) != Path.GetDirectoryName(File.Path))
+                                        if (imageFile != null && Path.GetDirectoryName(targetStorageFolder) != Path.GetDirectoryName(imageFile.Path))
                                         {
-                                            targetStorageFolder = Path.GetDirectoryName(File.Path);
+                                            targetStorageFolder = Path.GetDirectoryName(imageFile.Path);
                                         }
                                     }
-                                    if (null != File)
+                                    if (null != imageFile)
                                     {
-                                        LastFile = File;
+                                        LastFile = imageFile;
                                     }
                                     _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                 {
@@ -551,12 +550,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 else if (action.Equals(ImageAction.Process))
                                 {
                                     String TempFolder = _applicationService.GetLocalCacheFolder();
-                                    ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, SuggestedFileName, currentImage, resizedImageFileStream.ToArray());
-                                    ProcessedImageAction?.Invoke(temp, $"{SuggestedFileName}");
+                                    ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, suggestedFileName, currentImage, resizedImageFileStream.ToArray());
+                                    ProcessedImageAction?.Invoke(temp, $"{suggestedFileName}");
                                 }
                                 //open resized image depending whether only one image is resized and the user enabled this option
                                 if (SingleFile && LastFile != null && action != ImageAction.Process &&
-                                    _LocalSettings.Settings.EnabledOpenSingleFileAfterResize)
+                                    _localSettings.Settings.EnabledOpenSingleFileAfterResize)
                                 {
                                     OpenFileCommand.Execute(LastFile);
                                 }
@@ -566,8 +565,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         catch (NotSupportedException e)
                         {
                             _loggerService?.LogException($"{nameof(ResizeImages)}{nameof(ImageFiles)}", e,
-                                new Dictionary<string, string>() { { nameof(SuggestedFileName), SuggestedFileName } });
-                            await _pageDialogService?.ShowAsync(_ResourceLoader.GetString("ImageTypNotSupported"));
+                                new Dictionary<string, string>() { { nameof(suggestedFileName), suggestedFileName } });
+                            await _pageDialogService?.ShowAsync(_resourceLoader.GetString("ImageTypNotSupported"));
                         }
                         catch (InvalidOperationException e)
                         {
@@ -593,7 +592,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             progressBarDialog.ProcessedItems++;
                         }
                     }
-                    if (_LocalSettings != null && _LocalSettings.Settings.ShowSuccessMessage && LastFile != null)
+                    if (_localSettings != null && _localSettings.Settings.ShowSuccessMessage && LastFile != null)
                     {
                         await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
                     }
@@ -610,7 +609,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         }
                         if (lastException is UnknownImageFormatException)
                         {
-                            String message = _ResourceLoader.GetString("UnknownImageFormatException");
+                            String message = _resourceLoader.GetString("UnknownImageFormatException");
                             if (!String.IsNullOrEmpty(message))
                             {
                                 message = String.Format(message, string.Join(", ", _imageFileService.FileTypeFilter));
@@ -682,7 +681,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _loggerService?.LogEvent(nameof(OnOkCommand));
                 ImageAction Action = OverwriteFiles ? ImageAction.Save : ImageAction.SaveAs;
                 await ResizeImages(Action);
-                if (_LocalSettings.Settings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
+                if (_localSettings.Settings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
                 {
                     CancelCommand?.Execute(ImageFiles);
                 }
@@ -742,7 +741,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _Width, value, nameof(Width));
-                _LocalSettings.Settings.WidthCustom = _Width;
+                _localSettings.Settings.WidthCustom = _Width;
             }
         }
 
@@ -755,7 +754,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _PercentWidth, value, nameof(WidthPercent));
-                _LocalSettings.Settings.WidthPercent = _PercentWidth;
+                _localSettings.Settings.WidthPercent = _PercentWidth;
                 if (KeepAspectRatio)
                 {
                     _PercentHeight = _PercentWidth;
@@ -772,7 +771,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _Height, value, nameof(Height));
-                _LocalSettings.Settings.HeightCustom = _Height;
+                _localSettings.Settings.HeightCustom = _Height;
             }
         }
 
@@ -784,7 +783,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _PercentHeight, value, nameof(HeightPercent));
-                _LocalSettings.Settings.HeightPercent = _PercentHeight;
+                _localSettings.Settings.HeightPercent = _PercentHeight;
                 if (KeepAspectRatio)
                 {
                     _PercentWidth = _PercentHeight;
@@ -798,13 +797,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         private ICommand _CancelCommand;
         public ICommand CancelCommand => _CancelCommand ?? (_CancelCommand = new DelegateCommand(OnCancelCommand));
 
-        protected void OnCancelCommand()
+        protected async void OnCancelCommand()
         {
             try
             {
                 //dont exit app on sharing
-                if ((!SharingProcess) && (ImageFiles == null || ImageFiles?.Count == 0) || (_SelectedFiles == null || _SelectedFiles?.Count() != 0))
+                if ((!SharingProcess) && (ImageFiles == null || ImageFiles?.Count == 0) || (_selectedFiles == null || _selectedFiles?.Count() != 0))
                 {
+                    await _localSettings.SaveSettingsAsync();
                     _applicationService.Exit();
                 }
                 else
@@ -842,7 +842,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles));
-                _LocalSettings.Settings.OverwriteFiles = _OverwriteFiles;
+                _localSettings.Settings.OverwriteFiles = _OverwriteFiles;
                 RaisePropertyChanged(nameof(CanOverwriteFiles));
                 _loggerService?.LogEvent(nameof(OverwriteFiles), $"{OverwriteFiles}");
             }
@@ -857,7 +857,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             set
             {
                 SetProperty(ref _KeepAspectRatio, value, nameof(KeepAspectRatio));
-                _LocalSettings.Settings.KeepAspectRatio = _KeepAspectRatio;
+                _localSettings.Settings.KeepAspectRatio = _KeepAspectRatio;
                 _loggerService?.LogEvent(nameof(KeepAspectRatio), $"{KeepAspectRatio}");
             }
         }

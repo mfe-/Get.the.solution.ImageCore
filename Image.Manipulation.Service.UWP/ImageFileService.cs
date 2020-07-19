@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -15,12 +14,15 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public class ImageFileService : ImageFileBaseService, IImageFileService
     {
-        protected readonly IResourceService _resourceService;
-        public ImageFileService(ILoggerService loggerService, IResourceService resourceService) : base(loggerService)
+        private readonly IResourceService _resourceService;
+        private readonly FileService _fileService;
+
+        public ImageFileService(ILoggerService loggerService, IResourceService resourceService, ILocalSettings localSettings) 
+            : base(loggerService)
         {
             _resourceService = resourceService;
+            _fileService = new FileService(localSettings, loggerService);
         }
-        public string FutureAccessToken { get; private set; }
 
         public async Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync()
         {
@@ -31,60 +33,67 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
             //show picker
             IReadOnlyList<IStorageFile> files = await fileOpenPicker.PickMultipleFilesAsync();
-            //create imageFiles
-            List<ImageFile> imageFiles = new List<ImageFile>();
-            foreach (IStorageFile storage in files)
+            if (files != null)
             {
-                try
+                //process files (adding to future access list)
+                await _fileService.OnPickStorageItemsAsync(files);
+                //create imageFiles
+                List<ImageFile> imageFiles = new List<ImageFile>();
+                foreach (IStorageFile storageFile in files)
                 {
-                    imageFiles.Add(await FileToImageFile(storage, false));
-                    StorageApplicationPermissions.MostRecentlyUsedList.Add(storage);
-                    StorageFolder storageFolder = await StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(storage.Path));
-                    //todo save this tokens!!!
-                    FutureAccessToken = StorageApplicationPermissions.FutureAccessList.Add(storageFolder);
+                    try
+                    {
+                        imageFiles.Add(await FileToImageFileAsync(storageFile, false));
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        throw new Contract.Exceptions.UnauthorizedAccessException(e);
+                    }
+                    catch (Exception e)
+                    {
+                        _loggerService.LogException(nameof(PickMultipleFilesAsync), e);
+                    }
                 }
-                catch (UnauthorizedAccessException e)
-                {
-                    throw new Contract.Exceptions.UnauthorizedAccessException(e);
-                }
-                catch (Exception e)
-                {
-                    _loggerService.LogException(nameof(PickMultipleFilesAsync), e);
-                }
+
+                return imageFiles;
             }
-
-            return imageFiles;
+            return new List<ImageFile>();
         }
-        public virtual async Task<ImageFile> PickSaveFileAsync(String preferredSaveLocation, String SuggestedFileName)
+        public virtual async Task<ImageFile> PickSaveFileAsync(String preferredSaveLocation, String suggestedFileName)
         {
-            FileSavePicker FileSavePicker = new FileSavePicker();
-            FileInfo fileInfo = new FileInfo(SuggestedFileName);
+            FileSavePicker fileSavePicker = new FileSavePicker();
+            FileInfo fileInfo = new FileInfo(suggestedFileName);
 
-            FileSavePicker.DefaultFileExtension = fileInfo.Extension;
-            FileSavePicker.FileTypeChoices.Add(fileInfo.Extension, FileTypeFilter);
-            //if (Path.GetDirectoryName(preferredSaveLocation).Contains(System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)))
-            //{
-            //    FileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            //}
-            //else
-            //{
-                FileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            //}
+            fileSavePicker.DefaultFileExtension = fileInfo.Extension;
+            fileSavePicker.FileTypeChoices.Add(fileInfo.Extension, FileTypeFilter);
+            fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+
             // Default file name if the user does not type one in or select a file to replace
-            FileSavePicker.SuggestedFileName = SuggestedFileName;
-            IStorageFile File = await FileSavePicker.PickSaveFileAsync();
+            fileSavePicker.SuggestedFileName = suggestedFileName;
+            IStorageFile file = await fileSavePicker.PickSaveFileAsync();
             //file is null when the user clicked on "abort" on save as dialog
-            if (File != null)
+            if (file != null)
             {
-                return await FileToImageFileConverter(File);
+                await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { file });
+                return await FileToImageFileConverterAsync(file);
             }
             return null;
         }
-        public Task<ImageFile> FileToImageFileConverter(object storageFile)
+
+        public async Task<ImageFile> PickSaveFolderAsync(String preferredSaveLocation, String suggestedFileName)
         {
-            return FileToImageFileConverter(storageFile as IStorageFile);
+            FolderPicker folderPicker = new FolderPicker();
+            folderPicker.FileTypeFilter.Add("*");
+            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            //add location to future access list
+            await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { folder });
+            //create desired file
+            IStorageFile file = await folder.CreateFileAsync(suggestedFileName, CreationCollisionOption.OpenIfExists);
+
+            return await FileToImageFileConverterAsync(file);
         }
-        public static async Task<ImageFile> FileToImageFile(IStorageFile storageFile, bool readStream = true)
+
+        public static async Task<ImageFile> FileToImageFileAsync(IStorageFile storageFile, bool readStream = true)
         {
             Stream ImageStream = null;
             if (readStream)
@@ -110,39 +119,72 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             imageFile.IsReadOnly = (Windows.Storage.FileAttributes.ReadOnly & storageFile.Attributes) == Windows.Storage.FileAttributes.ReadOnly;
             return imageFile;
         }
-        public async Task<ImageFile> FileToImageFileConverter(IStorageFile storageFile)
+        public Task<ImageFile> FileToImageFileConverterAsync(object storageFile)
         {
-            return await FileToImageFile(storageFile);
+            return FileToImageFileConverterAsync(storageFile as IStorageFile);
+        }
+        public Task<ImageFile> FileToImageFileConverterAsync(IStorageFile storageFile)
+        {
+            return FileToImageFileAsync(storageFile);
         }
         public async Task WriteBytesAsync(IStorageFile file, byte[] buffer)
         {
             await FileIO.WriteBytesAsync(file, buffer);
-            StorageApplicationPermissions.MostRecentlyUsedList.Add(file);
         }
 
         public async Task WriteBytesAsync(ImageFile file, byte[] buffer)
         {
             try
             {
-                if (file.IsReadOnly) throw new Contract.Exceptions.UnauthorizedAccessException();
-                await WriteBytesAsync(file.Tag as IStorageFile, buffer);
+                IStorageFile storageFile = null;
+                //the file is readonly
+                if (file.IsReadOnly)
+                {
+                    IStorageItem storageItem = await _fileService.TryGetWriteAbleStorageItemAsync(file.Tag as IStorageFile);
+                    if (storageItem is IStorageFile storageFile1)
+                    {
+                        storageFile = storageFile1;
+                    }
+                    else
+                    {
+                        //if we dont have the token we cant access the file
+                        throw new Contract.Exceptions.UnauthorizedAccessException();
+                    }
+                }
+                else
+                {
+                    storageFile = file.Tag as IStorageFile;
+                }
+                await WriteBytesAsync(storageFile, buffer);
             }
             catch (UnauthorizedAccessException e)
             {
+                //for other reasons we dont have acess to the file
                 throw new Contract.Exceptions.UnauthorizedAccessException(e);
             }
         }
 
         public async Task<ImageFile> WriteBytesAsync(string folderPath, string suggestedFileName, ImageFile file, byte[] buffer)
         {
+            StorageFolder targetStorageFolder;
             try
             {
-                //try to save the ImageFile into the targetStorageFolder
-                var targetStorageFolder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+                //look up if we have this folder stored in our access list
+                IStorageItem storageItem = await _fileService.TryGetWriteAbleStorageItemAsync(folderPath, System.IO.FileAttributes.Directory);
+                if (storageItem is StorageFolder storageFolder)
+                {
+                    targetStorageFolder = storageFolder;
+                }
+                else
+                {
+                    //try to save the ImageFile into the targetStorageFolder - can throw a UnauthorizedAccessException
+                    targetStorageFolder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+                }
+
                 //this operation can throw a UnauthorizedAccessException
                 StorageFile storageFile = await targetStorageFolder.CreateFileAsync(suggestedFileName, CreationCollisionOption.GenerateUniqueName);
                 await WriteBytesAsync(storageFile, buffer);
-                return await FileToImageFileConverter(storageFile);
+                return await FileToImageFileConverterAsync(storageFile);
             }
             catch (UnauthorizedAccessException e)
             {
@@ -160,7 +202,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 if (FileTypeFilter.Contains(item.FileType.ToLower()))
                 {
-                    imageFiles.Add(await FileToImageFile(item, false));
+                    imageFiles.Add(await FileToImageFileAsync(item, false));
                 }
             }
 
@@ -170,7 +212,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public async Task<ImageFile> LoadImageFileAsync(string filepath)
         {
             IStorageFile storageFile = await StorageFile.GetFileFromPathAsync(filepath);
-            return await FileToImageFile(storageFile);
+            return await FileToImageFileAsync(storageFile);
         }
         public override string GenerateSuccess(ImageFile imageFile)
         {

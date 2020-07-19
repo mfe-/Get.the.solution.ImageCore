@@ -1,4 +1,5 @@
-﻿using Get.the.solution.Image.Manipulation.Contract;
+﻿using Get.the.solution.Image.Contract;
+using Get.the.solution.Image.Manipulation.Contract;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,10 +12,16 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public class DragDropService : IDragDropService
     {
-        protected IImageFileService _imageFileService;
+        private readonly IImageFileService _imageFileService;
+        private readonly FileService _fileService;
         public DragDropService(IImageFileService imageFileService)
         {
             _imageFileService = imageFileService;
+        }
+        public DragDropService(IImageFileService imageFileService, ILoggerService loggerService, ILocalSettings localSettings)
+            : this(imageFileService)
+        {
+            _fileService = new FileService(localSettings, loggerService);
         }
         public bool IsDragAndDropEnabled => true;
 
@@ -24,25 +31,25 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
             e.DragUIOverride.IsContentVisible = true;
             e.DragUIOverride.IsGlyphVisible = true;
-            IReadOnlyList<IStorageItem> Items = e.DataView.GetStorageItemsAsync().GetAwaiter().GetResult();
+            IReadOnlyList<IStorageItem> storeageItems = e.DataView.GetStorageItemsAsync().GetAwaiter().GetResult();
             //Flag determine wether draged files are allowed
             bool CanDrop = true;
-            foreach (var item in Items)
+            foreach (IStorageItem storageItem in storeageItems)
             {
-                if (item is IStorageFile)
+                if (storageItem is IStorageFile)
                 {
-                    if (item is StorageFile)
+                    if (storageItem is StorageFile storageFile)
                     {
-                        CanDrop = _imageFileService.FileTypeFilter.Contains((item as StorageFile).FileType);
+                        CanDrop = _imageFileService.FileTypeFilter.Contains((storageFile).FileType);
                     }
                 }
-                if (item is IStorageFolder && item is StorageFolder)
+                if (storageItem is IStorageFolder)
                 {
                     CanDrop = false;
                 }
             }
 
-            if (CanDrop == false)
+            if (!CanDrop)
             {
                 e.AcceptedOperation = DataPackageOperation.None;
             }
@@ -50,19 +57,31 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public async Task OnDropCommandAsync(object param, ObservableCollection<ImageFile> ImageFiles)
         {
-            if (param != null && param as IReadOnlyList<IStorageItem> != null)
+            if (param is IReadOnlyList<IStorageItem> readOnlyListStorageItems)
             {
                 if (ImageFiles == null)
                 {
                     ImageFiles = new ObservableCollection<ImageFile>();
                 }
-                foreach (var item in param as IReadOnlyList<IStorageItem>)
+                foreach (IStorageItem storageItem in readOnlyListStorageItems)
                 {
-                    if (item is IStorageFile)
+                    if (storageItem is IStorageFile)
                     {
-                        if (item is StorageFile)
+                        if (storageItem is StorageFile storageFile)
                         {
-                            ImageFiles.Add(await _imageFileService.FileToImageFileConverter(item as StorageFile));
+                            StorageFile imageStorageFile = storageFile;
+                            //check if its readonly
+                            if (_fileService != null && storageFile.Attributes.HasFlag(FileAttributes.ReadOnly))
+                            {
+                                //check if we can retriev the dragged file from our future access list 
+                                IStorageItem storageItem1 = await _fileService.TryGetWriteAbleStorageItemAsync(storageItem);
+                                //if a value was returned use it
+                                if(storageItem1 is StorageFile storageFile1)
+                                {
+                                    imageStorageFile = storageFile1;
+                                }
+                            }
+                            ImageFiles.Add(await _imageFileService.FileToImageFileConverterAsync(imageStorageFile));
                         }
                     }
                     //if (item is IStorageFolder && item is StorageFolder)

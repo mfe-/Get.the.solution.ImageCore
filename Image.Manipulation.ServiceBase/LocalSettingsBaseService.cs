@@ -32,14 +32,12 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
         public async Task LoadSettingsAsync()
         {
             string xml;
-            using (Stream stream1 = await GetStreamAsync(_xmlFilePath))
+            Stream stream1 = await GetStreamAsync(_xmlFilePath);
+            using (StreamReader file = new StreamReader(stream1))
             {
-                using (StreamReader file = new StreamReader(stream1))
-                {
-                    xml = file.ReadToEnd();
-                }
+                xml = file.ReadToEnd();
             }
-
+            //stream1 will be disposed by streamreader
 
             if (!String.IsNullOrEmpty(xml))
             {
@@ -99,7 +97,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
         /// <summary>
         /// Saves the user drugs to the user settings
         /// </summary>
-        SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
         public async Task SaveSettingsAsync()
         {
             try
@@ -117,13 +115,13 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
                 {
                     serializedXml = streamReader.ReadToEnd();
                 }
-                using (Stream stream = await GetStreamAsync(_xmlFilePath))
+                Stream stream = await GetStreamAsync(_xmlFilePath);
+                using (StreamWriter file = new StreamWriter(stream))
                 {
-                    using (StreamWriter file = new StreamWriter(stream))
-                    {
-                        file.WriteLine(serializedXml);
-                    }
+                    file.WriteLine(serializedXml);
                 }
+                //stream will be disposed by streamwriter
+
             }
             finally
             {

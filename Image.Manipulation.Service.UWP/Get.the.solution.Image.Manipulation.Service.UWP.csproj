@@ -111,6 +111,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FileService.cs" />
     <Compile Include="IMemoryBufferByteAccess.cs" />
     <Compile Include="MediaCaptureService.cs" />
     <Compile Include="ImageFileServiceExtensions.cs" />
