@@ -128,9 +128,5 @@ namespace Get.the.solution.Image.Manipulation.Contract
             // Cleanup
             Stream?.Dispose();
         }
-        ~ImageFile()
-        {
-            Dispose(false);
-        }
     }
 }
