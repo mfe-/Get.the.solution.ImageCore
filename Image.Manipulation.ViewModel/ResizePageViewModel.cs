@@ -176,7 +176,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 currentImage.NewHeight = dimension.Item2;
             }
         }
-        protected Tuple<int, int> PreviewDimensions(int widthimagefile, int heightimagefile, int entertedWidth, int entertedheight, int widthPercentage, int heightPercentage, bool keepAspect)
+        public Tuple<int, int> PreviewDimensions(int widthimagefile, int heightimagefile, int entertedWidth, int entertedheight, int widthPercentage, int heightPercentage, bool keepAspect)
         {
             //consider aspect only for custom and percent
             int newWidth;
@@ -509,6 +509,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                             {
                                                 imageFile = await _imageFileService.PickSaveFolderAsync(currentImage.Path, suggestedFileName);
                                             }
+                                            if (imageFile == null)
+                                            {
+                                                //if user canceled dialog try again
+                                                imageFile = await _imageFileService.PickSaveFileAsync(currentImage.Path, suggestedFileName);
+                                            }
                                             //File can be null when user aborted picksavefile dialog
                                             if (imageFile != null)
                                             {
@@ -543,9 +548,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                         LastFile = imageFile;
                                     }
                                     _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
-                                {
-                                    { nameof(currentImage.Path), $"{currentImage.Path}" }
-                                });
+                                    {
+                                        { nameof(currentImage.Path), $"{currentImage.Path}" }
+                                    });
                                 }
                                 else if (action.Equals(ImageAction.Process))
                                 {

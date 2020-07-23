@@ -32,9 +32,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 new MenuItem () { Name = resourceLoader.GetString("Contact"),Icon = "Contact", PageType = typeof(AboutPageViewModel) },
                 new MenuItem () { Name = resourceLoader.GetString("Setting"),Icon = "Setting", PageType = typeof(SettingsPageViewModel) },
 
-#pragma warning disable S125 // Sections of code should not be commented out
-//new MenuItem () {Name = "Images", Icon= "Pictures", PageType= typeof(ImageViewPageViewModel)}
-#pragma warning restore S125 // Sections of code should not be commented out
             };
             SelectedMenuItem = Items.FirstOrDefault();
             NavigateToCommand = new DelegateCommand<MenuItem>(OnNavigateToCommand);
@@ -52,14 +49,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
                 if (clicked != null)
                 {
-                    if (clicked.PageType == null)
-                    {
-                        clicked.PageType = typeof(AboutPageViewModel);
-                    }
-                    if (typeof(ImageViewPageViewModel).Equals(clicked.PageType))
-                    {
-                        IsExpanded = false;
-                    }
                     _LoggerService.LogEvent(nameof(NavigateToCommand),
                         new Dictionary<String, String>() { { nameof(clicked.Name), clicked.Name } });
                     _NavigationService.Navigate(clicked.PageType, null);

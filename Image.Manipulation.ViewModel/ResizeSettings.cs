@@ -25,6 +25,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             _WidthCustom = 1024;
             _OverwriteFiles = false;
             _RadioOptions = 4;
+            _CheckGlobalWriteAccess = true;
 
         }
         public ResizeSettings(ILoggerService loggerService) : this()
@@ -40,6 +41,15 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         }
 
         IDictionary<string, object> ILocalSettings.Values => Values;
+
+
+        private bool _CheckGlobalWriteAccess;
+        public bool CheckGlobalWriteAccess
+        {
+            get { return _CheckGlobalWriteAccess; }
+            set { SetProperty(ref _CheckGlobalWriteAccess, value, nameof(CheckGlobalWriteAccess)); }
+        }
+
 
         private int _RadioOptions;
         public int RadioOptions

@@ -10,7 +10,7 @@ using Windows.Storage.AccessCache;
 
 namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
-    public class FileService
+    public class FileService : IFileService
     {
         private readonly ILocalSettings _localSettings;
         private readonly ILoggerService _loggerService;
@@ -19,6 +19,35 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         {
             _localSettings = localSettings;
             _loggerService = loggerService;
+        }
+        public async Task<bool> HasGlobalWriteAccessAsync()
+        {
+            bool hasGlobalWriteAccess = false;
+            try
+            {
+                //try to create a test file to check if we have "global" write access
+                string path = Environment.GetEnvironmentVariable("USERPROFILE");
+
+                StorageFolder storageFolder = await StorageFolder.GetFolderFromPathAsync(path);
+                Guid guidtestfileName = Guid.NewGuid();
+                StorageFile storageFile = await storageFolder.CreateFileAsync(guidtestfileName.ToString(), CreationCollisionOption.GenerateUniqueName);
+                await storageFile.DeleteAsync();
+                hasGlobalWriteAccess = true;
+            }
+            catch (System.UnauthorizedAccessException)
+            {
+                hasGlobalWriteAccess = false;
+            }
+            if (!_localSettings.Values.ContainsKey(nameof(HasGlobalWriteAccessAsync)))
+            {
+                _localSettings.Values.Add(nameof(HasGlobalWriteAccessAsync), hasGlobalWriteAccess);
+            }
+            else
+            {
+                _localSettings.Values[nameof(HasGlobalWriteAccessAsync)] = hasGlobalWriteAccess;
+            }
+
+            return hasGlobalWriteAccess;
         }
         /// <summary>
         /// Pass result of <seealso cref="Windows.Storage.Pickers.FileSavePicker.PickSaveFileAsync"/>, 
@@ -31,33 +60,41 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         {
             foreach (IStorageItem storageFile in storageItems)
             {
-                Guid guidStorageFile = Guid.NewGuid();
-                // Application now has read/write access to all contents in the picked folder (including other sub-folder contents)
-                StorageApplicationPermissions.FutureAccessList.AddOrReplace(guidStorageFile.ToString(), storageFile);
-                // Add to FA without metadata
-                string faToken = StorageApplicationPermissions.FutureAccessList.Add(storageFile);
-                string mruToken = StorageApplicationPermissions.MostRecentlyUsedList.Add(storageFile, guidStorageFile.ToString());
-
-                string pathKey = storageFile.Path.ToLowerInvariant();
-
-                if (!_localSettings.Values.ContainsKey(pathKey))
+                if (storageFile != null)
                 {
-                    _localSettings.Values.Add(pathKey, guidStorageFile.ToString());
-                    _loggerService.LogEvent(nameof(guidStorageFile), nameof(_localSettings.Values.Add));
-                }
-                else
-                {
-                    _localSettings.Values[pathKey] = guidStorageFile.ToString();
-                    _loggerService.LogEvent(nameof(guidStorageFile), nameof(StorageApplicationPermissions.FutureAccessList.AddOrReplace));
-                }
+                    Guid guidStorageFile = Guid.NewGuid();
+                    // Application now has read/write access to all contents in the picked folder (including other sub-folder contents)
+                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(guidStorageFile.ToString(), storageFile);
+                    // Add to FA without metadata
+                    string faToken = StorageApplicationPermissions.FutureAccessList.Add(storageFile);
+                    string mruToken = StorageApplicationPermissions.MostRecentlyUsedList.Add(storageFile, guidStorageFile.ToString());
 
-                _loggerService.LogEvent(nameof(storageFile), new Dictionary<string, string>()
+                    string pathKey = storageFile.Path.ToLowerInvariant();
+
+                    //check if we have the dictionary key then we dont need to add the file key
+                    string directoryKey = Path.GetDirectoryName(storageFile.Path).ToLowerInvariant();
+                    //todo- wenn man verzeichnis hinzufügt alle files raus löschen
+
+                    if (!_localSettings.Values.ContainsKey(pathKey))
+                    {
+                        _localSettings.Values.Add(pathKey, guidStorageFile.ToString());
+                        _loggerService.LogEvent(nameof(guidStorageFile), nameof(_localSettings.Values.Add));
+                    }
+                    else
+                    {
+                        _localSettings.Values[pathKey] = guidStorageFile.ToString();
+                        _loggerService.LogEvent(nameof(guidStorageFile), nameof(StorageApplicationPermissions.FutureAccessList.AddOrReplace));
+                    }
+
+                    _loggerService.LogEvent(nameof(storageFile), new Dictionary<string, string>()
                     {
                         { nameof(storageFile),pathKey},
                         { nameof(guidStorageFile),guidStorageFile.ToString() },
                         { nameof(mruToken), mruToken},
                         { nameof(faToken), faToken},
                     });
+                }
+
             }
             return Task.CompletedTask;
         }

@@ -17,7 +17,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         private readonly IResourceService _resourceService;
         private readonly FileService _fileService;
 
-        public ImageFileService(ILoggerService loggerService, IResourceService resourceService, ILocalSettings localSettings) 
+        public ImageFileService(ILoggerService loggerService, IResourceService resourceService, ILocalSettings localSettings)
             : base(loggerService)
         {
             _resourceService = resourceService;
@@ -85,12 +85,16 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             FolderPicker folderPicker = new FolderPicker();
             folderPicker.FileTypeFilter.Add("*");
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-            //add location to future access list
-            await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { folder });
-            //create desired file
-            IStorageFile file = await folder.CreateFileAsync(suggestedFileName, CreationCollisionOption.OpenIfExists);
 
-            return await FileToImageFileConverterAsync(file);
+            if (folder != null)
+            {
+                //add location to future access list
+                await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { folder });
+                //create desired file
+                IStorageFile file = await folder.CreateFileAsync(suggestedFileName, CreationCollisionOption.OpenIfExists);
+                return await FileToImageFileConverterAsync(file);
+            }
+            return null;
         }
 
         public static async Task<ImageFile> FileToImageFileAsync(IStorageFile storageFile, bool readStream = true)
