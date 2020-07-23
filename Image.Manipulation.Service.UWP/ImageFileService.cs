@@ -215,7 +215,17 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public async Task<ImageFile> LoadImageFileAsync(string filepath)
         {
-            IStorageFile storageFile = await StorageFile.GetFileFromPathAsync(filepath);
+            IStorageFile storageFile;
+            //look up if we have this folder stored in our access list
+            IStorageItem storageItem = await _fileService.TryGetWriteAbleStorageItemAsync(filepath, System.IO.FileAttributes.Normal);
+            if (storageItem is StorageFile storageFileLookedUp)
+            {
+                storageFile = storageFileLookedUp;
+            }
+            else
+            {
+                storageFile = await StorageFile.GetFileFromPathAsync(filepath);
+            }
             return await FileToImageFileAsync(storageFile);
         }
         public override string GenerateSuccess(ImageFile imageFile)

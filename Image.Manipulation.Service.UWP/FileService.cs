@@ -2,6 +2,7 @@
 using Get.the.solution.Image.Manipulation.Contract;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,12 +13,12 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public class FileService : IFileService
     {
-        private readonly ILocalSettings _localSettings;
+        private readonly ApplicationDataContainer _localSettings;
         private readonly ILoggerService _loggerService;
 
         public FileService(ILocalSettings localSettings, ILoggerService loggerService)
         {
-            _localSettings = localSettings;
+            _localSettings = ApplicationData.Current.LocalSettings;
             _loggerService = loggerService;
         }
         public async Task<bool> HasGlobalWriteAccessAsync()
@@ -46,9 +47,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 _localSettings.Values[nameof(HasGlobalWriteAccessAsync)] = hasGlobalWriteAccess;
             }
-
             return hasGlobalWriteAccess;
         }
+
         /// <summary>
         /// Pass result of <seealso cref="Windows.Storage.Pickers.FileSavePicker.PickSaveFileAsync"/>, 
         /// <seealso cref="Windows.Storage.Pickers.FileOpenPicker.PickMultipleFilesAsync"/> or 
@@ -62,6 +63,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 if (storageFile != null)
                 {
+                    bool storeToken = true;
                     Guid guidStorageFile = Guid.NewGuid();
                     // Application now has read/write access to all contents in the picked folder (including other sub-folder contents)
                     StorageApplicationPermissions.FutureAccessList.AddOrReplace(guidStorageFile.ToString(), storageFile);
@@ -70,29 +72,45 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     string mruToken = StorageApplicationPermissions.MostRecentlyUsedList.Add(storageFile, guidStorageFile.ToString());
 
                     string pathKey = storageFile.Path.ToLowerInvariant();
-
-                    //check if we have the dictionary key then we dont need to add the file key
-                    string directoryKey = Path.GetDirectoryName(storageFile.Path).ToLowerInvariant();
-                    //todo- wenn man verzeichnis hinzufügt alle files raus löschen
-
-                    if (!_localSettings.Values.ContainsKey(pathKey))
+                    //only check if the file is covered by an folder token
+                    if (!(storageFile is IStorageFolder))
                     {
-                        _localSettings.Values.Add(pathKey, guidStorageFile.ToString());
-                        _loggerService.LogEvent(nameof(guidStorageFile), nameof(_localSettings.Values.Add));
+                        //check if we have the dictionary key then we dont need to add the file key
+                        string directoryKey = Path.GetDirectoryName(storageFile.Path).ToLowerInvariant();
+
+                        //check if the directory of the file is already stored in our token list
+                        if (_localSettings.Values.ContainsKey(directoryKey))
+                        {
+                            //we dont need to store the token
+                            storeToken = false;
+
+                        }
                     }
-                    else
+
+                    if (storeToken)
                     {
-                        _localSettings.Values[pathKey] = guidStorageFile.ToString();
-                        _loggerService.LogEvent(nameof(guidStorageFile), nameof(StorageApplicationPermissions.FutureAccessList.AddOrReplace));
+                        //encode guid and date into string (date to save access of file)
+                        string keyvalue = $"{guidStorageFile:D}{DateTime.Now:yyMMdd}";
+                        if (!_localSettings.Values.ContainsKey(pathKey))
+                        {
+                            _localSettings.Values.Add(pathKey, keyvalue);
+                            _loggerService.LogEvent(nameof(guidStorageFile), nameof(_localSettings.Values.Add));
+                        }
+                        else
+                        {
+                            _localSettings.Values[pathKey] = keyvalue;
+                            _loggerService.LogEvent(nameof(guidStorageFile), nameof(StorageApplicationPermissions.FutureAccessList.AddOrReplace));
+                        }
+
+                        _loggerService.LogEvent(nameof(storageFile), new Dictionary<string, string>()
+                        {
+                            { nameof(storageFile),pathKey},
+                            { nameof(guidStorageFile),guidStorageFile.ToString() },
+                            { nameof(mruToken), mruToken},
+                            { nameof(faToken), faToken},
+                        });
                     }
 
-                    _loggerService.LogEvent(nameof(storageFile), new Dictionary<string, string>()
-                    {
-                        { nameof(storageFile),pathKey},
-                        { nameof(guidStorageFile),guidStorageFile.ToString() },
-                        { nameof(mruToken), mruToken},
-                        { nameof(faToken), faToken},
-                    });
                 }
 
             }
@@ -124,44 +142,104 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// <returns>The found file or dictionary. If not access token was stored it returns null.</returns>
         public async Task<IStorageItem> TryGetWriteAbleStorageItemAsync(string path, System.IO.FileAttributes attr)
         {
-            string pathKey;
-            //detect whether its a directory or file
-            if ((attr & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
+            try
             {
-                pathKey = path.ToLowerInvariant();
-                if (_localSettings.Values.ContainsKey(pathKey))
+                string pathKey;
+                //detect whether its a directory or file
+                if ((attr & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
                 {
-                    string guidToken = _localSettings.Values[pathKey].ToString();
-                    return await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(guidToken);
-                }
-            }
-            else
-            {
-                pathKey = path.ToLowerInvariant();
-                if (_localSettings.Values.ContainsKey(pathKey))
-                {
-                    string guidToken = _localSettings.Values[pathKey].ToString();
-                    return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(guidToken);
+                    pathKey = path.ToLowerInvariant();
+                    if (_localSettings.Values.ContainsKey(pathKey))
+                    {
+                        string guidTokenDate = _localSettings.Values[pathKey].ToString();
+                        string guidToken = ExtractGuidFromKeyToken(guidTokenDate);
+                        return await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(guidToken);
+                    }
                 }
                 else
                 {
-                    //we dont have the file index maybe we got the directory of it...
-                    pathKey = Path.GetDirectoryName(path).ToLowerInvariant();
+                    pathKey = path.ToLowerInvariant();
                     if (_localSettings.Values.ContainsKey(pathKey))
                     {
-                        string guidToken = _localSettings.Values[pathKey].ToString();
-                        StorageFolder storageFolder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(guidToken);
+                        string guidTokenDate = _localSettings.Values[pathKey].ToString();
+                        string guidToken = ExtractGuidFromKeyToken(guidTokenDate);
+                        return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(guidToken);
+                    }
+                    else
+                    {
+                        //we dont have the file index maybe we got the directory of it...
+                        pathKey = Path.GetDirectoryName(path).ToLowerInvariant();
+                        if (_localSettings.Values.ContainsKey(pathKey))
+                        {
+                            string guidTokenDate = _localSettings.Values[pathKey].ToString();
+                            string guidToken = ExtractGuidFromKeyToken(guidTokenDate);
+                            StorageFolder storageFolder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(guidToken);
 
-                        StorageFile storageFile = await storageFolder.GetFileAsync(new FileInfo(path).Name);
-                        return storageFile;
+                            StorageFile storageFile = await storageFolder.GetFileAsync(new FileInfo(path).Name);
+                            return storageFile;
+                        }
                     }
                 }
+                //no guidtoken available for the overgiven path
             }
-            //no guidtoken available for the overgiven path
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                //this happens when calling FutureAccessList.GetFileAsync with a empty guid
+            }
+            catch (ArgumentException)
+            {
+                //this happens when calling FutureAccessList.GetFileAsync with a wrong guid
+            }
             return null;
         }
+        private string ExtractGuidFromKeyToken(string guiddateToken)
+        {
+            if (guiddateToken.Length >= 36)
+            {
+                return guiddateToken.Substring(0, 36);
+            }
+            return string.Empty;
+        }
+        private DateTime ExtractDateFromKeyToken(string guiddateToken)
+        {
+            if (guiddateToken.Length >= 42)
+            {
+                string date = guiddateToken.Substring(36, 6);
+                CultureInfo provider = CultureInfo.InvariantCulture;
+                DateTime dateTime;
+                DateTime.TryParseExact(date, "yyMMdd", provider, DateTimeStyles.None, out dateTime);
+                return dateTime;
+            }
+            return DateTime.MaxValue;
+        }
+        public Task CleanUpStorageItemTokensAsync(int removeOlderThanDays = 14)
+        {
+            try
+            {
+                //collect data which should be removed
+                List<string> keysToRemove = new List<string>();
+                foreach (var keyValuePair in _localSettings.Values)
+                {
+                    DateTime accessDateTime = ExtractDateFromKeyToken(keyValuePair.Value.ToString());
+                    if ((DateTime.Now - accessDateTime).TotalDays >= removeOlderThanDays)
+                    {
+                        keysToRemove.Add(keyValuePair.Key);
+                    }
+                }
+                //remove to old keys
+                foreach (string keys in keysToRemove)
+                {
+                    _localSettings.Values.Remove(keys);
+                }
+            }
+            catch(Exception e)
+            {
+                _loggerService?.LogException(e);
+            }
+            return Task.CompletedTask;
+        }
 
-        public static async Task CleanUpFolderAsync(StorageFolder storageFolder, IList<string> filesToRemoveWithFileExtension)
+        public static async Task CleanUpFolderAsync(StorageFolder storageFolder, IList<string> filesToRemoveWithFileExtension, int removeOlderThanDays = 7)
         {
             //remove old cached images
             IReadOnlyList<StorageFile> storageFiles = await storageFolder.GetFilesAsync();
@@ -170,7 +248,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 if (filesToRemoveWithFileExtension.Any(a => a.Contains(file.FileType.ToLowerInvariant())))
                 {
                     DateTime createdDateTime = file.DateCreated.DateTime;
-                    if ((DateTime.Now - createdDateTime).TotalDays >= 7)
+                    if ((DateTime.Now - createdDateTime).TotalDays >= removeOlderThanDays)
                     {
                         await file.DeleteAsync();
                     }

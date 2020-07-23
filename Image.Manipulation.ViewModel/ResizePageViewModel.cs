@@ -422,7 +422,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 }
                                 else
                                 {
-                                    //await ShowPermissionDeniedDialog(progressBarDialog); //todo file write/read test
                                     _loggerService.LogEvent("Could not load stream.", new Dictionary<string, string>() { { nameof(currentImage.Path), currentImage.Path } });
                                     continue;
                                 }
@@ -809,7 +808,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 //dont exit app on sharing
                 if ((!SharingProcess) && (ImageFiles == null || ImageFiles?.Count == 0) || (_selectedFiles == null || _selectedFiles?.Count() != 0))
                 {
-                    await _localSettings.SaveSettingsAsync();
                     _applicationService.Exit();
                 }
                 else
@@ -828,6 +826,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     LastFile = null;
                 }
                 SharingProcess = false;
+                await _localSettings.SaveSettingsAsync();
             }
             catch (Exception e)
             {
