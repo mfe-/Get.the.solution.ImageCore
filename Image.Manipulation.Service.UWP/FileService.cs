@@ -13,12 +13,12 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public class FileService : IFileService
     {
-        private readonly ApplicationDataContainer _localSettings;
+        private readonly ILocalSettings _localSettings;
         private readonly ILoggerService _loggerService;
 
         public FileService(ILocalSettings localSettings, ILoggerService loggerService)
         {
-            _localSettings = ApplicationData.Current.LocalSettings;
+            _localSettings = localSettings;
             _loggerService = loggerService;
         }
         public async Task<bool> HasGlobalWriteAccessAsync()
@@ -57,19 +57,13 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// </summary>
         /// <param name="storageItems">The picked items of the file/folder dialog</param>
         /// <returns>A task which indicates the process of executing this method</returns>
-        public Task OnPickStorageItemsAsync(IReadOnlyList<IStorageItem> storageItems)
+        public async Task OnPickStorageItemsAsync(IReadOnlyList<IStorageItem> storageItems)
         {
             foreach (IStorageItem storageFile in storageItems)
             {
                 if (storageFile != null)
                 {
                     bool storeToken = true;
-                    Guid guidStorageFile = Guid.NewGuid();
-                    // Application now has read/write access to all contents in the picked folder (including other sub-folder contents)
-                    StorageApplicationPermissions.FutureAccessList.AddOrReplace(guidStorageFile.ToString(), storageFile);
-                    // Add to FA without metadata
-                    string faToken = StorageApplicationPermissions.FutureAccessList.Add(storageFile);
-                    string mruToken = StorageApplicationPermissions.MostRecentlyUsedList.Add(storageFile, guidStorageFile.ToString());
 
                     string pathKey = storageFile.Path.ToLowerInvariant();
                     //only check if the file is covered by an folder token
@@ -89,6 +83,52 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
                     if (storeToken)
                     {
+                        Guid guidStorageFile = Guid.NewGuid();
+                        //check if there is space left for futureaccess tokens
+                        if (StorageApplicationPermissions.FutureAccessList.Entries.Count == StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed)
+                        {
+                            //maybe we can remove some old tokens
+                            await CleanUpStorageItemTokensAsync(7);
+                            //if nothing was removed we need to remove a random key
+                            if (StorageApplicationPermissions.FutureAccessList.Entries.Count == StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed)
+                            {
+                                _loggerService.LogEvent("Too much FutureAccessList.Entries. CleanUpStorageItemTokensAsync did not remove any tokens.");
+                                string guiddateTokenKey = string.Empty;
+                                string guidToken = string.Empty;
+                                //we got too many items - we have to remove a guidtoken from the list
+                                foreach (string key in _localSettings.Values.Keys)
+                                {
+                                    object value = _localSettings.Values[key];
+                                    guidToken = ExtractGuidFromKeyToken(value.ToString());
+                                    if (!String.IsNullOrEmpty(guidToken))
+                                    {
+                                        guiddateTokenKey = key;
+                                        break;
+                                    }
+                                }
+                                if (!String.IsNullOrEmpty(guiddateTokenKey))
+                                {
+                                    _localSettings.Values.Remove(guiddateTokenKey);
+                                    StorageApplicationPermissions.FutureAccessList.Remove(guidToken);
+                                    _loggerService.LogEvent(nameof(guidStorageFile), nameof(_localSettings.Values.Remove));
+                                }
+                            }
+                            if (StorageApplicationPermissions.FutureAccessList.Entries.Count == StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed)
+                            {
+                                _loggerService.LogEvent("Too much FutureAccessList.Entries. Settings file seems to be corrupt. Removing all FA tokens");
+                                //remove all tokens from FA
+                                foreach (AccessListEntry accessListEntry in StorageApplicationPermissions.FutureAccessList.Entries.ToArray())
+                                {
+                                    StorageApplicationPermissions.FutureAccessList.Remove(accessListEntry.Token);
+                                }
+                            }
+                        }
+                        // Application now has read/write access to all contents in the picked folder (including other sub-folder contents)
+                        StorageApplicationPermissions.FutureAccessList.AddOrReplace(guidStorageFile.ToString(), storageFile);
+                        // Add to FA without metadata
+                        string mruToken = StorageApplicationPermissions.MostRecentlyUsedList.Add(storageFile, guidStorageFile.ToString());
+
+
                         //encode guid and date into string (date to save access of file)
                         string keyvalue = $"{guidStorageFile:D}{DateTime.Now:yyMMdd}";
                         if (!_localSettings.Values.ContainsKey(pathKey))
@@ -107,14 +147,14 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                             { nameof(storageFile),pathKey},
                             { nameof(guidStorageFile),guidStorageFile.ToString() },
                             { nameof(mruToken), mruToken},
-                            { nameof(faToken), faToken},
+                            { nameof(StorageApplicationPermissions.FutureAccessList.Entries.Count), StorageApplicationPermissions.FutureAccessList.Entries.Count.ToString() },
+                            { nameof(StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed), StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed.ToString() }
                         });
                     }
 
                 }
 
             }
-            return Task.CompletedTask;
         }
         public async Task<IStorageItem> TryGetWriteAbleStorageItemAsync(IStorageItem item)
         {
@@ -192,11 +232,23 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return null;
         }
+        /// <summary>
+        /// Extracts the guid from the encoded guid date string
+        /// </summary>
+        /// <remarks>The string is expected in the format "{guidStorageFile:D}{DateTime.Now:yyMMdd}"</remarks>
+        /// <param name="guiddateToken">The string from where the guid should be extracted</param>
+        /// <returns>Returns the guid as string. If the string is empty no guid is available from the overgiven parameter value</returns>
         private string ExtractGuidFromKeyToken(string guiddateToken)
         {
             if (guiddateToken.Length >= 36)
             {
-                return guiddateToken.Substring(0, 36);
+                string guidstring = guiddateToken.Substring(0, 36);
+                Guid guid;
+                //check if its really a guid maybe the string was just 36 charachters long
+                if (Guid.TryParse(guidstring, out guid))
+                {
+                    return guidstring;
+                }
             }
             return string.Empty;
         }
@@ -207,8 +259,10 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 string date = guiddateToken.Substring(36, 6);
                 CultureInfo provider = CultureInfo.InvariantCulture;
                 DateTime dateTime;
-                DateTime.TryParseExact(date, "yyMMdd", provider, DateTimeStyles.None, out dateTime);
-                return dateTime;
+                if (DateTime.TryParseExact(date, "yyMMdd", provider, DateTimeStyles.None, out dateTime))
+                {
+                    return dateTime;
+                }
             }
             return DateTime.MaxValue;
         }
@@ -223,16 +277,23 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     DateTime accessDateTime = ExtractDateFromKeyToken(keyValuePair.Value.ToString());
                     if ((DateTime.Now - accessDateTime).TotalDays >= removeOlderThanDays)
                     {
-                        keysToRemove.Add(keyValuePair.Key);
+                        string guidToken = ExtractGuidFromKeyToken(keyValuePair.Value.ToString());
+                        if (!String.IsNullOrEmpty(guidToken))
+                        {
+                            //remove from windows future access list
+                            StorageApplicationPermissions.FutureAccessList.Remove(guidToken);
+                            keysToRemove.Add(keyValuePair.Key);
+                        }
+
                     }
                 }
-                //remove to old keys
+                //remove guid token from our settings
                 foreach (string keys in keysToRemove)
                 {
                     _localSettings.Values.Remove(keys);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _loggerService?.LogException(e);
             }

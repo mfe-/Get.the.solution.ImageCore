@@ -210,9 +210,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         protected void OnCtrlOpen(object param)
         {
-            _loggerService?.LogEvent(nameof(OnCtrlOpen));
             if (param != null && _applicationService.CtrlPressed(param))
             {
+                _loggerService?.LogEvent(nameof(OnCtrlOpen));
                 OpenFilePickerCommand.Execute(param);
             }
         }
