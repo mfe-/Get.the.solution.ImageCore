@@ -21,7 +21,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public DragDropService(IImageFileService imageFileService, ILoggerService loggerService, ILocalSettings localSettings)
             : this(imageFileService)
         {
-            _fileService = new FileService(localSettings, loggerService);
+            _fileService = new FileService(loggerService);
         }
         public bool IsDragAndDropEnabled => true;
 

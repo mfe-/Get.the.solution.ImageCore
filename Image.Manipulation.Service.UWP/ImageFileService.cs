@@ -17,11 +17,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         private readonly IResourceService _resourceService;
         private readonly FileService _fileService;
 
-        public ImageFileService(ILoggerService loggerService, IResourceService resourceService, ILocalSettings localSettings)
+        public ImageFileService(ILoggerService loggerService, IResourceService resourceService, FileService fileService)
             : base(loggerService)
         {
             _resourceService = resourceService;
-            _fileService = new FileService(localSettings, loggerService);
+            _fileService = fileService;
         }
 
         public async Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync()

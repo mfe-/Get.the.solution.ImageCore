@@ -13,12 +13,19 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public class FileService : IFileService
     {
-        private readonly ILocalSettings _localSettings;
+        private readonly ApplicationDataContainer _localSettings;
         private readonly ILoggerService _loggerService;
+        public static readonly string FileServiceContainer = "FileServiceContainer";
 
-        public FileService(ILocalSettings localSettings, ILoggerService loggerService)
+        public FileService(ILoggerService loggerService)
         {
-            _localSettings = localSettings;
+            ApplicationDataContainer localSettingsContainer = ApplicationData.Current.LocalSettings;
+            if (!localSettingsContainer.Containers.ContainsKey(FileServiceContainer))
+            {
+                localSettingsContainer.CreateContainer(FileServiceContainer, ApplicationDataCreateDisposition.Always);
+            }
+            _localSettings = localSettingsContainer.Containers[FileServiceContainer];
+
             _loggerService = loggerService;
         }
         public async Task<bool> HasGlobalWriteAccessAsync()
@@ -71,14 +78,22 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     {
                         //check if we have the dictionary key then we dont need to add the file key
                         string directoryKey = Path.GetDirectoryName(storageFile.Path).ToLowerInvariant();
-
-                        //check if the directory of the file is already stored in our token list
-                        if (_localSettings.Values.ContainsKey(directoryKey))
+                        try
                         {
-                            //we dont need to store the token
-                            storeToken = false;
+                            //check if the directory of the file is already stored in our token list
+                            if (_localSettings.Values.ContainsKey(directoryKey))
+                            {
+                                //we dont need to store the token
+                                storeToken = false;
 
+                            }
                         }
+                        catch (Exception e)
+                        {
+                            _loggerService.LogException(e);
+                            storeToken = false;
+                        }
+
                     }
 
                     if (storeToken)
@@ -131,25 +146,31 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
                         //encode guid and date into string (date to save access of file)
                         string keyvalue = $"{guidStorageFile:D}{DateTime.Now:yyMMdd}";
-                        if (!_localSettings.Values.ContainsKey(pathKey))
+                        try
                         {
-                            _localSettings.Values.Add(pathKey, keyvalue);
-                            _loggerService.LogEvent(nameof(guidStorageFile), nameof(_localSettings.Values.Add));
+                            if (!_localSettings.Values.ContainsKey(pathKey))
+                            {
+                                _localSettings.Values.Add(pathKey, keyvalue);
+                                _loggerService.LogEvent(nameof(guidStorageFile), nameof(_localSettings.Values.Add));
+                            }
+                            else
+                            {
+                                _localSettings.Values[pathKey] = keyvalue;
+                                _loggerService.LogEvent(nameof(guidStorageFile), nameof(StorageApplicationPermissions.FutureAccessList.AddOrReplace));
+                            }
+                            _loggerService.LogEvent(nameof(storageFile), new Dictionary<string, string>()
+                            {
+                                { nameof(storageFile),pathKey},
+                                { nameof(guidStorageFile),guidStorageFile.ToString() },
+                                { nameof(mruToken), mruToken},
+                                { nameof(StorageApplicationPermissions.FutureAccessList.Entries.Count), StorageApplicationPermissions.FutureAccessList.Entries.Count.ToString() },
+                                { nameof(StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed), StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed.ToString() }
+                            });
                         }
-                        else
+                        catch (Exception e)
                         {
-                            _localSettings.Values[pathKey] = keyvalue;
-                            _loggerService.LogEvent(nameof(guidStorageFile), nameof(StorageApplicationPermissions.FutureAccessList.AddOrReplace));
+                            HandleGenericException(e);
                         }
-
-                        _loggerService.LogEvent(nameof(storageFile), new Dictionary<string, string>()
-                        {
-                            { nameof(storageFile),pathKey},
-                            { nameof(guidStorageFile),guidStorageFile.ToString() },
-                            { nameof(mruToken), mruToken},
-                            { nameof(StorageApplicationPermissions.FutureAccessList.Entries.Count), StorageApplicationPermissions.FutureAccessList.Entries.Count.ToString() },
-                            { nameof(StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed), StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed.ToString() }
-                        });
                     }
 
                 }
@@ -182,9 +203,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// <returns>The found file or dictionary. If not access token was stored it returns null.</returns>
         public async Task<IStorageItem> TryGetWriteAbleStorageItemAsync(string path, System.IO.FileAttributes attr)
         {
+            string pathKey = string.Empty;
             try
             {
-                string pathKey;
+                //network path unsupported right now
+                if (new Uri(path).IsUnc) return null;
                 //detect whether its a directory or file
                 if ((attr & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
                 {
@@ -225,15 +248,44 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             catch (System.Runtime.InteropServices.COMException)
             {
                 //this happens when calling FutureAccessList.GetFileAsync with a empty guid
+                //our token key is outdated so we remove it
+                if (!string.IsNullOrEmpty(pathKey))
+                {
+                    _localSettings.Values.Remove(pathKey);
+                }
             }
             catch (ArgumentException)
             {
                 //this happens when calling FutureAccessList.GetFileAsync with a wrong guid
+                //our token key is outdated so we remove it
+                if (!string.IsNullOrEmpty(pathKey))
+                {
+                    _localSettings.Values.Remove(pathKey);
+                }
+            }
+            catch (Exception e)
+            {
+                HandleGenericException(e);
             }
             return null;
         }
+
+        private void HandleGenericException(Exception e)
+        {
+            if (e.HResult == -2147024735)
+            {
+                //The specified path is invalid.
+                //Error trying to query the application data container item info
+                //this happens for network paths
+            }
+            else
+            {
+                _loggerService.LogException(e);
+            }
+        }
+
         /// <summary>
-        /// Extracts the guid from the encoded guid date string
+        /// Extracts the guid from the encoded "guid date" string
         /// </summary>
         /// <remarks>The string is expected in the format "{guidStorageFile:D}{DateTime.Now:yyMMdd}"</remarks>
         /// <param name="guiddateToken">The string from where the guid should be extracted</param>
@@ -252,6 +304,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return string.Empty;
         }
+        /// <summary>
+        /// Extracts the date from the encoded "guid date" string
+        /// </summary>
+        /// <param name="guiddateToken"></param>
+        /// <returns></returns>
         private DateTime ExtractDateFromKeyToken(string guiddateToken)
         {
             if (guiddateToken.Length >= 42)
@@ -266,6 +323,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return DateTime.MaxValue;
         }
+        /// <summary>
+        /// Cleans up old tokens which are older than the value supplied by <paramref name="removeOlderThanDays"/>
+        /// </summary>
+        /// <param name="removeOlderThanDays">the amount of days on which the token was not updated</param>
+        /// <returns>Task which indicates the process of computing the method</returns>
         public Task CleanUpStorageItemTokensAsync(int removeOlderThanDays = 14)
         {
             try
