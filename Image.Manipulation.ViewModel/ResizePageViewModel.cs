@@ -90,11 +90,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             RadioOptions = _localSettings.Settings.RadioOptions;
             if (RadioOptions == 1)
             {
-                SizeSmallChecked = true;
+                SizeOptionOneChecked = true;
             }
             else if (RadioOptions == 2)
             {
-                SizeMediumChecked = true;
+                SizeOptionTwoChecked = true;
             }
             else if (RadioOptions == 3)
             {
@@ -144,8 +144,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                         }
                     }
                 }
-                if (e.PropertyName.Equals(nameof(SizeSmallChecked)) ||
-                    e.PropertyName.Equals(nameof(SizeMediumChecked)) ||
+                if (e.PropertyName.Equals(nameof(SizeOptionOneChecked)) ||
+                    e.PropertyName.Equals(nameof(SizeOptionTwoChecked)) ||
                      e.PropertyName.Equals(nameof(SizeCustomChecked)) ||
                       e.PropertyName.Equals(nameof(SizePercentChecked)) ||
                       e.PropertyName.Equals(nameof(HeightPercent)) ||
@@ -182,12 +182,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             int newWidth;
             int newHeight;
 
-            if (SizeSmallChecked)
+            if (SizeOptionOneChecked)
             {
                 newWidth = 640;
                 newHeight = 480;
             }
-            else if (SizeMediumChecked)
+            else if (SizeOptionTwoChecked)
             {
                 newWidth = 800;
                 newHeight = 600;
@@ -267,22 +267,22 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         #endregion
 
         #region RadioOptions
-        private bool _SizeSmallChecked;
+        private bool _SizeOptionOneChecked;
 
-        public bool SizeSmallChecked
+        public bool SizeOptionOneChecked
         {
-            get { return _SizeSmallChecked; }
+            get { return _SizeOptionOneChecked; }
             set
             {
-                SetProperty(ref _SizeSmallChecked, value, nameof(SizeSmallChecked));
-                if (SizeSmallChecked)
+                SetProperty(ref _SizeOptionOneChecked, value, nameof(SizeOptionOneChecked));
+                if (SizeOptionOneChecked)
                 {
                     Width = 640; Height = 480;
                 }
-                if (SizeSmallChecked)
+                if (SizeOptionOneChecked)
                 {
                     _localSettings.Settings.RadioOptions = 1;
-                    SizeMediumChecked = false;
+                    SizeOptionTwoChecked = false;
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
                 }
@@ -290,22 +290,22 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
         }
 
-        private bool _SizeMediumChecked;
+        private bool _SizeOptionTwoChecked;
 
-        public bool SizeMediumChecked
+        public bool SizeOptionTwoChecked
         {
-            get { return _SizeMediumChecked; }
+            get { return _SizeOptionTwoChecked; }
             set
             {
-                SetProperty(ref _SizeMediumChecked, value, nameof(SizeMediumChecked));
-                if (SizeMediumChecked)
+                SetProperty(ref _SizeOptionTwoChecked, value, nameof(SizeOptionTwoChecked));
+                if (SizeOptionTwoChecked)
                 {
                     Width = 800; Height = 600;
                 }
-                if (SizeMediumChecked)
+                if (SizeOptionTwoChecked)
                 {
                     _localSettings.Settings.RadioOptions = 2;
-                    SizeSmallChecked = false;
+                    SizeOptionOneChecked = false;
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
                 }
@@ -323,8 +323,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 if (SizeCustomChecked)
                 {
                     _localSettings.Settings.RadioOptions = 3;
-                    SizeSmallChecked = false;
-                    SizeMediumChecked = false;
+                    SizeOptionOneChecked = false;
+                    SizeOptionTwoChecked = false;
                     SizePercentChecked = false;
                 }
             }
@@ -343,8 +343,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 if (SizePercentChecked)
                 {
                     _localSettings.Settings.RadioOptions = 4;
-                    SizeSmallChecked = false;
-                    SizeMediumChecked = false;
+                    SizeOptionOneChecked = false;
+                    SizeOptionTwoChecked = false;
                     SizeCustomChecked = false;
 
                 }
