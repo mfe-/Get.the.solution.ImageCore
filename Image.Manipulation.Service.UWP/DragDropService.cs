@@ -27,31 +27,32 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public void OnDragOverCommand(object param)
         {
-            DragEventArgs e = param as DragEventArgs;
-
-            e.DragUIOverride.IsContentVisible = true;
-            e.DragUIOverride.IsGlyphVisible = true;
-            IReadOnlyList<IStorageItem> storeageItems = e.DataView.GetStorageItemsAsync().GetAwaiter().GetResult();
-            //Flag determine wether draged files are allowed
-            bool CanDrop = true;
-            foreach (IStorageItem storageItem in storeageItems)
+            if(param is DragEventArgs e)
             {
-                if (storageItem is IStorageFile)
+                e.DragUIOverride.IsContentVisible = true;
+                e.DragUIOverride.IsGlyphVisible = true;
+                IReadOnlyList<IStorageItem> storeageItems = e.DataView.GetStorageItemsAsync().GetAwaiter().GetResult();
+                //Flag determine wether draged files are allowed
+                bool CanDrop = true;
+                foreach (IStorageItem storageItem in storeageItems)
                 {
-                    if (storageItem is StorageFile storageFile)
+                    if (storageItem is IStorageFile)
                     {
-                        CanDrop = _imageFileService.FileTypeFilter.Contains((storageFile).FileType);
+                        if (storageItem is StorageFile storageFile)
+                        {
+                            CanDrop = _imageFileService.FileTypeFilter.Contains((storageFile).FileType);
+                        }
+                    }
+                    if (storageItem is IStorageFolder)
+                    {
+                        CanDrop = false;
                     }
                 }
-                if (storageItem is IStorageFolder)
+                if (!CanDrop)
                 {
-                    CanDrop = false;
+                    e.AcceptedOperation = DataPackageOperation.None;
                 }
-            }
-
-            if (!CanDrop)
-            {
-                e.AcceptedOperation = DataPackageOperation.None;
+                e.Handled = true;
             }
         }
 
