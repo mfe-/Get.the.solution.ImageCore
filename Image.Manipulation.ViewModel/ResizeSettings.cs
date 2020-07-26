@@ -1,5 +1,4 @@
-﻿using Get.the.solution.Image.Contract;
-using Get.the.solution.Image.Manipulation.Contract;
+﻿using Get.the.solution.Image.Manipulation.Contract;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -27,6 +26,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             _RadioOptions = 4;
             _CheckGlobalWriteAccess = true;
 
+            _SizeOptionOneWidth = 640;
+            _SizeOptionOneHeight = 480;
+
+            _SizeOptionTwoWidth = 800;
+            _SizeOptionTwoHeight = 600;
         }
         public ResizeSettings(ILoggerService loggerService) : this()
         {
@@ -56,6 +60,37 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             get { return _RadioOptions; }
             set { SetProperty(ref _RadioOptions, value, nameof(RadioOptions)); }
+        }
+
+
+        private int _SizeOptionOneWidth;
+        public int SizeOptionOneWidth
+        {
+            get { return _SizeOptionOneWidth; }
+            set { SetProperty(ref _SizeOptionOneWidth, value, nameof(SizeOptionOneWidth)); }
+        }
+
+
+        private int _SizeOptionOneHeight;
+        public int SizeOptionOneHeight
+        {
+            get { return _SizeOptionOneHeight; }
+            set { SetProperty(ref _SizeOptionOneHeight, value, nameof(SizeOptionOneHeight)); }
+        }
+
+
+        private int _SizeOptionTwoWidth;
+        public int SizeOptionTwoWidth
+        {
+            get { return _SizeOptionTwoWidth; }
+            set { SetProperty(ref _SizeOptionTwoWidth, value, nameof(SizeOptionTwoWidth)); }
+        }
+
+        private int _SizeOptionTwoHeight;
+        public int SizeOptionTwoHeight
+        {
+            get { return _SizeOptionTwoHeight; }
+            set { SetProperty(ref _SizeOptionTwoHeight, value, nameof(SizeOptionTwoHeight)); }
         }
 
 

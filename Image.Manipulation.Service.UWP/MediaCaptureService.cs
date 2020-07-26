@@ -93,17 +93,15 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             if (_mediaCapture != null)
             {
                 VideoFrame snapShot = await _mediaCapture.GetPreviewFrameAsync(videoFrame);
-                {
-                    // Collect the resulting frame
-                    SoftwareBitmap previewSoftwareBitmap = snapShot.SoftwareBitmap;
 
-                    modifySoftwareBitmapAction?.Invoke(previewSoftwareBitmap);
+                // Collect the resulting frame
+                SoftwareBitmap previewSoftwareBitmap = snapShot.SoftwareBitmap;
 
-                    SoftwareBitmap bitmapBGRA8 = SoftwareBitmap.Convert(previewSoftwareBitmap,
-                        BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-                    return bitmapBGRA8;
+                modifySoftwareBitmapAction?.Invoke(previewSoftwareBitmap);
 
-                }
+                SoftwareBitmap bitmapBGRA8 = SoftwareBitmap.Convert(previewSoftwareBitmap,
+                    BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+                return bitmapBGRA8;
             }
             else
             {

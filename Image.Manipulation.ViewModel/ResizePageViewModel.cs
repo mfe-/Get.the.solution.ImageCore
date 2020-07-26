@@ -87,7 +87,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         /// </summary>
         public void LoadSettings()
         {
-            RadioOptions = _localSettings.Settings.RadioOptions;
+            RadioOptions = Settings.RadioOptions;
             if (RadioOptions == 1)
             {
                 SizeOptionOneChecked = true;
@@ -109,14 +109,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 { nameof(RadioOptions),$"{RadioOptions}"}
             });
 
-            OverwriteFiles = _localSettings.Settings.OverwriteFiles;
-            Width = _localSettings.Settings.WidthCustom;
-            Height = _localSettings.Settings.HeightCustom;
-
-            WidthPercent = _localSettings.Settings.WidthPercent;
-            HeightPercent = _localSettings.Settings.HeightPercent;
-
-            KeepAspectRatio = _localSettings.Settings.KeepAspectRatio;
+            OverwriteFiles = Settings.OverwriteFiles;
+            KeepAspectRatio = Settings.KeepAspectRatio;
 
         }
         private void ResizePageViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -148,8 +142,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     e.PropertyName.Equals(nameof(SizeOptionTwoChecked)) ||
                      e.PropertyName.Equals(nameof(SizeCustomChecked)) ||
                       e.PropertyName.Equals(nameof(SizePercentChecked)) ||
-                      e.PropertyName.Equals(nameof(HeightPercent)) ||
-                      e.PropertyName.Equals(nameof(WidthPercent)) ||
                       e.PropertyName.Equals(nameof(Width)) ||
                       e.PropertyName.Equals(nameof(Height)))
                 {
@@ -171,38 +163,22 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             foreach (ImageFile currentImage in ImageFiles)
             {
-                Tuple<int, int> dimension = PreviewDimensions(currentImage.Width, currentImage.Height, Width, Height, WidthPercent, HeightPercent, KeepAspectRatio);
-                currentImage.NewWidth = dimension.Item1;
-                currentImage.NewHeight = dimension.Item2;
-            }
-        }
-        public Tuple<int, int> PreviewDimensions(int widthimagefile, int heightimagefile, int entertedWidth, int entertedheight, int widthPercentage, int heightPercentage, bool keepAspect)
-        {
-            //consider aspect only for custom and percent
-            int newWidth;
-            int newHeight;
+                int newWidth;
+                int newHeight;
 
-            if (SizeOptionOneChecked)
-            {
-                newWidth = 640;
-                newHeight = 480;
+                if (SizePercentChecked)
+                {
+                    newWidth = currentImage.Width * Settings.WidthPercent / 100;
+                    newHeight = currentImage.Height * Settings.HeightPercent / 100;
+                }
+                else
+                {
+                    newWidth = Width;
+                    newHeight = Height;
+                }
+                currentImage.NewWidth = newWidth;
+                currentImage.NewHeight = newHeight;
             }
-            else if (SizeOptionTwoChecked)
-            {
-                newWidth = 800;
-                newHeight = 600;
-            }
-            else if (SizePercentChecked)
-            {
-                newWidth = widthimagefile * widthPercentage / 100;
-                newHeight = heightimagefile * heightPercentage / 100;
-            }
-            else
-            {
-                newWidth = entertedWidth;
-                newHeight = entertedheight;
-            }
-            return new Tuple<int, int>(newWidth, newHeight);
         }
 
         private ICommand _CtrlOpen;
@@ -267,8 +243,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         #endregion
 
         #region RadioOptions
+        /// <summary>
+        /// Get or sets whehter the option one is checked
+        /// </summary>
         private bool _SizeOptionOneChecked;
-
         public bool SizeOptionOneChecked
         {
             get { return _SizeOptionOneChecked; }
@@ -277,11 +255,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SetProperty(ref _SizeOptionOneChecked, value, nameof(SizeOptionOneChecked));
                 if (SizeOptionOneChecked)
                 {
-                    Width = 640; Height = 480;
-                }
-                if (SizeOptionOneChecked)
-                {
-                    _localSettings.Settings.RadioOptions = 1;
+                    Width = Settings.SizeOptionOneWidth;
+                    Height = Settings.SizeOptionOneHeight;
+                    Settings.RadioOptions = 1;
                     SizeOptionTwoChecked = false;
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
@@ -289,9 +265,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
             }
         }
-
+        /// <summary>
+        /// Get or sets whether the option two is checked
+        /// </summary>
         private bool _SizeOptionTwoChecked;
-
         public bool SizeOptionTwoChecked
         {
             get { return _SizeOptionTwoChecked; }
@@ -300,20 +277,19 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SetProperty(ref _SizeOptionTwoChecked, value, nameof(SizeOptionTwoChecked));
                 if (SizeOptionTwoChecked)
                 {
-                    Width = 800; Height = 600;
-                }
-                if (SizeOptionTwoChecked)
-                {
-                    _localSettings.Settings.RadioOptions = 2;
+                    Width = Settings.SizeOptionTwoWidth;
+                    Height = Settings.SizeOptionTwoHeight;
+                    Settings.RadioOptions = 2;
                     SizeOptionOneChecked = false;
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
                 }
             }
         }
-
+        /// <summary>
+        /// Get or sets whether the custom width and custom height is checked
+        /// </summary>
         private bool _SizeCustomChecked;
-
         public bool SizeCustomChecked
         {
             get { return _SizeCustomChecked; }
@@ -322,7 +298,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SetProperty(ref _SizeCustomChecked, value, nameof(SizeCustomChecked));
                 if (SizeCustomChecked)
                 {
-                    _localSettings.Settings.RadioOptions = 3;
+                    Width = Settings.WidthCustom;
+                    Height = Settings.HeightCustom;
+                    Settings.RadioOptions = 3;
                     SizeOptionOneChecked = false;
                     SizeOptionTwoChecked = false;
                     SizePercentChecked = false;
@@ -330,10 +308,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
         }
 
-
-
+        /// <summary>
+        /// Get or sets whether the percent is checked
+        /// </summary>
         private bool _SizePercentChecked;
-
         public bool SizePercentChecked
         {
             get { return _SizePercentChecked; }
@@ -342,7 +320,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 SetProperty(ref _SizePercentChecked, value, nameof(SizePercentChecked));
                 if (SizePercentChecked)
                 {
-                    _localSettings.Settings.RadioOptions = 4;
+                    Width = Settings.WidthPercent;
+                    Height = Settings.HeightPercent;
+                    Settings.RadioOptions = 4;
                     SizeOptionOneChecked = false;
                     SizeOptionTwoChecked = false;
                     SizeCustomChecked = false;
@@ -354,8 +334,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         #endregion
 
         #region Images
+        /// <summary>
+        /// Get or sets the list of files which should be resized
+        /// </summary>
         private ObservableCollection<ImageFile> _ImageFiles;
-
         public ObservableCollection<ImageFile> ImageFiles
         {
             get { return _ImageFiles; }
@@ -656,9 +638,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             progressBarDialogService?.StartAsync(ImageFiles.Count);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
-
+        /// <summary>
+        /// Get or sets the flag which indicates whether a resize operation is currently processed
+        /// </summary>
+        /// <remarks>Also this flag is set to true when the user selected (open) images for resizing</remarks>
         private bool _Resizing;
-
         public bool Resizing
         {
             get { return _Resizing; }
@@ -734,67 +718,28 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
             SharingProcess = false;
         }
-        #endregion 
+        #endregion
 
         #region Width & Height
+        /// <summary>
+        /// Current width which should applied to the image
+        /// </summary>
         private int _Width;
-
         public int Width
         {
             get { return _Width; }
-            set
-            {
-                SetProperty(ref _Width, value, nameof(Width));
-                _localSettings.Settings.WidthCustom = _Width;
-            }
+            set { SetProperty(ref _Width, value, nameof(Width)); }
         }
-
-
-        private int _PercentWidth;
-
-        public int WidthPercent
-        {
-            get { return _PercentWidth; }
-            set
-            {
-                SetProperty(ref _PercentWidth, value, nameof(WidthPercent));
-                _localSettings.Settings.WidthPercent = _PercentWidth;
-                if (KeepAspectRatio)
-                {
-                    _PercentHeight = _PercentWidth;
-                    RaisePropertyChanged(nameof(HeightPercent));
-                }
-            }
-        }
-
+        /// <summary>
+        /// Current height which should be applied to the image
+        /// </summary>
         private int _Height;
-
         public int Height
         {
             get { return _Height; }
-            set
-            {
-                SetProperty(ref _Height, value, nameof(Height));
-                _localSettings.Settings.HeightCustom = _Height;
-            }
+            set { SetProperty(ref _Height, value, nameof(Height)); }
         }
 
-        private int _PercentHeight;
-
-        public int HeightPercent
-        {
-            get { return _PercentHeight; }
-            set
-            {
-                SetProperty(ref _PercentHeight, value, nameof(HeightPercent));
-                _localSettings.Settings.HeightPercent = _PercentHeight;
-                if (KeepAspectRatio)
-                {
-                    _PercentWidth = _PercentHeight;
-                    RaisePropertyChanged(nameof(WidthPercent));
-                }
-            }
-        }
         #endregion
 
         #region CancelCommand
@@ -836,17 +781,17 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         }
         #endregion
 
-        private bool _OverwriteFiles;
         /// <summary>
         /// This flag determines whether the existing file should be overwriten when resizing the image or a new file should be created
         /// </summary>
+        private bool _OverwriteFiles;
         public bool OverwriteFiles
         {
             get { return _OverwriteFiles; }
             set
             {
                 SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles));
-                _localSettings.Settings.OverwriteFiles = _OverwriteFiles;
+                Settings.OverwriteFiles = _OverwriteFiles;
                 RaisePropertyChanged(nameof(CanOverwriteFiles));
                 _loggerService?.LogEvent(nameof(OverwriteFiles), $"{OverwriteFiles}");
             }
@@ -854,14 +799,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
 
         private bool _KeepAspectRatio;
-
         public bool KeepAspectRatio
         {
             get { return _KeepAspectRatio; }
             set
             {
                 SetProperty(ref _KeepAspectRatio, value, nameof(KeepAspectRatio));
-                _localSettings.Settings.KeepAspectRatio = _KeepAspectRatio;
+                Settings.KeepAspectRatio = _KeepAspectRatio;
                 _loggerService?.LogEvent(nameof(KeepAspectRatio), $"{KeepAspectRatio}");
             }
         }
@@ -928,6 +872,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
             _loggerService?.LogEvent(nameof(OnDropCommand));
         }
+        /// <summary>
+        /// Get or sets the last file which was resized
+        /// </summary>
         protected ImageFile _LastFile;
         public ImageFile LastFile
         {
@@ -960,7 +907,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             }
         }
 
-
+        /// <summary>
+        /// Gets whether all selected files for resizing are writeable
+        /// </summary>
         public bool CanOverwriteFiles
         {
             get
@@ -981,12 +930,23 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
             }
         }
+        /// <summary>
+        /// Gets whether only one file is selected for resizing
+        /// </summary>
         public bool SingleFile
         {
             get
             {
                 bool single = ImageFiles?.Count == 1;
                 return single;
+            }
+        }
+
+        public ResizeSettings Settings
+        {
+            get
+            {
+                return _localSettings.Settings;
             }
         }
 
