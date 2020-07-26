@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Get.the.solution.Image.Contract
+namespace Get.the.solution.Image.Manipulation.Contract
 {
     public interface ILoggerService
     {

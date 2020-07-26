@@ -1,6 +1,5 @@
-﻿using Get.the.solution.Image.Contract;
+﻿using Get.the.solution.Image.Manipulation.Contract;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;

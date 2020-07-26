@@ -1,4 +1,4 @@
-﻿using Get.the.solution.Image.Contract;
+﻿using Get.the.solution.Image.Manipulation.Contract;
 using System;
 using System.Collections.Generic;
 

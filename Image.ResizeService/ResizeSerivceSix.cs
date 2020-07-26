@@ -1,4 +1,5 @@
 ﻿using Get.the.solution.Image.Contract;
+using Get.the.solution.Image.Manipulation.Contract;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using System.IO;
@@ -77,7 +78,7 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
             }
             catch(UnknownImageFormatException ui)
             {
-                throw new Contract.Exceptions.UnknownImageFormatException(ui.Message, ui);
+                throw new Image.Contract.Exceptions.UnknownImageFormatException(ui.Message, ui);
             }
         }
     }
