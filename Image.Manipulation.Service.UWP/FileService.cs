@@ -15,6 +15,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         private readonly ApplicationDataContainer _localSettings;
         private readonly ILoggerService _loggerService;
         public static readonly string FileServiceContainer = "FileServiceContainer";
+        public static readonly string HasGlobalWriteAccess = "HasGlobalWriteAccess";
 
         public FileService(ILoggerService loggerService)
         {
@@ -26,6 +27,17 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             _localSettings = localSettingsContainer.Containers[FileServiceContainer];
 
             _loggerService = loggerService;
+        }
+        /// <summary>
+        /// Determines depending on the <seealso cref="HasGlobalWriteAccess"/> Flag which is stored in <seealso cref="ApplicationData.Current.LocalSettings"/> if the app can write globaly
+        /// </summary>
+        /// <returns>True if the app can write globaly</returns>
+        public static bool HasGlobalWritePermission()
+        {
+            var hasGlobalWriteAccess = ApplicationData.Current.LocalSettings.Values[FileService.HasGlobalWriteAccess];
+            if (hasGlobalWriteAccess == null) return false;
+            if (hasGlobalWriteAccess is bool b) return b;
+            return false;
         }
         public async Task<bool> HasGlobalWriteAccessAsync()
         {

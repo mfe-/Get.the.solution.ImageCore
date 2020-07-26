@@ -35,8 +35,12 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             IReadOnlyList<IStorageFile> files = await fileOpenPicker.PickMultipleFilesAsync();
             if (files != null)
             {
-                //process files (adding to future access list)
-                await _fileService.OnPickStorageItemsAsync(files);
+                if (!FileService.HasGlobalWritePermission())
+                {
+                    //process files (adding to future access list)
+                    await _fileService.OnPickStorageItemsAsync(files);
+                }
+
                 //create imageFiles
                 List<ImageFile> imageFiles = new List<ImageFile>();
                 foreach (IStorageFile storageFile in files)
@@ -59,6 +63,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return new List<ImageFile>();
         }
+
         public virtual async Task<ImageFile> PickSaveFileAsync(String preferredSaveLocation, String suggestedFileName)
         {
             FileSavePicker fileSavePicker = new FileSavePicker();
@@ -74,7 +79,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             //file is null when the user clicked on "abort" on save as dialog
             if (file != null)
             {
-                await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { file });
+                if (!FileService.HasGlobalWritePermission())
+                    await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { file });
+
                 return await FileToImageFileConverterAsync(file);
             }
             return null;
@@ -88,8 +95,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
             if (folder != null)
             {
-                //add location to future access list
-                await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { folder });
+                if (!FileService.HasGlobalWritePermission())
+                {
+                    //add location to future access list
+                    await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { folder });
+                }
                 //create desired file
                 IStorageFile file = await folder.CreateFileAsync(suggestedFileName, CreationCollisionOption.OpenIfExists);
                 return await FileToImageFileConverterAsync(file);
