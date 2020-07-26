@@ -110,7 +110,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             });
 
             OverwriteFiles = Settings.OverwriteFiles;
-            KeepAspectRatio = Settings.KeepAspectRatio;
 
         }
         private void ResizePageViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -118,26 +117,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             try
             {
                 PropertyChanged -= ResizePageViewModel_PropertyChanged;
-                if (KeepAspectRatio &&
-                    (nameof(Width).Equals(e.PropertyName) || nameof(Height).Equals(e.PropertyName)))
-                {
-                    if (SelectedFile == null && ImageFiles.Count > 0)
-                    {
-                        SelectedFile = ImageFiles?.First();
-                    }
-                    if (SelectedFile != null)
-                    {
-                        float R = (float)SelectedFile.Width / (float)SelectedFile.Height;
-                        if (SelectedFile != null && nameof(Width).Equals(e.PropertyName))
-                        {
-                            Height = (int)(Width / R);
-                        }
-                        else if (SelectedFile != null && nameof(Height).Equals(e.PropertyName))
-                        {
-                            Width = (int)(Height * R);
-                        }
-                    }
-                }
                 if (e.PropertyName.Equals(nameof(SizeOptionOneChecked)) ||
                     e.PropertyName.Equals(nameof(SizeOptionTwoChecked)) ||
                      e.PropertyName.Equals(nameof(SizeCustomChecked)) ||
@@ -244,6 +223,32 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         #region RadioOptions
         /// <summary>
+        /// Updates the current Width Height according of the selected option
+        /// </summary>
+        public void UpdateOptionSettings()
+        {
+            if (SizeOptionOneChecked)
+            {
+                Width = Settings.SizeOptionOneWidth;
+                Height = Settings.SizeOptionOneHeight;
+            }
+            if (SizeOptionTwoChecked)
+            {
+                Width = Settings.SizeOptionTwoWidth;
+                Height = Settings.SizeOptionTwoHeight;
+            }
+            if (SizeCustomChecked)
+            {
+                Width = Settings.WidthCustom;
+                Height = Settings.HeightCustom;
+            }
+            if (SizePercentChecked)
+            {
+                Width = Settings.WidthPercent;
+                Height = Settings.HeightPercent;
+            }
+        }
+        /// <summary>
         /// Get or sets whehter the option one is checked
         /// </summary>
         private bool _SizeOptionOneChecked;
@@ -262,7 +267,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     SizeCustomChecked = false;
                     SizePercentChecked = false;
                 }
-
             }
         }
         /// <summary>
@@ -326,7 +330,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     SizeOptionOneChecked = false;
                     SizeOptionTwoChecked = false;
                     SizeCustomChecked = false;
-
                 }
             }
         }
@@ -362,8 +365,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             ApplyPreviewDimensions();
         }
         #endregion
-
-        public async Task<bool> ResizeImages(ImageAction action, Action<ImageFile, String> ProcessedImageAction = null)
+        /// <summary>
+        /// Starts resizing the image operation
+        /// </summary>
+        /// <param name="action">Determine whether the image files should be saved as, or updated or resize image is used from sharing</param>
+        /// <param name="processedImageAction">Action method which retrievs the resized image. Can be used for sharing.</param>
+        /// <returns>Task which indicates if the current resize operation was successfull</returns>
+        public async Task<bool> ResizeImages(ImageAction action, Action<ImageFile, String> processedImageAction = null)
         {
             IProgressBarDialogService progressBarDialog = !IsShareTarget ? _progressBarDialogService.ProgressBarDialogFactory() : null;
             try
@@ -537,7 +545,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 {
                                     String TempFolder = _applicationService.GetLocalCacheFolder();
                                     ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, suggestedFileName, currentImage, resizedImageFileStream.ToArray());
-                                    ProcessedImageAction?.Invoke(temp, $"{suggestedFileName}");
+                                    processedImageAction?.Invoke(temp, $"{suggestedFileName}");
                                 }
                                 //open resized image depending whether only one image is resized and the user enabled this option
                                 if (SingleFile && LastFile != null && action != ImageAction.Process &&
@@ -666,6 +674,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             try
             {
                 await _SemaphoreSlimOnOkCommand.WaitAsync();
+                UpdateOptionSettings();
                 _loggerService?.LogEvent(nameof(OnOkCommand));
                 ImageAction Action = OverwriteFiles ? ImageAction.Save : ImageAction.SaveAs;
                 await ResizeImages(Action);
@@ -794,19 +803,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 Settings.OverwriteFiles = _OverwriteFiles;
                 RaisePropertyChanged(nameof(CanOverwriteFiles));
                 _loggerService?.LogEvent(nameof(OverwriteFiles), $"{OverwriteFiles}");
-            }
-        }
-
-
-        private bool _KeepAspectRatio;
-        public bool KeepAspectRatio
-        {
-            get { return _KeepAspectRatio; }
-            set
-            {
-                SetProperty(ref _KeepAspectRatio, value, nameof(KeepAspectRatio));
-                Settings.KeepAspectRatio = _KeepAspectRatio;
-                _loggerService?.LogEvent(nameof(KeepAspectRatio), $"{KeepAspectRatio}");
             }
         }
 
@@ -941,7 +937,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 return single;
             }
         }
-
+        /// <summary>
+        /// Gets the Settings object
+        /// </summary>
         public ResizeSettings Settings
         {
             get
