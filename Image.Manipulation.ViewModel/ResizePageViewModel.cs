@@ -516,21 +516,40 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                             await _imageFileService.WriteBytesAsync(targetStorageFolder, suggestedFileName, currentImage, resizedImageFileStream.ToArray());
                                         }
                                     }
-                                    catch (Contract.Exceptions.UnauthorizedAccessException)
+                                    catch (FileNotFoundException)
                                     {
-                                        //log the UnauthorizedAccessException
+                                        //happens if the targetStorageFolder from the settings was removed (or renamed) meanwhile
                                         _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
                                         {
-                                            { nameof(Contract.Exceptions.UnauthorizedAccessException), $"{true}" },
+                                            { nameof(FileNotFoundException), true.ToString() },
                                         });
-                                        await ShowPermissionDeniedDialog(progressBarDialog);
+                                        //happens if the targetStorageFolder was removed meanwhile
+                                        Settings.DefaultSaveAsTargetFolder = String.Empty;
                                         //tell the user to save the file in an other location
                                         imageFile = await _imageFileService.PickSaveFileAsync(currentImage.Path, suggestedFileName);
                                         //try to apply the new storagefolder (if the user selected a new location)
                                         if (imageFile != null && Path.GetDirectoryName(targetStorageFolder) != Path.GetDirectoryName(imageFile.Path))
                                         {
                                             targetStorageFolder = Path.GetDirectoryName(imageFile.Path);
+                                            await _imageFileService.WriteBytesAsync(imageFile, resizedImageFileStream.ToArray());
                                         }
+                                    }
+                                    catch (Contract.Exceptions.UnauthorizedAccessException)
+                                    {
+                                        //log the UnauthorizedAccessException
+                                        _loggerService?.LogEvent(nameof(ResizeImages), new Dictionary<String, String>()
+                                        {
+                                            { nameof(Contract.Exceptions.UnauthorizedAccessException), true.ToString() },
+                                        });
+                                        //tell the user to save the file in an other location
+                                        imageFile = await _imageFileService.PickSaveFileAsync(currentImage.Path, suggestedFileName);
+                                        //try to apply the new storagefolder (if the user selected a new location)
+                                        if (imageFile != null && Path.GetDirectoryName(targetStorageFolder) != Path.GetDirectoryName(imageFile.Path))
+                                        {
+                                            targetStorageFolder = Path.GetDirectoryName(imageFile.Path);
+                                            await _imageFileService.WriteBytesAsync(imageFile, resizedImageFileStream.ToArray());
+                                        }
+                                        await ShowPermissionDeniedDialog(progressBarDialog);
                                     }
                                     if (null != imageFile)
                                     {
