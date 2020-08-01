@@ -40,7 +40,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     {
                         if (storageItem is StorageFile storageFile)
                         {
-                            CanDrop = _imageFileService.FileTypeFilter.Contains((storageFile).FileType);
+                            CanDrop = _imageFileService.FileTypeFilter.Contains((storageFile).FileType.ToLowerInvariant());
                         }
                     }
                     if (storageItem is IStorageFolder)
