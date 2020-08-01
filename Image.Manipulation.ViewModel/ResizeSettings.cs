@@ -46,6 +46,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         IDictionary<string, object> ILocalSettings.Values => Values;
 
+        private string _DefaultSaveAsTargetFolder;
+        public string DefaultSaveAsTargetFolder
+        {
+            get { return _DefaultSaveAsTargetFolder; }
+            set { SetProperty(ref _DefaultSaveAsTargetFolder, value, nameof(DefaultSaveAsTargetFolder)); }
+        }
 
         private bool _CheckGlobalWriteAccess;
         public bool CheckGlobalWriteAccess

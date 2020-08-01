@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
+using Windows.Storage.Pickers;
 
 namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
@@ -27,6 +28,75 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             _localSettings = localSettingsContainer.Containers[FileServiceContainer];
 
             _loggerService = loggerService;
+        }
+        public virtual async Task<IStorageFile> PickSaveFileAsync(String preferredSaveLocation, String suggestedFileName, IList<string> fileTypeChoicesFilter)
+        {
+            FileSavePicker fileSavePicker = new FileSavePicker();
+            FileInfo fileInfo = new FileInfo(suggestedFileName);
+
+            fileSavePicker.DefaultFileExtension = fileInfo.Extension;
+            fileSavePicker.FileTypeChoices.Add(fileInfo.Extension, fileTypeChoicesFilter);
+            fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+
+            // Default file name if the user does not type one in or select a file to replace
+            fileSavePicker.SuggestedFileName = suggestedFileName;
+            IStorageFile file = await fileSavePicker.PickSaveFileAsync();
+            //file is null when the user clicked on "abort" on save as dialog
+            if (file != null)
+            {
+                if (!FileService.HasGlobalWritePermission())
+                    await OnPickStorageItemsAsync(new IStorageItem[] { file });
+
+                return file;
+            }
+            return null;
+        }
+        public async Task<IReadOnlyList<IStorageFile>> PickMultipleFilesAsync(IList<string> fileTypeChoicesFilter)
+        {
+            FileOpenPicker fileOpenPicker = new FileOpenPicker() { ViewMode = PickerViewMode.List };
+            foreach (String Filetypeextension in fileTypeChoicesFilter)
+                fileOpenPicker.FileTypeFilter.Add(Filetypeextension);
+
+            fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
+            //show picker
+            IReadOnlyList<IStorageFile> files = await fileOpenPicker.PickMultipleFilesAsync();
+            if (files != null)
+            {
+                if (!FileService.HasGlobalWritePermission())
+                {
+                    //process files (adding to future access list)
+                    await OnPickStorageItemsAsync(files);
+                }
+                return files;
+            }
+            return new List<IStorageFile>();
+        }
+
+        public async Task<IStorageFolder> PickFolderAsync()
+        {
+            FolderPicker folderPicker = new FolderPicker();
+            folderPicker.FileTypeFilter.Add("*");
+            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+
+            if (folder != null)
+            {
+                if (!FileService.HasGlobalWritePermission())
+                {
+                    //add location to future access list
+                    await OnPickStorageItemsAsync(new IStorageItem[] { folder });
+                }
+            }
+            return folder;
+        }
+        public async Task<DirectoryInfo> PickDirectoryAsync()
+        {
+            var folder = await PickFolderAsync();
+            if (folder != null)
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(folder.Path);
+                return directoryInfo;
+            }
+            return default(DirectoryInfo);
         }
         /// <summary>
         /// Determines depending on the <seealso cref="HasGlobalWriteAccess"/> Flag which is stored in <seealso cref="ApplicationData.Current.LocalSettings"/> if the app can write globaly

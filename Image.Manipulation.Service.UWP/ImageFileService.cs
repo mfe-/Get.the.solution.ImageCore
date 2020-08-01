@@ -1,5 +1,4 @@
-﻿using Get.the.solution.Image.Contract;
-using Get.the.solution.Image.Manipulation.Contract;
+﻿using Get.the.solution.Image.Manipulation.Contract;
 using Get.the.solution.Image.Manipulation.ServiceBase;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 
 namespace Get.the.solution.Image.Manipulation.Service.UWP
@@ -26,21 +24,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public async Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync()
         {
-            FileOpenPicker fileOpenPicker = new FileOpenPicker() { ViewMode = PickerViewMode.List };
-            foreach (String Filetypeextension in FileTypeFilter)
-                fileOpenPicker.FileTypeFilter.Add(Filetypeextension);
-
-            fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
-            //show picker
-            IReadOnlyList<IStorageFile> files = await fileOpenPicker.PickMultipleFilesAsync();
+            var files = await _fileService.PickMultipleFilesAsync(FileTypeFilter);
             if (files != null)
             {
-                if (!FileService.HasGlobalWritePermission())
-                {
-                    //process files (adding to future access list)
-                    await _fileService.OnPickStorageItemsAsync(files);
-                }
-
                 //create imageFiles
                 List<ImageFile> imageFiles = new List<ImageFile>();
                 foreach (IStorageFile storageFile in files)
@@ -66,22 +52,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public virtual async Task<ImageFile> PickSaveFileAsync(String preferredSaveLocation, String suggestedFileName)
         {
-            FileSavePicker fileSavePicker = new FileSavePicker();
-            FileInfo fileInfo = new FileInfo(suggestedFileName);
-
-            fileSavePicker.DefaultFileExtension = fileInfo.Extension;
-            fileSavePicker.FileTypeChoices.Add(fileInfo.Extension, FileTypeFilter);
-            fileSavePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-
-            // Default file name if the user does not type one in or select a file to replace
-            fileSavePicker.SuggestedFileName = suggestedFileName;
-            IStorageFile file = await fileSavePicker.PickSaveFileAsync();
-            //file is null when the user clicked on "abort" on save as dialog
+            IStorageFile file = await _fileService.PickSaveFileAsync(preferredSaveLocation, suggestedFileName, FileTypeFilter); ;
             if (file != null)
             {
-                if (!FileService.HasGlobalWritePermission())
-                    await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { file });
-
                 return await FileToImageFileConverterAsync(file);
             }
             return null;
@@ -89,17 +62,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public async Task<ImageFile> PickSaveFolderAsync(String preferredSaveLocation, String suggestedFileName)
         {
-            FolderPicker folderPicker = new FolderPicker();
-            folderPicker.FileTypeFilter.Add("*");
-            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-
+            var folder = await _fileService.PickFolderAsync();
             if (folder != null)
             {
-                if (!FileService.HasGlobalWritePermission())
-                {
-                    //add location to future access list
-                    await _fileService.OnPickStorageItemsAsync(new IStorageItem[] { folder });
-                }
                 //create desired file
                 IStorageFile file = await folder.CreateFileAsync(suggestedFileName, CreationCollisionOption.OpenIfExists);
                 return await FileToImageFileConverterAsync(file);
