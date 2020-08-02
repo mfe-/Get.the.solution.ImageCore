@@ -848,23 +848,28 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         #region DragOver
         private ICommand _DragOverCommand;
-        public ICommand DragOverCommand => _DragOverCommand ?? (_DragOverCommand = new DelegateCommand<object>(OnDragOverCommand));
-
+        public ICommand DragOverCommand => _DragOverCommand ?? (_DragOverCommand = new DelegateCommand<object>(OnDragOverCommandAsync));
+        private readonly SemaphoreSlim _SemaphoreSlimDragOver = new SemaphoreSlim(1, 1);
         /// <summary>
         /// Determine whether the draged file is a supported image.
         /// </summary>
         /// <param name="param">Provides event informations.</param>
-        protected void OnDragOverCommand(object param)
+        protected async void OnDragOverCommandAsync(object param)
         {
             try
             {
+                await _SemaphoreSlimDragOver.WaitAsync();
                 _dragDropService.OnDragOverCommand(param);
             }
             catch (Exception e)
             {
-                _loggerService?.LogException(nameof(OnDragOverCommand), e);
+                _loggerService?.LogException(nameof(OnDragOverCommandAsync), e);
             }
-            _loggerService?.LogEvent(nameof(OnDragOverCommand));
+            finally
+            {
+                _SemaphoreSlimDragOver.Release();
+            }
+            _loggerService?.LogEvent(nameof(OnDragOverCommandAsync));
         }
         #endregion
 
