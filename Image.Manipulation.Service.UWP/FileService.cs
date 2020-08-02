@@ -29,6 +29,13 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
             _loggerService = loggerService;
         }
+        /// <summary>
+        /// Opens the Save As Dialog and adds the file to the Future Access List
+        /// </summary>
+        /// <param name="preferredSaveLocation"></param>
+        /// <param name="suggestedFileName"></param>
+        /// <param name="fileTypeChoicesFilter"></param>
+        /// <returns></returns>
         public virtual async Task<IStorageFile> PickSaveFileAsync(String preferredSaveLocation, String suggestedFileName, IList<string> fileTypeChoicesFilter)
         {
             FileSavePicker fileSavePicker = new FileSavePicker();
@@ -51,6 +58,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return null;
         }
+        /// <summary>
+        /// Opens the FilePicker and adds the selected files to the Future Access List
+        /// </summary>
+        /// <param name="fileTypeChoicesFilter"></param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<IStorageFile>> PickMultipleFilesAsync(IList<string> fileTypeChoicesFilter)
         {
             FileOpenPicker fileOpenPicker = new FileOpenPicker() { ViewMode = PickerViewMode.List };
@@ -71,7 +83,10 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return new List<IStorageFile>();
         }
-
+        /// <summary>
+        /// Opens the Folder Picker and adds it to the Future Access List
+        /// </summary>
+        /// <returns></returns>
         public async Task<IStorageFolder> PickFolderAsync()
         {
             FolderPicker folderPicker = new FolderPicker();
@@ -88,6 +103,10 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return folder;
         }
+        /// <summary>
+        /// Opens the Folder Picker adds the folder to the Future Access List
+        /// </summary>
+        /// <returns></returns>
         public async Task<DirectoryInfo> PickDirectoryAsync()
         {
             var folder = await PickFolderAsync();
@@ -109,6 +128,10 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             if (hasGlobalWriteAccess is bool b) return b;
             return false;
         }
+        /// <summary>
+        /// Checks if the app has global write access by creating a temp file in the user profile and removes it
+        /// </summary>
+        /// <returns>If the file could be created and the app has global write permission it retuns true</returns>
         public async Task<bool> HasGlobalWriteAccessAsync()
         {
             bool hasGlobalWriteAccess = false;
@@ -259,7 +282,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
         }
         /// <summary>
-        /// decode path to base 64
+        /// encode path to base 64
         /// </summary>
         /// <param name="storageItem"></param>
         /// <returns></returns>
@@ -268,7 +291,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             return GenerateBase64Key(storageItem.Path);
         }
         /// <summary>
-        /// decode path to base 64
+        /// encode path to base 64
         /// </summary>
         /// <param name="storageItem"></param>
         /// <returns></returns>
