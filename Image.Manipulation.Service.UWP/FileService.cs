@@ -152,13 +152,13 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 if (storageFile != null)
                 {
                     bool storeToken = true;
-
-                    string pathKey = storageFile.Path.ToLowerInvariant();
+                    //ApplicationDataContainer cannot handle path seperators "/" - therefore create a key
+                    string pathKey = GenerateBase64Key(storageFile);
                     //only check if the file is covered by an folder token
                     if (!(storageFile is IStorageFolder))
                     {
                         //check if we have the dictionary key then we dont need to add the file key
-                        string directoryKey = Path.GetDirectoryName(storageFile.Path).ToLowerInvariant();
+                        string directoryKey = GenerateBase64Key(Path.GetDirectoryName(storageFile.Path));
                         try
                         {
                             //check if the directory of the file is already stored in our token list
@@ -258,6 +258,32 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
             }
         }
+        /// <summary>
+        /// decode path to base 64
+        /// </summary>
+        /// <param name="storageItem"></param>
+        /// <returns></returns>
+        private static string GenerateBase64Key(IStorageItem storageItem)
+        {
+            return GenerateBase64Key(storageItem.Path);
+        }
+        /// <summary>
+        /// decode path to base 64
+        /// </summary>
+        /// <param name="storageItem"></param>
+        /// <returns></returns>
+        private static string GenerateBase64Key(string path)
+        {
+            path = path.ToLowerInvariant();
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(path);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+        private static string DecodeBase64Key(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
         public async Task<IStorageItem> TryGetWriteAbleStorageItemAsync(IStorageItem item)
         {
             // get the file attributes for file or directory
@@ -292,7 +318,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 //detect whether its a directory or file
                 if ((attr & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
                 {
-                    pathKey = path.ToLowerInvariant();
+                    pathKey = GenerateBase64Key(path);
                     if (_localSettings.Values.ContainsKey(pathKey))
                     {
                         string guidTokenDate = _localSettings.Values[pathKey].ToString();
@@ -302,7 +328,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 }
                 else
                 {
-                    pathKey = path.ToLowerInvariant();
+                    pathKey = GenerateBase64Key(path);
                     if (_localSettings.Values.ContainsKey(pathKey))
                     {
                         string guidTokenDate = _localSettings.Values[pathKey].ToString();
@@ -312,7 +338,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     else
                     {
                         //we dont have the file index maybe we got the directory of it...
-                        pathKey = Path.GetDirectoryName(path).ToLowerInvariant();
+                        pathKey = GenerateBase64Key(Path.GetDirectoryName(path));
                         if (_localSettings.Values.ContainsKey(pathKey))
                         {
                             string guidTokenDate = _localSettings.Values[pathKey].ToString();

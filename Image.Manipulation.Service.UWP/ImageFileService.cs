@@ -52,7 +52,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public virtual async Task<ImageFile> PickSaveFileAsync(String preferredSaveLocation, String suggestedFileName)
         {
-            IStorageFile file = await _fileService.PickSaveFileAsync(preferredSaveLocation, suggestedFileName, FileTypeFilter); ;
+            IStorageFile file = await _fileService.PickSaveFileAsync(preferredSaveLocation, suggestedFileName, FileTypeFilter);
             if (file != null)
             {
                 return await FileToImageFileConverterAsync(file);
