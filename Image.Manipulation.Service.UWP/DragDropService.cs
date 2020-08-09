@@ -1,8 +1,8 @@
-﻿using Get.the.solution.Image.Contract;
-using Get.the.solution.Image.Manipulation.Contract;
+﻿using Get.the.solution.Image.Manipulation.Contract;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -27,7 +27,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public void OnDragOverCommand(object param)
         {
-            if(param is DragEventArgs e)
+            if (param is DragEventArgs e)
             {
                 e.DragUIOverride.IsContentVisible = true;
                 e.DragUIOverride.IsGlyphVisible = true;
@@ -56,13 +56,13 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
         }
 
-        public async Task OnDropCommandAsync(object param, ObservableCollection<ImageFile> ImageFiles)
+        public async Task OnDropCommandAsync(object param, ObservableCollection<ImageFile> imageFiles)
         {
             if (param is IReadOnlyList<IStorageItem> readOnlyListStorageItems)
             {
-                if (ImageFiles == null)
+                if (imageFiles == null)
                 {
-                    ImageFiles = new ObservableCollection<ImageFile>();
+                    imageFiles = new ObservableCollection<ImageFile>();
                 }
                 foreach (IStorageItem storageItem in readOnlyListStorageItems)
                 {
@@ -71,18 +71,21 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                         if (storageItem is StorageFile storageFile)
                         {
                             StorageFile imageStorageFile = storageFile;
-                            //check if its readonly
-                            if (_fileService != null && storageFile.Attributes.HasFlag(FileAttributes.ReadOnly))
+                            if (!imageFiles.Any(a => a.Path == imageStorageFile.Path))
                             {
-                                //check if we can retriev the dragged file from our future access list 
-                                IStorageItem storageItem1 = await _fileService.TryGetWriteAbleStorageItemAsync(storageItem);
-                                //if a value was returned use it
-                                if(storageItem1 is StorageFile storageFile1)
+                                //check if its readonly
+                                if (_fileService != null && storageFile.Attributes.HasFlag(FileAttributes.ReadOnly))
                                 {
-                                    imageStorageFile = storageFile1;
+                                    //check if we can retriev the dragged file from our future access list 
+                                    IStorageItem storageItem1 = await _fileService.TryGetWriteAbleStorageItemAsync(storageItem);
+                                    //if a value was returned use it
+                                    if (storageItem1 is StorageFile storageFile1)
+                                    {
+                                        imageStorageFile = storageFile1;
+                                    }
                                 }
+                                imageFiles.Add(await _imageFileService.FileToImageFileConverterAsync(imageStorageFile));
                             }
-                            ImageFiles.Add(await _imageFileService.FileToImageFileConverterAsync(imageStorageFile));
                         }
                     }
                     //if (item is IStorageFolder && item is StorageFolder)

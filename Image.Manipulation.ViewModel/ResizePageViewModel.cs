@@ -41,6 +41,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             try
             {
+                _appStartType = appStartType;
                 _fileSystemPermissionDialogService = fileSystemPermissionDialogService;
                 _dragDropService = dragDrop;
                 _shareService = shareService;
@@ -62,6 +63,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 }
                 //get settings
                 LoadSettings();
+
+                if(IsShareTarget)
+                {
+                    OverwriteFiles = false;
+                }
+
                 //update preview
                 ApplyPreviewDimensions();
                 PropertyChanged += ResizePageViewModel_PropertyChanged;
@@ -72,7 +79,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 _loggerService?.LogException(nameof(ResizePageViewModel), e);
             }
 
-            _appStartType = appStartType;
+
         }
         public bool IsShareTarget
         {
@@ -936,7 +943,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 try
                 {
-                    bool can = ImageFiles?.Count(a => a.IsReadOnly) == 0;
+                    bool can = ImageFiles?.Count(a => a.IsReadOnly) == 0 && !IsShareTarget;
                     if (!can)
                     {
                         OverwriteFiles = false;
