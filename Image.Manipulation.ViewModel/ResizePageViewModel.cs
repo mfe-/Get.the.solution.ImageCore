@@ -883,19 +883,25 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 
         private ICommand _DropCommand;
         public ICommand DropCommand => _DropCommand ?? (_DropCommand = new DelegateCommand<object>(OnDropCommand));
+        private readonly SemaphoreSlim _SemaphoreSlimOnDrop = new SemaphoreSlim(1, 1);
         /// <summary>
         /// Add Dropped files to our <see cref="ImageFiles"/> list.
         /// </summary>
         /// <param name="param"></param>
-        protected void OnDropCommand(object param)
+        protected async void OnDropCommand(object param)
         {
             try
             {
-                _dragDropService.OnDropCommandAsync(param, ImageFiles);
+                await _SemaphoreSlimOnDrop.WaitAsync();
+                await _dragDropService.OnDropCommandAsync(param, ImageFiles);
             }
             catch (Exception e)
             {
                 _loggerService?.LogException(nameof(OnDropCommand), e);
+            }
+            finally
+            {
+                _SemaphoreSlimOnDrop.Release();
             }
             _loggerService?.LogEvent(nameof(OnDropCommand));
         }
