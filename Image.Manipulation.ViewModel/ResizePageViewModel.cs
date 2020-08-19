@@ -64,7 +64,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 //get settings
                 LoadSettings();
 
-                if(IsShareTarget)
+                if (IsShareTarget)
                 {
                     OverwriteFiles = false;
                 }
@@ -426,22 +426,16 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             TaskCompletionSource<MemoryStream> taskMemoryStreamCompletionSource = new TaskCompletionSource<MemoryStream>();
                             if (!IsShareTarget)
                             {
-                                //do the resizing in a seperate thread
-                                Thread thread = new Thread(() =>
+                                //do the resizing in a seperate thread using Task.Run
+                                try
                                 {
-                                    try
-                                    {
-                                        var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, suggestedFileName, _localSettings.Settings.ImageQuality);
-                                        taskMemoryStreamCompletionSource.SetResult(ms);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        taskMemoryStreamCompletionSource.SetException(e);
-                                    }
-                                });
-                                thread.IsBackground = true;
-                                thread.Priority = ThreadPriority.Normal;
-                                thread.Start();
+                                    var ms = await Task.Run(() => _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, suggestedFileName, _localSettings.Settings.ImageQuality));
+                                    taskMemoryStreamCompletionSource.SetResult(ms);
+                                }
+                                catch (Exception e)
+                                {
+                                    taskMemoryStreamCompletionSource.SetException(e);
+                                }
                             }
                             else
                             {
