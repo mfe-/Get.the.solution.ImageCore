@@ -76,8 +76,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 if (!FileService.HasGlobalWritePermission())
                 {
-                    //process files (adding to future access list)
-                    await OnPickStorageItemsAsync(files);
+                    if (files.Count < 20)
+                    {
+                        //process files (adding to future access list)
+                        await OnPickStorageItemsAsync(files);
+                    }
                 }
                 return files;
             }
