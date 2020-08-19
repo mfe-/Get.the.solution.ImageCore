@@ -6,9 +6,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
     public class ResourceService : IResourceService
     {
         protected ResourceLoader _resources;
-        public ResourceService()
+        public ResourceService(string resourceMap)
         {
-            _resources = ResourceLoader.GetForViewIndependentUse("Get.the.solution.Image.Manipulation.Resources/Resources");
+            _resources = ResourceLoader.GetForViewIndependentUse(resourceMap);
         }
         public string GetString(string resource)
         {
