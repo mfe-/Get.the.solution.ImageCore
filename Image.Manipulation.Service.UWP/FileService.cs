@@ -269,7 +269,6 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                             {
                                 { nameof(storageFile),pathKey},
                                 { nameof(guidStorageFile),guidStorageFile.ToString() },
-                                { nameof(mruToken), mruToken},
                                 { nameof(StorageApplicationPermissions.FutureAccessList.Entries.Count), StorageApplicationPermissions.FutureAccessList.Entries.Count.ToString() },
                                 { nameof(StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed), StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed.ToString() }
                             });
