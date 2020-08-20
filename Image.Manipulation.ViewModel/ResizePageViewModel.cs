@@ -413,7 +413,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                             if (currentImage.Stream == null || !currentImage.Stream.CanSeek && !currentImage.Stream.CanRead)
                             {
                                 var imageFile = (await _imageFileService.LoadImageFileAsync(currentImage.Path));
-                                if (imageFile.Stream != null)
+                                if (imageFile?.Stream != null)
                                 {
                                     currentImage.Stream = imageFile.Stream;
                                 }

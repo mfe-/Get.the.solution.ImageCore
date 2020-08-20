@@ -187,21 +187,34 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
             return imageFiles;
         }
-
+        bool? hasGlobalWriteAccess = null;
         public async Task<ImageFile> LoadImageFileAsync(string filepath)
         {
-            IStorageFile storageFile;
-            //look up if we have this folder stored in our access list
-            IStorageItem storageItem = await _fileService.TryGetWriteAbleStorageItemAsync(filepath, System.IO.FileAttributes.Normal);
-            if (storageItem is StorageFile storageFileLookedUp)
+            if (hasGlobalWriteAccess == null)
             {
-                storageFile = storageFileLookedUp;
+                hasGlobalWriteAccess = FileService.HasGlobalWritePermission();
+            }
+
+            IStorageFile storageFile = null;
+            //look up only if we dont have global write access
+            if (hasGlobalWriteAccess == null || !hasGlobalWriteAccess.Value)
+            {
+                //look up if we have this folder stored in our access list
+                IStorageItem storageItem = await _fileService.TryGetWriteAbleStorageItemAsync(filepath, System.IO.FileAttributes.Normal);
+                if (storageItem is StorageFile storageFileLookedUp)
+                {
+                    storageFile = storageFileLookedUp;
+                }
             }
             else
             {
                 storageFile = await StorageFile.GetFileFromPathAsync(filepath);
             }
-            return await FileToImageFileAsync(storageFile);
+            if (storageFile != null)
+            {
+                return await FileToImageFileAsync(storageFile);
+            }
+            return null;
         }
         public override string GenerateSuccess(ImageFile imageFile)
         {
