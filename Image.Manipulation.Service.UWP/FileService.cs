@@ -52,7 +52,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             if (file != null)
             {
                 if (!FileService.HasGlobalWritePermission())
-                    await OnPickStorageItemsAsync(new IStorageItem[] { file });
+                    await AddStorageItemsToFutureAccessListAsync(new IStorageItem[] { file });
 
                 return file;
             }
@@ -79,7 +79,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     if (files.Count < 20)
                     {
                         //process files (adding to future access list)
-                        await OnPickStorageItemsAsync(files);
+                        await AddStorageItemsToFutureAccessListAsync(files);
                     }
                 }
                 return files;
@@ -101,7 +101,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 if (!FileService.HasGlobalWritePermission())
                 {
                     //add location to future access list
-                    await OnPickStorageItemsAsync(new IStorageItem[] { folder });
+                    await AddStorageItemsToFutureAccessListAsync(new IStorageItem[] { folder });
                 }
             }
             return folder;
@@ -171,7 +171,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// </summary>
         /// <param name="storageItems">The picked items of the file/folder dialog</param>
         /// <returns>A task which indicates the process of executing this method</returns>
-        public async Task OnPickStorageItemsAsync(IReadOnlyList<IStorageItem> storageItems)
+        public async Task AddStorageItemsToFutureAccessListAsync(IReadOnlyList<IStorageItem> storageItems)
         {
             foreach (IStorageItem storageFile in storageItems)
             {
@@ -267,8 +267,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                             }
                             _loggerService.LogEvent(nameof(storageFile), new Dictionary<string, string>()
                             {
-                                { nameof(storageFile),pathKey},
-                                { nameof(guidStorageFile),guidStorageFile.ToString() },
+                                { nameof(storageFile),storageFile?.Path ?? ""},
                                 { nameof(StorageApplicationPermissions.FutureAccessList.Entries.Count), StorageApplicationPermissions.FutureAccessList.Entries.Count.ToString() },
                                 { nameof(StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed), StorageApplicationPermissions.FutureAccessList.MaximumItemsAllowed.ToString() }
                             });
