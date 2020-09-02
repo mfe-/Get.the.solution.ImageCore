@@ -98,13 +98,13 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             imageFile.IsReadOnly = (Windows.Storage.FileAttributes.ReadOnly & storageFile.Attributes) == Windows.Storage.FileAttributes.ReadOnly;
             return imageFile;
         }
-        public Task<ImageFile> FileToImageFileConverterAsync(object storageFile)
+        public Task<ImageFile> FileToImageFileConverterAsync(object storageFile, bool readStream = true)
         {
-            return FileToImageFileConverterAsync(storageFile as IStorageFile);
+            return FileToImageFileConverterAsync(storageFile as IStorageFile, readStream);
         }
-        public Task<ImageFile> FileToImageFileConverterAsync(IStorageFile storageFile)
+        public Task<ImageFile> FileToImageFileConverterAsync(IStorageFile storageFile, bool readStream = true)
         {
-            return FileToImageFileAsync(storageFile);
+            return FileToImageFileAsync(storageFile, readStream);
         }
         public async Task WriteBytesAsync(IStorageFile file, byte[] buffer)
         {

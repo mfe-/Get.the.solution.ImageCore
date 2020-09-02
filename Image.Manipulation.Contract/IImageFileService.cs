@@ -12,7 +12,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         Task<ImageFile> PickSaveFolderAsync(String preferredSaveLocation, String suggestedFileName);
         Task WriteBytesAsync(ImageFile file, byte[] buffer);
         Task<ImageFile> WriteBytesAsync(string folderPath, string suggestedFileName, ImageFile file, byte[] buffer);
-        Task<ImageFile> FileToImageFileConverterAsync(object storageFile);
+        Task<ImageFile> FileToImageFileConverterAsync(object storageFile, bool readStream = true);
         Task<IList<ImageFile>> GetFilesFromFolderAsync(string folderPath);
         Task<ImageFile> LoadImageFileAsync(string filepath);
         string GenerateResizedFileName(ImageFile storeage, int? width, int? height);
