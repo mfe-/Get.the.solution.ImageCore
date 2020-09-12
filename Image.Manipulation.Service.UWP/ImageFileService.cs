@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using Windows.System.UserProfile;
 
 namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
@@ -143,7 +144,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
         }
 
-        public async Task<ImageFile> WriteBytesAsync(string folderPath, string suggestedFileName, ImageFile file, byte[] buffer)
+        public async Task<ImageFile> WriteBytesAsync(string folderPath, string suggestedFileName, byte[] buffer)
         {
             StorageFolder targetStorageFolder;
             try
@@ -224,6 +225,36 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 successMessage = String.Format(successMessage, imageFile.Path);
             }
             return successMessage;
+        }
+
+        public async Task<bool> TrySetWallpaperImageAsync(string imageFilePath)
+        {
+            if (String.IsNullOrEmpty(imageFilePath)) throw new ArgumentNullException(nameof(imageFilePath));
+
+            bool success = false;
+            //remove old wallpapers
+            await FileService.CleanUpFolderAsync(ApplicationData.Current.LocalFolder, FileTypeFilter, 0);
+
+            if (UserProfilePersonalizationSettings.IsSupported())
+            {
+                StorageFile wallpaper;
+                if (!imageFilePath.Contains(ApplicationData.Current.LocalFolder.Path))
+                {
+                    StorageFile originalStorageFile = await StorageFile.GetFileFromPathAsync(imageFilePath);
+
+                    wallpaper = await ApplicationData.Current.LocalFolder.CreateFileAsync(
+                        new FileInfo(imageFilePath).Name, CreationCollisionOption.GenerateUniqueName);
+
+                    await originalStorageFile.CopyAndReplaceAsync(wallpaper);
+                }
+                else
+                {
+                    wallpaper = await StorageFile.GetFileFromPathAsync(imageFilePath);
+                }
+                UserProfilePersonalizationSettings profileSettings = UserProfilePersonalizationSettings.Current;
+                success = await profileSettings.TrySetWallpaperImageAsync(wallpaper);
+            }
+            return success;
         }
     }
 }

@@ -514,7 +514,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                         }
                                         else
                                         {
-                                            await _imageFileService.WriteBytesAsync(targetStorageFolder, suggestedFileName, currentImage, resizedImageFileStream.ToArray());
+                                            await _imageFileService.WriteBytesAsync(targetStorageFolder, suggestedFileName, resizedImageFileStream.ToArray());
                                         }
                                     }
                                     catch (FileNotFoundException)
@@ -564,7 +564,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                                 else if (action.Equals(ImageAction.Process))
                                 {
                                     String TempFolder = _applicationService.GetLocalCacheFolder();
-                                    ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, suggestedFileName, currentImage, resizedImageFileStream.ToArray());
+                                    ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, suggestedFileName, resizedImageFileStream.ToArray());
                                     processedImageAction?.Invoke(temp, $"{suggestedFileName}");
                                 }
                                 //open resized image depending whether only one image is resized and the user enabled this option

@@ -153,21 +153,21 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 hasGlobalWriteAccess = false;
             }
-            if (!_localSettings.Values.ContainsKey(nameof(HasGlobalWriteAccessAsync)))
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(FileService.HasGlobalWriteAccess))
             {
-                _localSettings.Values.Add(nameof(HasGlobalWriteAccessAsync), hasGlobalWriteAccess);
+                ApplicationData.Current.LocalSettings.Values[FileService.HasGlobalWriteAccess] = hasGlobalWriteAccess;
             }
             else
             {
-                _localSettings.Values[nameof(HasGlobalWriteAccessAsync)] = hasGlobalWriteAccess;
+                ApplicationData.Current.LocalSettings.Values.Add(FileService.HasGlobalWriteAccess, hasGlobalWriteAccess);
             }
             return hasGlobalWriteAccess;
         }
 
         /// <summary>
-        /// Pass result of <seealso cref="Windows.Storage.Pickers.FileSavePicker.PickSaveFileAsync"/>, 
-        /// <seealso cref="Windows.Storage.Pickers.FileOpenPicker.PickMultipleFilesAsync"/> or 
-        /// <seealso cref="Windows.Storage.Pickers.FolderPicker.PickSingleFolderAsync"/> to this method to save future access to the picked files/folders
+        /// Pass result of <seealso cref="FileSavePicker.PickSaveFileAsync"/>, 
+        /// <seealso cref="FileOpenPicker.PickMultipleFilesAsync"/> or 
+        /// <seealso cref="FolderPicker.PickSingleFolderAsync"/> to this method to save future access to the picked files/folders
         /// </summary>
         /// <param name="storageItems">The picked items of the file/folder dialog</param>
         /// <returns>A task which indicates the process of executing this method</returns>
