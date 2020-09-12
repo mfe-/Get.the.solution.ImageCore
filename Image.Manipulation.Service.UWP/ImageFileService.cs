@@ -84,6 +84,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             ImageProperties imageProp;
             int width = 0;
             int height = 0;
+            string filepath = String.Empty;
             if (storageFile is StorageFile sFile)
             {
                 if (sFile.Properties != null)
@@ -92,9 +93,25 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     width = (int)imageProp.Width;
                     height = (int)imageProp.Height;
                 }
+                //path can be empty if from the file picker dialog 
+                //a image path from the internet was enterted
+                if (String.IsNullOrEmpty(storageFile.Path))
+                {
+                    filepath = sFile.FolderRelativeId;
+                }
+                else
+                {
+                    filepath = storageFile.Path;
+                }
             }
-            FileInfo fileInfo = new FileInfo(storageFile.Path);
-            ImageFile imageFile = new ImageFile(storageFile.Path, ImageStream, width, height, fileInfo);
+
+            if (String.IsNullOrEmpty(filepath))
+            {
+                filepath = storageFile.Path;
+            }
+
+            FileInfo fileInfo = String.IsNullOrEmpty(filepath) ? null : new FileInfo(filepath);
+            ImageFile imageFile = new ImageFile(filepath, ImageStream, width, height, fileInfo);
             imageFile.Tag = storageFile;
             imageFile.IsReadOnly = (Windows.Storage.FileAttributes.ReadOnly & storageFile.Attributes) == Windows.Storage.FileAttributes.ReadOnly;
             return imageFile;
@@ -216,15 +233,6 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 return await FileToImageFileAsync(storageFile);
             }
             return null;
-        }
-        public override string GenerateSuccess(ImageFile imageFile)
-        {
-            string successMessage = _resourceService.GetString("SavedTo");
-            if (!String.IsNullOrEmpty(successMessage))
-            {
-                successMessage = String.Format(successMessage, imageFile.Path);
-            }
-            return successMessage;
         }
 
         public async Task<bool> TrySetWallpaperImageAsync(string imageFilePath)

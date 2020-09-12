@@ -12,7 +12,17 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
         {
             _loggerService = loggerService;
         }
-        public virtual IList<string> FileTypeFilter { get; set; } = new List<String>() { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+        /// <summary>
+        /// Get or sets the list of supported images
+        /// </summary>
+        public virtual IList<string> FileTypeFilter { get; set; } = new List<String>() 
+        { 
+            ".jpg", 
+            ".jpeg",
+            ".png", 
+            ".gif", 
+            ".bmp" 
+        };
         public virtual string GenerateResizedFileName(ImageFile storeage, int? width, int? height)
         {
             try
@@ -46,11 +56,6 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
                 _loggerService?.LogException(nameof(GenerateResizedFileName), e);
             }
             return String.Empty;
-        }
-
-        public virtual string GenerateSuccess(ImageFile imageFile)
-        {
-            return imageFile.Path;
         }
     }
 }

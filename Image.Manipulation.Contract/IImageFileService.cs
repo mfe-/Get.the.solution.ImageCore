@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace Get.the.solution.Image.Manipulation.Contract
 {
+    /// <summary>
+    /// Provides methods to load, save and update image files
+    /// </summary>
     public interface IImageFileService
     {
         /// <summary>
@@ -73,7 +76,6 @@ namespace Get.the.solution.Image.Manipulation.Contract
         /// <param name="height"></param>
         /// <returns></returns>
         string GenerateResizedFileName(ImageFile storeage, int? width, int? height);
-        string GenerateSuccess(ImageFile imageFile);
         /// <summary>
         /// Tries to set the given image as wallpaper on the device
         /// </summary>

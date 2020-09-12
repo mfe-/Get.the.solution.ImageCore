@@ -177,6 +177,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 if (storageFile != null)
                 {
+                    if (String.IsNullOrEmpty(storageFile.Path)) return;
                     bool storeToken = true;
                     //ApplicationDataContainer cannot handle path seperators "/" - therefore create a key
                     string pathKey = GenerateBase64Key(storageFile);
@@ -337,8 +338,18 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             string pathKey = string.Empty;
             try
             {
+                Uri uri = null;
+                try
+                {
+                    uri = new Uri(path);
+                }
+                catch (System.UriFormatException)
+                {
+                    return null;
+                }
+
                 //network path unsupported right now
-                if (new Uri(path).IsUnc) return null;
+                if (uri.IsUnc) return null;
                 //detect whether its a directory or file
                 if ((attr & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
                 {

@@ -608,7 +608,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                     }
                     if (_localSettings != null && _localSettings.Settings.ShowSuccessMessage && LastFile != null)
                     {
-                        await _pageDialogService?.ShowAsync(_imageFileService.GenerateSuccess(LastFile));
+                        await _pageDialogService?.ShowAsync(GenerateSuccess(LastFile));
                     }
                     if (IsShareTarget)
                     {
@@ -654,6 +654,15 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
                 { "ResizeFinished","true" }
             });
             return true;
+        }
+        public string GenerateSuccess(ImageFile imageFile)
+        {
+            string successMessage = _resourceLoader.GetString("SavedTo");
+            if (!String.IsNullOrEmpty(successMessage))
+            {
+                successMessage = String.Format(successMessage, imageFile.Path);
+            }
+            return successMessage;
         }
 
         private async Task ShowPermissionDeniedDialog(IProgressBarDialogService progressBarDialogService = null)
