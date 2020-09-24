@@ -28,7 +28,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     IsAppUpdated = false;
                 }
                 _contentDialog = contentDialog;
-                _contentDialog.Closed += ContentDialog_Closed;
+                if(_contentDialog!=null)
+                {
+                    _contentDialog.Closed += ContentDialog_Closed;
+                }
+
             }
             catch (Exception e)
             {
