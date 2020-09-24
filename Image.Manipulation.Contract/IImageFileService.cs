@@ -17,7 +17,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         /// Opens the file picker to open images
         /// </summary>
         /// <returns></returns>
-        Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync();
+        Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync(bool readStream = false);
         /// <summary>
         /// Opens the file picker and returns a <seealso cref="ImageFile"/>
         /// </summary>

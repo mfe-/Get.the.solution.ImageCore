@@ -57,7 +57,10 @@ namespace Get.the.solution.Image.Manipulation.Contract
                 }
                 return _Stream;
             }
-            set { _Stream = value; }
+            set
+            {
+                SetProperty(ref _Stream, value, nameof(Stream));
+            }
         }
 
         protected int _Width;
@@ -104,7 +107,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
+        public virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -22,8 +22,8 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             _resourceService = resourceService;
             _fileService = fileService;
         }
-
-        public async Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync()
+        ///<inheritdoc/>
+        public async Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync(bool readStream = false)
         {
             var files = await _fileService.PickMultipleFilesAsync(FileTypeFilter);
             if (files != null)
@@ -34,7 +34,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 {
                     try
                     {
-                        imageFiles.Add(await FileToImageFileAsync(storageFile, false));
+                        imageFiles.Add(await FileToImageFileAsync(storageFile, readStream));
                     }
                     catch (UnauthorizedAccessException e)
                     {
@@ -50,7 +50,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return new List<ImageFile>();
         }
-
+        ///<inheritdoc/>
         public virtual async Task<ImageFile> PickSaveFileAsync(String preferredSaveLocation, String suggestedFileName)
         {
             IStorageFile file = await _fileService.PickSaveFileAsync(preferredSaveLocation, suggestedFileName, FileTypeFilter);
@@ -60,7 +60,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return null;
         }
-
+        ///<inheritdoc/>
         public async Task<ImageFile> PickSaveFolderAsync(String preferredSaveLocation, String suggestedFileName)
         {
             var folder = await _fileService.PickFolderAsync();
@@ -75,11 +75,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public static async Task<ImageFile> FileToImageFileAsync(IStorageFile storageFile, bool readStream = true)
         {
-            Stream ImageStream = null;
+            Stream imageStream = null;
             if (readStream)
             {
                 IRandomAccessStreamWithContentType RandomAccessStream = await storageFile?.OpenReadAsync();
-                ImageStream = RandomAccessStream?.AsStreamForWrite();
+                imageStream = RandomAccessStream?.AsStreamForWrite();
             }
             ImageProperties imageProp;
             int width = 0;
@@ -111,11 +111,12 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
 
             FileInfo fileInfo = String.IsNullOrEmpty(filepath) ? null : new FileInfo(filepath);
-            ImageFile imageFile = new ImageFile(filepath, ImageStream, width, height, fileInfo);
+            ImageFile imageFile = new ImageFile(filepath, imageStream, width, height, fileInfo);
             imageFile.Tag = storageFile;
             imageFile.IsReadOnly = (Windows.Storage.FileAttributes.ReadOnly & storageFile.Attributes) == Windows.Storage.FileAttributes.ReadOnly;
             return imageFile;
         }
+        ///<inheritdoc/>
         public Task<ImageFile> FileToImageFileConverterAsync(object storageFile, bool readStream = true)
         {
             return FileToImageFileConverterAsync(storageFile as IStorageFile, readStream);
@@ -124,11 +125,12 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         {
             return FileToImageFileAsync(storageFile, readStream);
         }
+
         public async Task WriteBytesAsync(IStorageFile file, byte[] buffer)
         {
             await FileIO.WriteBytesAsync(file, buffer);
         }
-
+        ///<inheritdoc/>
         public async Task WriteBytesAsync(ImageFile file, byte[] buffer)
         {
             try
@@ -160,7 +162,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 throw new Contract.Exceptions.UnauthorizedAccessException(e);
             }
         }
-
+        ///<inheritdoc/>
         public async Task<ImageFile> WriteBytesAsync(string folderPath, string suggestedFileName, byte[] buffer)
         {
             StorageFolder targetStorageFolder;
@@ -188,7 +190,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 throw new Contract.Exceptions.UnauthorizedAccessException(e);
             }
         }
-
+        ///<inheritdoc/>
         public async Task<IList<ImageFile>> GetFilesFromFolderAsync(string folderPath)
         {
             folderPath = Path.GetDirectoryName(folderPath);
@@ -206,6 +208,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             return imageFiles;
         }
         bool? hasGlobalWriteAccess = null;
+        ///<inheritdoc/>
         public async Task<ImageFile> LoadImageFileAsync(string filepath)
         {
             if (hasGlobalWriteAccess == null)
@@ -234,7 +237,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return null;
         }
-
+        ///<inheritdoc/>
         public async Task<bool> TrySetWallpaperImageAsync(string imageFilePath)
         {
             if (String.IsNullOrEmpty(imageFilePath)) throw new ArgumentNullException(nameof(imageFilePath));
@@ -264,5 +267,6 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return success;
         }
+
     }
 }
