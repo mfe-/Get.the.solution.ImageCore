@@ -1,6 +1,6 @@
 # About
 
-[Get.the.solution.ImageCore](https://github.com/mfe-/Get.the.solution.ImageCore) is used in the app "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)" and was outsourced to this repository to make most parts of the application open source. The name "ImageCore" is kept general to cover other potential topics (regarding image manipulation) as well. Common functionallity can be used by other "image manipulation" apps, according to the licence (AGPL-3.0)
+[Get.the.solution.ImageCore](https://github.com/mfe-/Get.the.solution.ImageCore) is used in the app "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)", "[image-viwer](https://www.microsoft.com/en-us/p/image-viewer/9nd45c9v3zpw)" and was outsourced to this repository to make most parts of the application open source. The name "ImageCore" is kept general to cover other potential topics (regarding image manipulation) as well. Common functionallity can be used by other "image manipulation" apps, according to the licence (AGPL-3.0)
 
 This repository contains functionality which is required to load images into an application for diffrent platforms like UWP and android.
 
@@ -10,7 +10,9 @@ This repository contains functionality which is required to load images into an 
 - share service
 - drag and drop
 
-Another goal of this repository is to track issues regarding "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)".
+Another goal of this repository is to track [issues](https://github.com/mfe-/Get.the.solution.ImageCore/issues) regarding "[resize image](https://www.microsoft.com/en-us/p/resize-image/9p87m9tknkvl)", and "[image-viwer](https://www.microsoft.com/en-us/p/image-viewer/9nd45c9v3zpw)".
+
+The last versions (offical and unoffical) of ["resize image" can be downloaded here](https://dev.azure.com/get-the-solution/get-the-solution/_build?definitionId=5)
 
 ## Project set up
 
