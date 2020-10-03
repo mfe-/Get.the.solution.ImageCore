@@ -194,7 +194,16 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public async Task<IList<ImageFile>> GetFilesFromFolderAsync(string folderPath)
         {
             folderPath = Path.GetDirectoryName(folderPath);
-            var targetStorageFolder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+            StorageFolder targetStorageFolder = null;
+            try
+            {
+                targetStorageFolder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                throw new Contract.Exceptions.UnauthorizedAccessException(e);
+            }
+
             IReadOnlyList<IStorageFile> storageFiles = await targetStorageFolder.GetFilesAsync();
             List<ImageFile> imageFiles = new List<ImageFile>();
             foreach (var item in storageFiles)
