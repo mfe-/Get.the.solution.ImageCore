@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Get.the.solution.Image.Manipulation.ViewModel
+namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 {
     public class ResizePageViewModel : BindableBase
     {

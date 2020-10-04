@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Get.the.solution.Image.Manipulation.ViewModel
+namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 {
     public class MainPageViewModel : BindableBase
     {

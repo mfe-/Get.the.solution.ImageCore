@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Get.the.solution.Image.Manipulation.ViewModel
+namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 {
     public class ResizeSettings : INotifyPropertyChanged, ILocalSettings
     {

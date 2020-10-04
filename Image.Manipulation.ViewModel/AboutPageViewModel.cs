@@ -2,7 +2,7 @@
 using Prism.Mvvm;
 using System;
 
-namespace Get.the.solution.Image.Manipulation.ViewModel
+namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 {
     public class AboutPageViewModel : BindableBase
     {
