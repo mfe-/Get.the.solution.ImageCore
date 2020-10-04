@@ -18,7 +18,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
     public class ResizePageViewModel : BindableBase
     {
         protected readonly ILoggerService _loggerService;
-        protected readonly INavigation _navigationService;
+        protected readonly INavigationService _navigationService;
         protected readonly IResourceService _resourceLoader;
         protected readonly IImageFileService _imageFileService;
         protected readonly IApplicationService _applicationService;
@@ -37,7 +37,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar,
             IFileSystemPermissionDialogService fileSystemPermissionDialogService, IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings<ResizeSettings> localSettings,
             ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles,
-            INavigation navigationService, IResourceService resourceLoader, AppStartType appStartType)
+            INavigationService navigationService, IResourceService resourceLoader, AppStartType appStartType)
         {
             try
             {

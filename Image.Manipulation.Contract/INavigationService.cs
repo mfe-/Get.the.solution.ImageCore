@@ -8,8 +8,8 @@ namespace Get.the.solution.Image.Manipulation.Contract
     //     your Windows Store app. The default implementation of INavigationService is the
     //     FrameNavigationService class, that uses a class that implements the IFrameFacade
     //     interface to provide page navigation.
-    public interface INavigation
+    public interface INavigationService
     {
-        bool Navigate(Type pageToken, object parameter);
+        bool Navigate(Type pageToken, object parameter = null);
     }
 }

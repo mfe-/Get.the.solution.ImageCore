@@ -9,13 +9,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 {
     public class MainPageViewModel : BindableBase
     {
-        protected readonly INavigation _NavigationService;
+        protected readonly INavigationService _NavigationService;
         protected readonly IResourceService _ResourceLoader;
         protected readonly ILoggerService _LoggerService;
         protected readonly IApplicationService _applicationService;
         protected readonly ILocalSettings<ResizeSettings> _localSettings;
 
-        public MainPageViewModel(INavigation navigationService, IResourceService resourceLoader,
+        public MainPageViewModel(INavigationService navigationService, IResourceService resourceLoader,
             ILoggerService loggerService, IApplicationService applicationService, ILocalSettings<ResizeSettings> localSettings)
         {
             _ResourceLoader = resourceLoader;

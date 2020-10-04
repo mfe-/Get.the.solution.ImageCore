@@ -5,6 +5,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
 {
     public interface IApplicationService
     {
+        void SetAppTitlebar(string titleText);
         void SetActivatedEventArgs(String args);
         string ActivatedEventArgs { get; }
         string UriDefinitionOpen { get; }

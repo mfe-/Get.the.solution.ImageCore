@@ -11,12 +11,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
 {
     public class ImageViewPageViewModel : BindableBase
     {
-        protected readonly INavigation _NavigationService;
+        protected readonly INavigationService _NavigationService;
         protected readonly IResourceService _ResourceLoader;
         protected readonly ILoggerService _LoggerService;
         protected readonly IApplicationService _applicationService;
         protected readonly IImageFileService _imageFileService;
-        public ImageViewPageViewModel(IImageFileService imageFileService, INavigation navigationService, IResourceService resourceLoader,
+        public ImageViewPageViewModel(IImageFileService imageFileService, INavigationService navigationService, IResourceService resourceLoader,
             ILoggerService loggerService, IApplicationService applicationService, ObservableCollection<ImageFile> selectedFiles)
         {
             try
