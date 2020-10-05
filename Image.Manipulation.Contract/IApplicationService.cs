@@ -5,6 +5,8 @@ namespace Get.the.solution.Image.Manipulation.Contract
 {
     public interface IApplicationService
     {
+        bool IsAlwaysOnTop { get; }
+        Task<bool> ToggleAlwaysOnTopAsync();
         void SetAppTitlebar(string titleText);
         void SetActivatedEventArgs(String args);
         string ActivatedEventArgs { get; }

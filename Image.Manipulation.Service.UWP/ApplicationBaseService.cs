@@ -77,7 +77,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         }
 
-        public abstract string GetAppVersion(); 
+        public abstract string GetAppVersion();
 
         public string GetLocalCacheFolder()
         {
@@ -90,7 +90,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         }
 
         public abstract string GetDeviceFormFactorType();
-      
+
         public void SetActivatedEventArgs(String args)
         {
             ActivatedEventArgs = args;
@@ -103,6 +103,29 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             dataPackage.SetText(content);
             Clipboard.SetContent(dataPackage);
         }
-
+        public bool IsAlwaysOnTop
+        {
+            get
+            {
+                return !ApplicationViewMode.Default.Equals(ApplicationView.GetForCurrentView().ViewMode);
+            }
+        }
+        public async Task<bool> ToggleAlwaysOnTopAsync()
+        {
+            bool modeSwitched = false;
+            if (!ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+            {
+                return modeSwitched;
+            }
+            if(!IsAlwaysOnTop)
+            {
+                modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
+            }
+            else
+            {
+                modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
+            }
+            return modeSwitched;
+        }
     }
 }
