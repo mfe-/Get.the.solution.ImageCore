@@ -120,6 +120,21 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return default(DirectoryInfo);
         }
+        public async Task<bool> DeleteFileAsync(string path)
+        {
+            StorageFile storageFile;
+            try
+            {
+                storageFile = await StorageFile.GetFileFromPathAsync(path);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                //for other reasons we dont have acess to the file
+                throw new Contract.Exceptions.UnauthorizedAccessException(e);
+            }
+            await storageFile.DeleteAsync();
+            return true;
+        }
         /// <summary>
         /// Determines depending on the <seealso cref="HasGlobalWriteAccess"/> Flag which is stored in <seealso cref="ApplicationData.Current.LocalSettings"/> if the app can write globaly
         /// </summary>
