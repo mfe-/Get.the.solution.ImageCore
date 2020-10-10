@@ -13,7 +13,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
     public abstract class LocalSettingsBaseService<TSetting> : ILocalSettings<TSetting>, INotifyPropertyChanged
     {
         protected ILoggerService _loggerService;
-        private readonly string _xmlFilePath;
+        protected readonly string _xmlFilePath;
         private readonly Func<TSetting> _createDefaultTSettingFunc;
 
         protected LocalSettingsBaseService(string xmlFilePath, Func<TSetting> createDefaultTSettingFunc, ILoggerService loggerService)
@@ -140,5 +140,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        public abstract Task ResetSettingsAsync();
     }
 }

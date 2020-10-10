@@ -31,5 +31,20 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 throw new NotImplementedException();
             }
         }
+        public override async Task ResetSettingsAsync()
+        {
+            try
+            {
+                IStorageItem storageItem = await ApplicationData.Current.LocalCacheFolder.TryGetItemAsync(_xmlFilePath);
+                if (storageItem != null)
+                {
+                    await storageItem.DeleteAsync(StorageDeleteOption.Default);
+                }
+            }
+            catch (Exception e)
+            {
+                _loggerService.LogException(e);
+            }
+        }
     }
 }
