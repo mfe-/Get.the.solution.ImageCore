@@ -29,6 +29,29 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
             _loggerService = loggerService;
         }
+        ///<inheritdoc/>
+        public async Task<Stream> LoadStreamFromFileAsync(string path)
+        {
+            try
+            {
+                StorageFile storageFile = await StorageFile.GetFileFromPathAsync(path);
+                return await LoadStreamFromFileAsync(storageFile);
+            }
+            catch(UnauthorizedAccessException e)
+            {
+                throw new Contract.Exceptions.UnauthorizedAccessException(e);
+            }
+
+        }
+        ///<inheritdoc/>
+        public Task<Stream> LoadStreamFromFileAsync(object file)
+        {
+            if (file is StorageFile storageFile)
+            {
+                return storageFile.OpenStreamForReadAsync();
+            }
+            throw new NotSupportedException($"Parameter {nameof(file)} expected of type {nameof(StorageFile)}");
+        }
         /// <summary>
         /// Opens the Save As Dialog and adds the file to the Future Access List
         /// </summary>
