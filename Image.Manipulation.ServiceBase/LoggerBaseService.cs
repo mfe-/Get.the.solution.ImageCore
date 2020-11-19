@@ -14,7 +14,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
         {
             try
             {
-                if(data==null)
+                if (data == null)
                 {
                     data = new Dictionary<String, String>();
                 }
@@ -22,7 +22,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
                 {
                     data.Add(nameof(methodname), methodname);
                 }
-            
+
                 data.Add(nameof(Exception.Data), $"{e?.Data}");
                 data.Add(nameof(Exception.HResult), $"{e?.HResult}");
                 data.Add(nameof(Exception.InnerException), $"{e?.InnerException}");
@@ -32,7 +32,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
 
                 LogEvent(nameof(Exception.Message), data);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 //cant handle this exception
             }
@@ -45,4 +45,16 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
             LogEvent(eventName, new Dictionary<string, string>() { { eventName, value } });
         }
     }
+    public static class LoggeHelper
+    {
+        public static int RoundTo(this int number, int step = 5)
+        {
+            if(number<=step)
+            {
+                return number;
+            }
+            return (number / step) * step;
+        }
+    }
+
 }
