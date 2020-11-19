@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
@@ -117,7 +118,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 return modeSwitched;
             }
-            if(!IsAlwaysOnTop)
+            if (!IsAlwaysOnTop)
             {
                 modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay);
             }
@@ -126,6 +127,31 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default);
             }
             return modeSwitched;
+        }
+        private Size? previousSize = null;
+        public bool TrySetWindowSize()
+        {
+            if (!previousSize.HasValue) return false;
+            return TrySetWindowSize(previousSize.Value.Width, previousSize.Value.Height);
+        }
+        public bool TrySetWindowSize(double width, double height)
+        {
+            ApplicationView applicationView = ApplicationView.GetForCurrentView();
+            if (previousSize == null)
+            {
+                previousSize = new Size(applicationView.VisibleBounds.Width, applicationView.VisibleBounds.Height);
+            }
+            var preferredSize = new Size(width, height);
+            if (!applicationView.IsFullScreenMode)
+            {
+                var successfull = applicationView.TryResizeView(preferredSize);
+                if (!successfull)
+                {
+                    applicationView.TryResizeView(previousSize.Value);
+                }
+                return successfull;
+            }
+            return false;
         }
     }
 }

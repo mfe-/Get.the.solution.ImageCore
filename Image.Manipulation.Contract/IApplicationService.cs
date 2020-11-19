@@ -8,6 +8,8 @@ namespace Get.the.solution.Image.Manipulation.Contract
         bool IsAlwaysOnTop { get; }
         Task<bool> ToggleAlwaysOnTopAsync();
         void SetAppTitlebar(string titleText);
+        bool TrySetWindowSize();
+        bool TrySetWindowSize(double width, double height);
         void SetActivatedEventArgs(String args);
         string ActivatedEventArgs { get; }
         string UriDefinitionOpen { get; }
