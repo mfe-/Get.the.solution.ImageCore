@@ -22,6 +22,10 @@ namespace Get.the.solution.Image.Manipulation.Contract
         Task LaunchFileAsync(ImageFile imageFile, bool openWith = false);
         Task LaunchFileAsync(string protocol, object param);
         /// <summary>
+        /// Starts the file explorer 
+        /// </summary>
+        Task<bool> LaunchFileExplorerAsync(string protocol);
+        /// <summary>
         /// Starts on the platform a process which is associated with the overgiven uri
         /// </summary>
         /// <param name="protocol"></param>
