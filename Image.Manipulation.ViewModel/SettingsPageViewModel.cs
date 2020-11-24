@@ -1,18 +1,16 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
-using Prism.Commands;
-using Prism.Mvvm;
 using System;
 using System.Windows.Input;
 
 namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 {
-    public class SettingsPageViewModel : BindableBase
+    public class SettingsPageViewModel : NotifyPropertyChanged
     {
         private readonly ILoggerService _LoggerService;
         private readonly ILocalSettings<ResizeSettings> _localSettings;
         private readonly IFileService _fileService;
 
-        public SettingsPageViewModel(ILoggerService loggerService, ILocalSettings<ResizeSettings> localSettings, IFileService fileService)
+        public SettingsPageViewModel(ILoggerService loggerService, ILocalSettings<ResizeSettings> localSettings, IFileService fileService) : base(loggerService)
         {
             try
             {

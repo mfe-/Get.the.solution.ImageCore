@@ -1,13 +1,11 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
-using Prism.Commands;
-using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 {
-    public class MainPageViewModel : BindableBase
+    public class MainPageViewModel : NotifyPropertyChanged
     {
         protected readonly INavigationService _NavigationService;
         protected readonly IResourceService _ResourceLoader;
@@ -16,7 +14,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
         protected readonly ILocalSettings<ResizeSettings> _localSettings;
 
         public MainPageViewModel(INavigationService navigationService, IResourceService resourceLoader,
-            ILoggerService loggerService, IApplicationService applicationService, ILocalSettings<ResizeSettings> localSettings)
+            ILoggerService loggerService, IApplicationService applicationService, ILocalSettings<ResizeSettings> localSettings) : base(loggerService)
         {
             _ResourceLoader = resourceLoader;
             _NavigationService = navigationService;

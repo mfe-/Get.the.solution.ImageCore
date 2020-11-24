@@ -1,6 +1,4 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
-using Prism.Commands;
-using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +7,7 @@ using System.Windows.Input;
 
 namespace Get.the.solution.Image.Manipulation.ViewModel
 {
-    public class ImageViewPageViewModel : BindableBase
+    public class ImageViewPageViewModel : NotifyPropertyChanged
     {
         protected readonly INavigationService _NavigationService;
         protected readonly IResourceService _ResourceLoader;
@@ -17,7 +15,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         protected readonly IApplicationService _applicationService;
         protected readonly IImageFileService _imageFileService;
         public ImageViewPageViewModel(IImageFileService imageFileService, INavigationService navigationService, IResourceService resourceLoader,
-            ILoggerService loggerService, IApplicationService applicationService, ObservableCollection<ImageFile> selectedFiles)
+            ILoggerService loggerService, IApplicationService applicationService, ObservableCollection<ImageFile> selectedFiles) : base(loggerService)
         {
             try
             {
@@ -43,7 +41,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             {
                 ImageFiles = await _imageFileService.GetFilesFromFolderAsync(SelectedImage.Path);
                 ImageFile img = ImageFiles?.FirstOrDefault(a => a.Name.ToLowerInvariant() == SelectedImage.Name.ToLowerInvariant());
-                if(img==null)
+                if (img == null)
                 {
                     ImageFiles.Add(SelectedImage);
                 }

@@ -13,13 +13,11 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public class ImageFileService : ImageFileBaseService, IImageFileService
     {
-        private readonly IResourceService _resourceService;
         private readonly FileService _fileService;
 
-        public ImageFileService(ILoggerService loggerService, IResourceService resourceService, FileService fileService)
+        public ImageFileService(ILoggerService loggerService, FileService fileService)
             : base(loggerService)
         {
-            _resourceService = resourceService;
             _fileService = fileService;
         }
         ///<inheritdoc/>
@@ -204,7 +202,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 throw new Contract.Exceptions.UnauthorizedAccessException(e);
             }
 
-            IReadOnlyList<IStorageFile> storageFiles = await targetStorageFolder.GetFilesAsync();
+            var storageFiles = (await targetStorageFolder.GetFilesAsync());
             List<ImageFile> imageFiles = new List<ImageFile>();
             foreach (var item in storageFiles)
             {

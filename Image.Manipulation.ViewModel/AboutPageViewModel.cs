@@ -1,14 +1,13 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
-using Prism.Mvvm;
 using System;
 
 namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 {
-    public class AboutPageViewModel : BindableBase
+    public class AboutPageViewModel : NotifyPropertyChanged
     {
         protected readonly ILoggerService _LoggerService;
         protected readonly IApplicationService _applicationService;
-        public AboutPageViewModel(ILoggerService loggerService, IApplicationService applicationService)
+        public AboutPageViewModel(ILoggerService loggerService, IApplicationService applicationService) : base(loggerService)
         {
             try
             {

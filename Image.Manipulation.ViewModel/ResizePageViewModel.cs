@@ -1,8 +1,6 @@
 ﻿using Get.the.solution.Image.Contract;
 using Get.the.solution.Image.Contract.Exceptions;
 using Get.the.solution.Image.Manipulation.Contract;
-using Prism.Commands;
-using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +13,7 @@ using System.Windows.Input;
 
 namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 {
-    public class ResizePageViewModel : BindableBase
+    public class ResizePageViewModel : NotifyPropertyChanged
     {
         protected readonly ILoggerService _loggerService;
         protected readonly INavigationService _navigationService;
@@ -37,7 +35,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             IResizeService resizeService, IPageDialogService pageDialogService, IProgressBarDialogService progressBar,
             IFileSystemPermissionDialogService fileSystemPermissionDialogService, IApplicationService applicationService, IImageFileService imageFileService, ILocalSettings<ResizeSettings> localSettings,
             ILoggerService loggerService, ObservableCollection<ImageFile> selectedFiles,
-            INavigationService navigationService, IResourceService resourceLoader, AppStartType appStartType)
+            INavigationService navigationService, IResourceService resourceLoader, AppStartType appStartType) : base(loggerService)
         {
             try
             {
@@ -359,16 +357,16 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                     ImageFiles.CollectionChanged += ImageFiles_CollectionChanged;
                 }
                 ApplyPreviewDimensions();
-                RaisePropertyChanged(nameof(ShowOpenFilePicker));
-                RaisePropertyChanged(nameof(SingleFile));
+                OnPropertyChanged(nameof(ShowOpenFilePicker));
+                OnPropertyChanged(nameof(SingleFile));
             }
         }
 
         private void ImageFiles_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            RaisePropertyChanged(nameof(ShowOpenFilePicker));
-            RaisePropertyChanged(nameof(CanOverwriteFiles));
-            RaisePropertyChanged(nameof(SingleFile));
+            OnPropertyChanged(nameof(ShowOpenFilePicker));
+            OnPropertyChanged(nameof(CanOverwriteFiles));
+            OnPropertyChanged(nameof(SingleFile));
             ApplyPreviewDimensions();
         }
         #endregion
@@ -830,7 +828,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             {
                 SetProperty(ref _OverwriteFiles, value, nameof(OverwriteFiles));
                 Settings.OverwriteFiles = _OverwriteFiles;
-                RaisePropertyChanged(nameof(CanOverwriteFiles));
+                OnPropertyChanged(nameof(CanOverwriteFiles));
                 _loggerService?.LogEvent(nameof(OverwriteFiles), $"{OverwriteFiles}");
             }
         }

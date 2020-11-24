@@ -21,7 +21,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        protected bool SetProperty<T>(ref T field, T value, string propertyName)
+        protected virtual bool SetProperty<T>(ref T field, T value, string propertyName)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
