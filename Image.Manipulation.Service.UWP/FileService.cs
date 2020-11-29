@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml.Controls;
 
 namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
@@ -180,12 +181,16 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             {
                 //try to create a test file to check if we have "global" write access
                 string path = Environment.GetEnvironmentVariable("USERPROFILE");
+                //Environment.GetEnvironmentVariable("USERPROFILE") works only for > Windows 10 15063
+                if (!String.IsNullOrEmpty(path))
+                {
 
-                StorageFolder storageFolder = await StorageFolder.GetFolderFromPathAsync(path);
-                Guid guidtestfileName = Guid.NewGuid();
-                StorageFile storageFile = await storageFolder.CreateFileAsync(guidtestfileName.ToString(), CreationCollisionOption.GenerateUniqueName);
-                await storageFile.DeleteAsync();
-                hasGlobalWriteAccess = true;
+                    StorageFolder storageFolder = await StorageFolder.GetFolderFromPathAsync(path);
+                    Guid guidtestfileName = Guid.NewGuid();
+                    StorageFile storageFile = await storageFolder.CreateFileAsync(guidtestfileName.ToString(), CreationCollisionOption.GenerateUniqueName);
+                    await storageFile.DeleteAsync();
+                    hasGlobalWriteAccess = true;
+                }
             }
             catch (System.UnauthorizedAccessException)
             {
