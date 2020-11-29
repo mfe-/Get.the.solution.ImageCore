@@ -26,7 +26,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
             OnPropertyChanged(propertyName);
-            _loggerService?.LogEvent(propertyName, value.ToString());
+            _loggerService?.LogEvent(propertyName, value?.ToString() ?? "NULL");
             return true;
         }
     }
