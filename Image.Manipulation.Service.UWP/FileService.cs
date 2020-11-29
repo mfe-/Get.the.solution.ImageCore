@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Controls;
 
 namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
@@ -38,7 +37,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 StorageFile storageFile = await StorageFile.GetFileFromPathAsync(path);
                 return await LoadStreamFromFileAsync(storageFile);
             }
-            catch(UnauthorizedAccessException e)
+            catch (UnauthorizedAccessException e)
             {
                 throw new Contract.Exceptions.UnauthorizedAccessException(e);
             }
@@ -103,7 +102,8 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     if (files.Count < 20)
                     {
                         //process files (adding to future access list)
-                        await AddStorageItemsToFutureAccessListAsync(files);
+                        //call files.ToArray() otherwise we can encounter System.AccessViolationException (happens on windows mobile)
+                        await AddStorageItemsToFutureAccessListAsync(files.ToArray());
                     }
                 }
                 return files;
