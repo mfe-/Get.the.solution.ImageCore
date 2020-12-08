@@ -1,6 +1,7 @@
 ﻿using Get.the.solution.Image.Contract;
 using Get.the.solution.Image.Contract.Exceptions;
 using Get.the.solution.Image.Manipulation.Contract;
+using Get.the.solution.Image.Manipulation.ServiceBase;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -204,7 +205,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 Resizing = true;
                 IReadOnlyList<ImageFile> files = await _imageFileService.PickMultipleFilesAsync();
                 ImageFiles = new ObservableCollection<ImageFile>(files);
-                _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count}" } });
+                _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count.RoundTo(5)}" } });
             }
             catch (Contract.Exceptions.UnauthorizedAccessException)
             {

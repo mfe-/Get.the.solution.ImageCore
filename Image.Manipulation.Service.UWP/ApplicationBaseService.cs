@@ -85,8 +85,8 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
                 try
                 {
-                    StorageFile? storageFile = null;
-                    StorageFolder? storageFolder = null;
+                    StorageFile storageFile = null;
+                    StorageFolder storageFolder = null;
                     try
                     {
                         storageFile = await StorageFile.GetFileFromPathAsync(protocol);

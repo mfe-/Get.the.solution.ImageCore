@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.4.0</TargetFrameworks>
-    <LangVersion>8.0</LangVersion>
+    <TargetFramework>netstandard1.4</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Image.Contract\Get.the.solution.Image.Contract.csproj" />
     <ProjectReference Include="..\Image.Manipulation.Contract\Get.the.solution.Image.Manipulation.Contract.csproj" />
+    <ProjectReference Include="..\Image.Manipulation.ServiceBase\Get.the.solution.Image.Manipulation.ServiceBase.csproj" />
   </ItemGroup>
 
 </Project>
