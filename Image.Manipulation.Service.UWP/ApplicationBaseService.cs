@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
@@ -154,12 +155,21 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
 
         }
-
+        //should be initialized on ui thread
+        private readonly SynchronizationContext synchronizationContext = SynchronizationContext.Current;
         public void SetAppTitlebar(string titleText)
         {
             try
             {
-                ApplicationView.GetForCurrentView().Title = titleText;
+                if (synchronizationContext != SynchronizationContext.Current)
+                {
+                    synchronizationContext.Post(
+                        title => ApplicationView.GetForCurrentView().Title = title.ToString(), titleText);
+                }
+                else
+                {
+                    ApplicationView.GetForCurrentView().Title = titleText;
+                }
             }
             catch (Exception e)
             {

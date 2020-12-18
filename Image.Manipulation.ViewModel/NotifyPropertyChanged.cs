@@ -1,6 +1,7 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Get.the.solution.Image.Manipulation.ViewModel
 {
@@ -16,10 +17,19 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
         {
             _loggerService = loggerService;
         }
+        private readonly SynchronizationContext synchronizationContext = SynchronizationContext.Current;
         public event PropertyChangedEventHandler PropertyChanged;
         public virtual void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (synchronizationContext != SynchronizationContext.Current)
+            {
+                synchronizationContext.Post(
+                    propname => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname.ToString())), propertyName);
+            }
+            else
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
         protected virtual bool SetProperty<T>(ref T field, T value, string propertyName)
         {
