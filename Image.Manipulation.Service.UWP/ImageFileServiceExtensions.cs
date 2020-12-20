@@ -47,6 +47,10 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// <returns>The generated <seealso cref="SoftwareBitmap"/></returns>
         public static async Task<SoftwareBitmap> ToSoftwareBitmapAsync(this Stream stream)
         {
+            if(stream.Length!=0)
+            {
+                stream.Position = 0;
+            }
             BitmapDecoder bitmapDecoder = await BitmapDecoder.CreateAsync(stream.AsRandomAccessStream());
             SoftwareBitmap softwareBitmap = await bitmapDecoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
             return softwareBitmap;

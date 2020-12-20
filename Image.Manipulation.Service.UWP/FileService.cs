@@ -81,6 +81,16 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return null;
         }
+        ///<inheritdoc/>
+        public async Task<Stream> PickSaveFileStreamAsync(String preferredSaveLocation, String suggestedFileName, IList<string> fileTypeChoicesFilter)
+        {
+            var storageFile = await PickSaveFileAsync(preferredSaveLocation, suggestedFileName, fileTypeChoicesFilter);
+            if(storageFile!=null)
+            {
+                return await storageFile.OpenStreamForWriteAsync();
+            }
+            return null;
+        }
         /// <summary>
         /// Opens the FilePicker and adds the selected files to the Future Access List
         /// </summary>
