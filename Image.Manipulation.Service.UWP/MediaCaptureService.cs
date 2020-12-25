@@ -1,5 +1,6 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
@@ -28,7 +29,32 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 return _mediaCapture;
             }
         }
+        public async Task InitializeCameraAsync(string cameraSourceDeviceId)
+        {
+            // Create MediaCapture and its settings
+            _mediaCapture = new MediaCapture();
 
+            // Register for a notification when something goes wrong
+            _mediaCapture.Failed += MediaCapture_Failed;
+
+            var settings = new MediaCaptureInitializationSettings
+            {
+                VideoDeviceId = cameraSourceDeviceId,
+                StreamingCaptureMode = StreamingCaptureMode.Video
+            };
+
+            // Initialize MediaCapture
+            try
+            {
+                await _mediaCapture.InitializeAsync(settings);
+            }
+            catch (UnauthorizedAccessException u)
+            {
+                //capability microphone and webcam is required
+                _loggerService.LogException("The app was denied access to the camera", u);
+                throw;
+            }
+        }
         public async Task InitializeCameraAsync()
         {
             if (_mediaCapture == null)
@@ -65,6 +91,10 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     throw;
                 }
             }
+        }
+        public async Task<IEnumerable<DeviceInformation>> GetDevicesAsync()
+        {
+            return await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
         }
         private void MediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
         {
@@ -136,5 +166,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return Task.CompletedTask;
         }
+
+
     }
 }
