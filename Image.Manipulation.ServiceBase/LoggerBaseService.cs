@@ -1,11 +1,22 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Get.the.solution.Image.Manipulation.ServiceBase
 {
     public abstract class LoggerBaseService : ILoggerService
     {
+        protected readonly Queue<Action> _queueLogs = new Queue<Action>();
+        /// <summary>
+        /// Get or sets whether collection data is enabled
+        /// </summary>
+        public bool EnableTracking { get; set; } = true;
+
+        public virtual Task SendBufferAsync()
+        {
+            return Task.CompletedTask;
+        }
         public virtual void LogException(Exception e)
         {
             LogException(nameof(Exception), e, null);
