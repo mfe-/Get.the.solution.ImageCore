@@ -204,7 +204,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 Resizing = true;
                 IReadOnlyList<ImageFile> files = await _imageFileService.PickMultipleFilesAsync();
                 ImageFiles = new ObservableCollection<ImageFile>(files);
-                _loggerService?.LogEvent(nameof(OpenFilePicker), new Dictionary<String, String>() { { nameof(files), $"{files?.Count}" } });
+                _loggerService?.LogEvent(nameof(OpenFilePicker),
+                    new Dictionary<String, String>() { { nameof(files), RoundTo(files.Count).ToString() ?? string.Empty } });
             }
             catch (Contract.Exceptions.UnauthorizedAccessException)
             {
@@ -602,6 +603,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                         if (progressBarDialog != null)
                         {
                             progressBarDialog.ProcessedItems++;
+                            if (progressBarDialog.AbortedClicked())
+                            {
+                                _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
+                                {
+                                    { nameof(progressBarDialog.AbortedClicked), Boolean.TrueString }
+                                });
+                                break;
+                            }
                         }
                     }
                     if (_localSettings != null && _localSettings.Settings.ShowSuccessMessage && LastFile != null)
@@ -992,6 +1001,14 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             SaveAs,
             Share,
             Process
+        }
+        public static int RoundTo(int number, int step = 5)
+        {
+            if (number <= step)
+            {
+                return number;
+            }
+            return (number / step) * step;
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 
             _SizeOptionTwoWidth = 800;
             _SizeOptionTwoHeight = 600;
+            _UseBottomAppBar = false;
         }
         public ResizeSettings(ILoggerService loggerService) : this()
         {
@@ -190,6 +191,15 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             get { return _PreferredSizeHeight; }
             set { SetProperty(ref _PreferredSizeHeight, value, nameof(PreferredSizeHeight)); }
         }
+
+        private bool _UseBottomAppBar;
+        public bool UseBottomAppBar
+        {
+            get { return _UseBottomAppBar; }
+            set { SetProperty(ref _UseBottomAppBar, value, nameof(UseBottomAppBar)); }
+        }
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

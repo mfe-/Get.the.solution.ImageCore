@@ -11,6 +11,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         String CurrentItem { get; set; }
         int ProcessedItems { get; set; }
         void Stop();
+        bool AbortedClicked();
 
     }
 }
