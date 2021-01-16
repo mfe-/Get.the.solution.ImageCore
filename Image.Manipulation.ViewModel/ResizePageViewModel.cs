@@ -45,6 +45,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 _shareService = shareService;
                 _resizeService = resizeService;
                 _localSettings = localSettings;
+                _localSettings.Settings.PropertyChanged += Settings_PropertyChanged;
                 _pageDialogService = pageDialogService;
                 _progressBarDialogService = progressBar;
                 _applicationService = applicationService;
@@ -142,15 +143,26 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 PropertyChanged += ResizePageViewModel_PropertyChanged;
             }
         }
-
         public void ApplyPreviewDimensions()
         {
             foreach (ImageFile currentImage in ImageFiles)
             {
                 int newWidth;
                 int newHeight;
-
-                if (SizePercentChecked)
+                if (MaintainAspectRatio)
+                {
+                    if (MaintainAspectRatioHeight)
+                    {
+                        newWidth = (int)(((double)currentImage.Width / (double)currentImage.Height) * (double)Height);
+                        newHeight = Height;
+                    }
+                    else
+                    {
+                        newWidth = Width;
+                        newHeight = (int)(((double)currentImage.Height / (double)currentImage.Width) * (double)Width);
+                    }
+                }
+                else if (SizePercentChecked)
                 {
                     newWidth = currentImage.Width * Settings.WidthPercent / 100;
                     newHeight = currentImage.Height * Settings.HeightPercent / 100;
@@ -296,6 +308,19 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 }
             }
         }
+        private void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (SizeCustomChecked)
+            {
+                Width = Settings.WidthCustom;
+                Height = Settings.HeightCustom;
+            }
+            if (SizePercentChecked)
+            {
+                Width = Settings.WidthPercent;
+                Height = Settings.HeightPercent;
+            }
+        }
         /// <summary>
         /// Get or sets whether the custom width and custom height is checked
         /// </summary>
@@ -308,8 +333,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 SetProperty(ref _SizeCustomChecked, value, nameof(SizeCustomChecked));
                 if (SizeCustomChecked)
                 {
-                    Width = Settings.WidthCustom;
-                    Height = Settings.HeightCustom;
                     Settings.RadioOptions = 3;
                     SizeOptionOneChecked = false;
                     SizeOptionTwoChecked = false;
@@ -330,8 +353,6 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 SetProperty(ref _SizePercentChecked, value, nameof(SizePercentChecked));
                 if (SizePercentChecked)
                 {
-                    Width = Settings.WidthPercent;
-                    Height = Settings.HeightPercent;
                     Settings.RadioOptions = 4;
                     SizeOptionOneChecked = false;
                     SizeOptionTwoChecked = false;
@@ -368,6 +389,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             OnPropertyChanged(nameof(ShowOpenFilePicker));
             OnPropertyChanged(nameof(CanOverwriteFiles));
             OnPropertyChanged(nameof(SingleFile));
+            if (!_ImageFiles.Any())
+            {
+                OnPropertyChanged(nameof(ImageFiles));
+            }
             ApplyPreviewDimensions();
         }
         #endregion
@@ -609,7 +634,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                                 {
                                     { nameof(progressBarDialog.AbortedClicked), Boolean.TrueString }
                                 });
-                                break;
+                                return false;
                             }
                         }
                     }
@@ -713,8 +738,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 UpdateOptionSettings();
                 _loggerService?.LogEvent(nameof(OnOkCommand));
                 ImageAction Action = OverwriteFiles ? ImageAction.Save : ImageAction.SaveAs;
-                await ResizeImages(Action);
-                if (_localSettings.Settings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
+                bool successfull = await ResizeImages(Action);
+                if (successfull && _localSettings.Settings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
                 {
                     CancelCommand?.Execute(ImageFiles);
                 }
@@ -947,6 +972,46 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             catch (Exception e)
             {
                 _loggerService?.LogException(nameof(OnDeleteFile), e);
+            }
+        }
+        private bool _MaintainAspectRatioWidth;
+        public bool MaintainAspectRatioWidth
+        {
+            get { return _MaintainAspectRatioWidth; }
+            set
+            {
+                SetProperty(ref _MaintainAspectRatioWidth, value, nameof(MaintainAspectRatioWidth));
+                if (MaintainAspectRatioWidth)
+                {
+                    MaintainAspectRatioHeight = false;
+                }
+                MaintainAspectRatio = _MaintainAspectRatioWidth || _MaintainAspectRatioHeight;
+            }
+        }
+
+        private bool _MaintainAspectRatioHeight;
+        public bool MaintainAspectRatioHeight
+        {
+            get { return _MaintainAspectRatioHeight; }
+            set
+            {
+                SetProperty(ref _MaintainAspectRatioHeight, value, nameof(MaintainAspectRatioHeight));
+                if (MaintainAspectRatioHeight)
+                {
+                    MaintainAspectRatioWidth = false;
+                }
+                MaintainAspectRatio = _MaintainAspectRatioWidth || _MaintainAspectRatioHeight;
+            }
+        }
+
+        private bool _MaintainAspectRatio;
+        public bool MaintainAspectRatio
+        {
+            get { return _MaintainAspectRatio; }
+            set
+            {
+                SetProperty(ref _MaintainAspectRatio, value, nameof(MaintainAspectRatio));
+                ApplyPreviewDimensions();
             }
         }
 
