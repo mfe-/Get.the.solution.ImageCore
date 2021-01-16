@@ -310,16 +310,20 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
         }
         private void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (SizeCustomChecked)
+            if(!nameof(Settings.RadioOptions).Equals(e.PropertyName))
             {
-                Width = Settings.WidthCustom;
-                Height = Settings.HeightCustom;
+                if (SizeCustomChecked)
+                {
+                    Width = Settings.WidthCustom;
+                    Height = Settings.HeightCustom;
+                }
+                else if (SizePercentChecked)
+                {
+                    Width = Settings.WidthPercent;
+                    Height = Settings.HeightPercent;
+                }
             }
-            if (SizePercentChecked)
-            {
-                Width = Settings.WidthPercent;
-                Height = Settings.HeightPercent;
-            }
+
         }
         /// <summary>
         /// Get or sets whether the custom width and custom height is checked
@@ -333,6 +337,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 SetProperty(ref _SizeCustomChecked, value, nameof(SizeCustomChecked));
                 if (SizeCustomChecked)
                 {
+                    Width = Settings.WidthCustom;
+                    Height = Settings.HeightCustom;
                     Settings.RadioOptions = 3;
                     SizeOptionOneChecked = false;
                     SizeOptionTwoChecked = false;
@@ -353,6 +359,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 SetProperty(ref _SizePercentChecked, value, nameof(SizePercentChecked));
                 if (SizePercentChecked)
                 {
+                    Width = Settings.WidthPercent;
+                    Height = Settings.HeightPercent;
                     Settings.RadioOptions = 4;
                     SizeOptionOneChecked = false;
                     SizeOptionTwoChecked = false;
