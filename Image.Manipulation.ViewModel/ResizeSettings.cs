@@ -1,4 +1,5 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -32,6 +33,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             _SizeOptionTwoWidth = 800;
             _SizeOptionTwoHeight = 600;
             _UseBottomAppBar = false;
+            _InstallDateTime = DateTime.Now;
+            
         }
         public ResizeSettings(ILoggerService loggerService) : this()
         {
@@ -46,6 +49,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
         }
 
         IDictionary<string, object> ILocalSettings.Values => Values;
+
+        private DateTime _InstallDateTime;
+        public DateTime InstallDateTime
+        {
+            get { return _InstallDateTime; }
+            set { SetProperty(ref _InstallDateTime, value, nameof(InstallDateTime)); }
+        }
 
         private string _DefaultSaveAsTargetFolder;
         public string DefaultSaveAsTargetFolder
