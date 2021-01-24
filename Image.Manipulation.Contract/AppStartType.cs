@@ -14,5 +14,6 @@
         /// The app was called as ShareTarget
         /// </summary>
         AppIsShareTarget,
+        CommandLine,
     }
 }
