@@ -310,7 +310,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
         }
         private void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(!nameof(Settings.RadioOptions).Equals(e.PropertyName))
+            if (!nameof(Settings.RadioOptions).Equals(e.PropertyName))
             {
                 if (SizeCustomChecked)
                 {
@@ -750,6 +750,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 if (successfull && _localSettings.Settings.ClearImageListAfterSuccess && ImageFiles?.Count != 0)
                 {
                     CancelCommand?.Execute(ImageFiles);
+                }
+                //if the app was started from command line exit the app after resize
+                if (AppStartType.CommandLine.Equals(_appStartType))
+                {
+                    _applicationService.Exit();
                 }
 
             }
