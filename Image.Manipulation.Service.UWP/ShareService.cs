@@ -21,14 +21,16 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             _ResourceLoader = resourceService;
             _imageFileService = imageFileService;
         }
-        protected List<ImageFile> LocalCachedResizedImages = new List<ImageFile>();
+        protected IList<ImageFile> LocalCachedResizedImages = new List<ImageFile>();
         protected Action ShareCompleteAction;
         public TaskCompletionSource<IReadOnlyList<ImageFile>> PickImageTaskCompletionSource { set; get; }
-        public async Task StartShareAsync(IList<ImageFile> imageFiles, Func<Action<ImageFile, String>, Task<bool>> viewModelReiszeImageFunc, Action shareCompleteAction = null)
+        private string PackageTitle;
+        public async Task StartShareAsync(string packageTitle, IList<ImageFile> imageFiles, Func<Action<ImageFile, String>, Task<bool>> viewModelReiszeImageFunc = null, Action shareCompleteAction = null)
         {
             try
             {
                 //init
+                PackageTitle = packageTitle;
                 SharingProcess = true;
                 LocalCachedResizedImages = new List<ImageFile>();
                 ShareCompleteAction = shareCompleteAction;
@@ -37,14 +39,22 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     LocalCachedResizedImages.Add(resizedImage);
                 });
                 PickImageTaskCompletionSource = new TaskCompletionSource<IReadOnlyList<ImageFile>>();
-                //call bool Result = await ResizeImages(ImageAction.Process, ProcessImageAction); from viewmodel
-                bool Result = await viewModelReiszeImageFunc(ProcessImageAction);
+
+                if (viewModelReiszeImageFunc != null)
+                {
+                    //call bool Result = await ResizeImages(ImageAction.Process, ProcessImageAction); from viewmodel
+                    _ = await viewModelReiszeImageFunc(ProcessImageAction);
+                }
+                else
+                {
+                    LocalCachedResizedImages = imageFiles;
+                }
                 _DataTransferManager = DataTransferManager.GetForCurrentView();
                 _DataTransferManager.DataRequested += DataTransferManager_DataRequested;
                 DataTransferManager.ShowShareUI();
                 await PickImageTaskCompletionSource.Task;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _loggerService.LogException(nameof(StartShareAsync), e);
             }
@@ -65,7 +75,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     //our DataPackage we want to share
                     DataPackage Package = new DataPackage();
                     Package.RequestedOperation = DataPackageOperation.Copy;
-                    Package.Properties.Title = _ResourceLoader.GetString("AppName");
+                    Package.Properties.Title = PackageTitle;
                     foreach (var file in LocalCachedResizedImages)
                     {
                         Package.Properties.Description = $"{Package.Properties.Description} {file.Name}";
@@ -128,7 +138,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         private ShareOperation _shareOperation = null;
         public void StartShareTargetOperation(object shareOperation)
         {
-            if(shareOperation is ShareOperation shareOperation1)
+            if (shareOperation is ShareOperation shareOperation1)
             {
                 _shareOperation = shareOperation1;
                 _shareOperation.ReportDataRetrieved();

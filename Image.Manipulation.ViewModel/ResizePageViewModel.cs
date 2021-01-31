@@ -310,7 +310,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
         }
         private void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(!nameof(Settings.RadioOptions).Equals(e.PropertyName))
+            if (!nameof(Settings.RadioOptions).Equals(e.PropertyName))
             {
                 if (SizeCustomChecked)
                 {
@@ -784,7 +784,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             {
                 SharingProcess = true;
                 _loggerService?.LogEvent(nameof(OnShareCommand));
-                await _shareService.StartShareAsync(ImageFiles, async (action) => await ResizeImages(ImageAction.Process, action), OnCancelCommand);
+                await _shareService.StartShareAsync(
+                    _resourceLoader.GetString("AppName"), 
+                    ImageFiles, 
+                    async (action) => await ResizeImages(ImageAction.Process, action), 
+                    OnCancelCommand);
             }
             catch (Exception e)
             {
