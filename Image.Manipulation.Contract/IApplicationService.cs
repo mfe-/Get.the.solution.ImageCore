@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -15,13 +16,14 @@ namespace Get.the.solution.Image.Manipulation.Contract
         string ActivatedEventArgs { get; }
         string UriDefinitionOpen { get; }
         string UriDefinitionResize { get; }
+        string UriFilePathParamName { get; }
         string GetDeviceFormFactorType();
         String GetAppVersion();
         String GetTemporaryFolderPath();
         String GetCulture();
         bool CtrlPressed(object param);
         Task LaunchFileAsync(ImageFile imageFile, bool openWith = false);
-        Task LaunchFileAsync(string protocol, object param);
+        Task LaunchFileAsync(string protocol, IDictionary<string, object> parameters);
         /// <summary>
         /// Starts the file explorer 
         /// </summary>

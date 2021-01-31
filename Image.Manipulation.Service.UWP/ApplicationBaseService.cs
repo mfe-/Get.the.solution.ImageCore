@@ -1,12 +1,16 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
@@ -27,6 +31,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public virtual string UriDefinitionResize => "resize-image:resize";
 
+        public string UriFilePathParamName => "fileName";
+        public string ApplicationPackageFamilyName => "8273mfetzel.ResizeImage_c0krq7an0ms3c";
+
         public async Task LaunchFileAsync(ImageFile imageFile, bool openWith = false)
         {
             if (!openWith)
@@ -38,12 +45,48 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 await Launcher.LaunchFileAsync(imageFile.Tag as IStorageFile, new LauncherOptions() { DisplayApplicationPicker = true });
             }
         }
-
-        public async Task LaunchFileAsync(string protocol, object param)
+        /// <summary>
+        /// Converts from a protocol uri the query parameters to a dictionary
+        /// </summary>
+        /// <see cref="https://codereview.stackexchange.com/questions/1588/get-params-from-a-url"/>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> GetParametersFromUri(string uri)
         {
-            ImageFile imageFile = param as ImageFile;
-            protocol = $"{UriDefinitionResize}?{protocol}={imageFile?.Path}";
-            await Launcher.LaunchUriAsync(new Uri(protocol));
+            var matches = Regex.Matches(uri, @"[\?&](([^&=]+)=([^&=#]*))", RegexOptions.Compiled);
+            return matches.Cast<Match>().ToDictionary(
+                m => Uri.UnescapeDataString(m.Groups[2].Value),
+                m => Uri.UnescapeDataString(m.Groups[3].Value)
+            );
+        }
+        public async Task LaunchFileAsync(string protocol, IDictionary<string, object> parameters)
+        {
+            //create uri 
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append($"{protocol}?");
+            foreach (var para in parameters)
+            {
+                stringBuilder.Append($"{para.Key}={para.Value ?? String.Empty}&");
+            }
+            protocol = stringBuilder.ToString();
+
+            if (protocol.StartsWith(UriDefinitionResize))
+            {
+                //if we start our app we also set valuesets
+                ValueSet valueset = new ValueSet();
+                foreach (var para in parameters)
+                {
+                    valueset.Add(para.Key, para.Value);
+                }
+                await Launcher.LaunchUriAsync(new Uri(protocol), new LauncherOptions
+                {
+                    TargetApplicationPackageFamilyName = ApplicationPackageFamilyName
+                }, valueset);
+            }
+            else
+            {
+                await Launcher.LaunchUriAsync(new Uri(protocol));
+            }
         }
         /// <summary>
         /// Starts the file explorer by using the <seealso cref="fileProtocol"/>. If the <paramref name="protocol"/> contains only the
