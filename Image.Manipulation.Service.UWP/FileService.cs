@@ -85,7 +85,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public async Task<Stream> PickSaveFileStreamAsync(String preferredSaveLocation, String suggestedFileName, IList<string> fileTypeChoicesFilter)
         {
             var storageFile = await PickSaveFileAsync(preferredSaveLocation, suggestedFileName, fileTypeChoicesFilter);
-            if(storageFile!=null)
+            if (storageFile != null)
             {
                 return await storageFile.OpenStreamForWriteAsync();
             }
@@ -557,13 +557,13 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             return Task.CompletedTask;
         }
 
-        public static async Task CleanUpFolderAsync(StorageFolder storageFolder, IList<string> filesToRemoveWithFileExtension, int removeOlderThanDays = 7)
+        public static async Task CleanUpFolderAsync(StorageFolder storageFolder, IList<string> filesToRemoveWithFileExtension = null, int removeOlderThanDays = 7)
         {
             //remove old cached images
             IReadOnlyList<StorageFile> storageFiles = await storageFolder.GetFilesAsync();
             foreach (StorageFile file in storageFiles)
             {
-                if (filesToRemoveWithFileExtension.Any(a => a.Contains(file.FileType.ToLowerInvariant())))
+                if (filesToRemoveWithFileExtension == null || filesToRemoveWithFileExtension.Any(a => a.Contains(file.FileType.ToLowerInvariant())))
                 {
                     DateTime createdDateTime = file.DateCreated.DateTime;
                     if ((DateTime.Now - createdDateTime).TotalDays >= removeOlderThanDays)

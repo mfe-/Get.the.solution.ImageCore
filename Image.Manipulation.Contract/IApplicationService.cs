@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Get.the.solution.Image.Manipulation.Contract
@@ -16,7 +17,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         string UriDefinitionResize { get; }
         string GetDeviceFormFactorType();
         String GetAppVersion();
-        String GetLocalCacheFolder();
+        String GetTemporaryFolderPath();
         String GetCulture();
         bool CtrlPressed(object param);
         Task LaunchFileAsync(ImageFile imageFile, bool openWith = false);
@@ -32,6 +33,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         /// <returns></returns>
         Task<bool> LaunchUriAsync(string protocol);
         void AddToClipboard(String content);
+        Task<Stream> GetClipboardAsync();
         void Exit();
     }
 }
