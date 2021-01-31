@@ -751,6 +751,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 {
                     CancelCommand?.Execute(ImageFiles);
                 }
+                //if the app was started from command line exit the app after resize
+                if (AppStartType.CommandLine.Equals(_appStartType))
+                {
+                    _applicationService.Exit();
+                }
 
             }
             catch (Exception e)
