@@ -32,7 +32,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
 
         public String LocalCacheFolder
         {
-            get { return _applicationService.GetLocalCacheFolder(); }
+            get { return _applicationService.GetTemporaryFolderPath(); }
         }
 
         public String Culture

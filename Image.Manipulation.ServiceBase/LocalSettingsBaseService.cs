@@ -81,16 +81,15 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
             }
         }
 
-        private async void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            try
+            SaveSettingsAsync().ContinueWith(a =>
             {
-                await SaveSettingsAsync();
-            }
-            catch (Exception ex)
-            {
-                _loggerService.LogException(ex);
-            }
+                if (a.Exception != null)
+                {
+                    _loggerService.LogException(a.Exception);
+                }
+            }).ConfigureAwait(false);
         }
 
         /// <summary>

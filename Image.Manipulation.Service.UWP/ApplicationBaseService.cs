@@ -180,7 +180,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
         public abstract string GetAppVersion();
 
-        public string GetLocalCacheFolder()
+        public string GetTemporaryFolderPath()
         {
             return ApplicationData.Current.TemporaryFolder.Path;
         }
@@ -203,6 +203,16 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             var dataPackage = new DataPackage();
             dataPackage.SetText(content);
             Clipboard.SetContent(dataPackage);
+        }
+        public async Task<Stream> GetClipboardAsync()
+        {
+            DataPackageView dataPackageView = Clipboard.GetContent();
+            if (dataPackageView.Contains(StandardDataFormats.Bitmap))
+            {
+                var randomAccessStreamReference = await dataPackageView.GetBitmapAsync();
+                return (await randomAccessStreamReference.OpenReadAsync()).AsStream();
+            }
+            return null;
         }
         public bool IsAlwaysOnTop
         {

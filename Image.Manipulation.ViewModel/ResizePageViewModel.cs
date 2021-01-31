@@ -595,7 +595,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                                 }
                                 else if (action.Equals(ImageAction.Process))
                                 {
-                                    String TempFolder = _applicationService.GetLocalCacheFolder();
+                                    String TempFolder = _applicationService.GetTemporaryFolderPath();
                                     ImageFile temp = await _imageFileService.WriteBytesAsync(TempFolder, suggestedFileName, resizedImageFileStream.ToArray());
                                     processedImageAction?.Invoke(temp, $"{suggestedFileName}");
                                 }
