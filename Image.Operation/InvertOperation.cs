@@ -1,7 +1,4 @@
 ﻿using Get.the.solution.Image.Contract;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Image.Operation
 {
