@@ -19,14 +19,14 @@ namespace Image.Operation
         /// <summary>
         /// Computes absolute differences between the two input pixels and calculates the the mathematical mean value
         /// </summary>
-        /// <param name="b1"></param>
-        /// <param name="g1"></param>
-        /// <param name="r1"></param>
-        /// <param name="a1"></param>
-        /// <param name="b2"></param>
-        /// <param name="g2"></param>
-        /// <param name="r2"></param>
-        /// <param name="a2"></param>
+        /// <param name="b1">blue pixel of first image</param>
+        /// <param name="g1">green pixel of first image</param>
+        /// <param name="r1">red pixel of first image</param>
+        /// <param name="a1">alpha pixel of first image</param>
+        /// <param name="b2">blue pixel of second image</param>
+        /// <param name="g2">green pixel of second image</param>
+        /// <param name="r2">red pixel of second image</param>
+        /// <param name="a2">alpha pixel of second image</param>
         public void EditPixels(ref byte b1, ref byte g1, ref byte r1, ref byte a1, ref byte b2, ref byte g2, ref byte r2, ref byte a2)
         {
             byte b = (byte)Math.Abs(b1 - b2);
@@ -46,6 +46,10 @@ namespace Image.Operation
             
             amountPixels++;
         }
+        /// <summary>
+        /// Calculates the standard deviation of each channel (R,G,B) and assignes the result value to <see cref="Result"/>
+        /// </summary>
+        /// <returns></returns>
         public object SetResult()
         {
             //calculate mean
