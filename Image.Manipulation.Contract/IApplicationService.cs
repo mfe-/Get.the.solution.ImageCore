@@ -22,8 +22,20 @@ namespace Get.the.solution.Image.Manipulation.Contract
         String GetTemporaryFolderPath();
         String GetCulture();
         bool CtrlPressed(object param);
-        Task LaunchFileAsync(ImageFile imageFile, bool openWith = false);
-        Task LaunchFileAsync(string protocol, IDictionary<string, object> parameters);
+        /// <summary>
+        /// starts the process for imagefile
+        /// </summary>
+        /// <param name="imageFile"></param>
+        /// <param name="openWith"></param>
+        /// <returns></returns>
+        Task<bool> LaunchFileAsync(ImageFile imageFile, bool openWith = false);
+        /// <summary>
+        /// Starts protocol based process
+        /// </summary>
+        /// <param name="protocol"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        Task<bool> LaunchProtocolFileAsync(string protocol, IDictionary<string, object> parameters);
         /// <summary>
         /// Starts the file explorer 
         /// </summary>

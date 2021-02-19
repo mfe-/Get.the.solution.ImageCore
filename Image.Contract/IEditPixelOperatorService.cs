@@ -8,6 +8,6 @@ namespace Get.the.solution.Image.Contract
         Task<Stream> SoftwareBitmapToStreamAsync(object softwareBitmap);
         Task<object> StartEditPixelEditAsync(Stream stream);
 
-        Task EditPixelAsync(object editablePixels, IEditPixelOperator editPixelOperator);
+        Task EditPixelAsync(object editablePixels, IEditPixelOperator editPixelOperator, uint height = 0, uint width = 0);
     }
 }

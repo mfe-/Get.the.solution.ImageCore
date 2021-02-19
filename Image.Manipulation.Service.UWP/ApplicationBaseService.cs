@@ -34,15 +34,15 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         public string UriFilePathParamName => "fileName";
         public string ApplicationPackageFamilyName => "8273mfetzel.ResizeImage_c0krq7an0ms3c";
 
-        public async Task LaunchFileAsync(ImageFile imageFile, bool openWith = false)
+        public async Task<bool> LaunchFileAsync(ImageFile imageFile, bool openWith = false)
         {
             if (!openWith)
             {
-                await Launcher.LaunchFileAsync(imageFile.Tag as IStorageFile);
+                return await Launcher.LaunchFileAsync(imageFile.Tag as IStorageFile);
             }
             else
             {
-                await Launcher.LaunchFileAsync(imageFile.Tag as IStorageFile, new LauncherOptions() { DisplayApplicationPicker = true });
+                return await Launcher.LaunchFileAsync(imageFile.Tag as IStorageFile, new LauncherOptions() { DisplayApplicationPicker = true });
             }
         }
         /// <summary>
@@ -59,7 +59,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 m => Uri.UnescapeDataString(m.Groups[3].Value)
             );
         }
-        public async Task LaunchFileAsync(string protocol, IDictionary<string, object> parameters)
+        public async Task<bool> LaunchProtocolFileAsync(string protocol, IDictionary<string, object> parameters)
         {
             //create uri 
             StringBuilder stringBuilder = new StringBuilder();
@@ -78,14 +78,14 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 {
                     valueset.Add(para.Key, para.Value);
                 }
-                await Launcher.LaunchUriAsync(new Uri(protocol), new LauncherOptions
+                return await Launcher.LaunchUriAsync(new Uri(protocol), new LauncherOptions
                 {
                     TargetApplicationPackageFamilyName = ApplicationPackageFamilyName
                 }, valueset);
             }
             else
             {
-                await Launcher.LaunchUriAsync(new Uri(protocol));
+                return await Launcher.LaunchUriAsync(new Uri(protocol));
             }
         }
         /// <summary>

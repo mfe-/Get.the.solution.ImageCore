@@ -47,7 +47,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// <returns>The generated <seealso cref="SoftwareBitmap"/></returns>
         public static async Task<SoftwareBitmap> ToSoftwareBitmapAsync(this Stream stream)
         {
-            if(stream.Length!=0)
+            if (stream.Length != 0)
             {
                 stream.Position = 0;
             }
@@ -76,9 +76,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 }
             }
         }
-        public static unsafe void EditPixels(this SoftwareBitmap bitmap, IEnumerable<IEditPixelOperator> editPixelOperatorList)
+        public static unsafe void EditPixels(this SoftwareBitmap bitmap, IEnumerable<IEditPixelOperator> editPixelOperatorList, uint height = 0, uint width = 0)
         {
-            EditPixels(bitmap, currPixelAction: null, editPixelOperatorList: editPixelOperatorList);
+            EditPixels(bitmap, currPixelAction: null, editPixelOperatorList: editPixelOperatorList, height: height, width: width);
         }
         public static unsafe void EditPixels(this SoftwareBitmap bitmap, ActionRef<byte> currPixelAction = null)
         {
@@ -90,7 +90,7 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
         /// <param name="bitmap">The bitmap to modify</param>
         /// <param name="currPixelAction">The pixel action which should be called</param>
         /// <param name="editPixelOperatorList">A list of pixel operators which should be applied on each pixel</param>
-        private static unsafe void EditPixels(this SoftwareBitmap bitmap, ActionRef<byte> currPixelAction = null, IEnumerable<IEditPixelOperator> editPixelOperatorList = null)
+        private static unsafe void EditPixels(this SoftwareBitmap bitmap, ActionRef<byte> currPixelAction = null, IEnumerable<IEditPixelOperator> editPixelOperatorList = null, uint width = 0, uint height = 0)
         {
             if (bitmap == null) throw new ArgumentException(nameof(currPixelAction));
             if (bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8) throw new ArgumentException(nameof(bitmap), $"{BitmapPixelFormat.Bgra8} expected");
@@ -115,9 +115,9 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     var desc = buffer.GetPlaneDescription(0);
 
                     // Iterate over all pixels
-                    for (uint row = 0; row < desc.Height; row++)
+                    for (uint row = height; row < desc.Height; row++)
                     {
-                        for (uint col = 0; col < desc.Width; col++)
+                        for (uint col = width; col < desc.Width; col++)
                         {
                             // 8 bit or 1 byte for one data field 0... 255
 
