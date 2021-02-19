@@ -520,6 +520,11 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                                     ImageFile imageFile = null;
                                     try
                                     {
+                                        //if the user enabled the option "save images to same folder"
+                                        if (Settings.SaveFilesForSaveAsInSameFolder && !AppStartType.AppIsShareTarget.Equals(_appStartType))
+                                        {
+                                            targetStorageFolder = Path.GetDirectoryName(currentImage.Path);
+                                        }
                                         if (String.IsNullOrEmpty(targetStorageFolder))
                                         {
                                             if (SingleFile)
@@ -790,9 +795,9 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 SharingProcess = true;
                 _loggerService?.LogEvent(nameof(OnShareCommand));
                 await _shareService.StartShareAsync(
-                    _resourceLoader.GetString("AppName"), 
-                    ImageFiles, 
-                    async (action) => await ResizeImages(ImageAction.Process, action), 
+                    _resourceLoader.GetString("AppName"),
+                    ImageFiles,
+                    async (action) => await ResizeImages(ImageAction.Process, action),
                     OnCancelCommand);
             }
             catch (Exception e)
