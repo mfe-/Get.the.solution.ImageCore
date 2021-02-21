@@ -33,6 +33,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             _SizeOptionTwoWidth = 800;
             _SizeOptionTwoHeight = 600;
             _UseBottomAppBar = false;
+            _SaveFilesForSaveAsInSameFolder = false;
             _InstallDateTime = DateTime.Now;
             
         }
@@ -71,6 +72,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             set { SetProperty(ref _CheckGlobalWriteAccess, value, nameof(CheckGlobalWriteAccess)); }
         }
 
+        private bool _SaveFilesForSaveAsInSameFolder;
+        public bool SaveFilesForSaveAsInSameFolder
+        {
+            get { return _SaveFilesForSaveAsInSameFolder; }
+            set { SetProperty(ref _SaveFilesForSaveAsInSameFolder, value, nameof(SaveFilesForSaveAsInSameFolder)); }
+        }
 
         private int _RadioOptions;
         public int RadioOptions
