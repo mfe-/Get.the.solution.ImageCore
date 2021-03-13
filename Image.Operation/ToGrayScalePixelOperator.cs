@@ -3,7 +3,7 @@ using System;
 
 namespace Image.Operation
 {
-    public class ToGrayScaleOperator : IEditPixelOperator
+    public class ToGrayScalePixelOperator : IEditPixelOperator
     {
         /// <summary>
         /// Calculates for the current pixels of a,r,g,b a grayscale value.

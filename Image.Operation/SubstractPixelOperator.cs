@@ -7,7 +7,7 @@ namespace Image.Operation
     /// <summary>
     /// Substracts and calculates the standard deviation
     /// </summary>
-    public class SubstractOperator : IEditPixelOperators<Tuple<double, double, double>>
+    public class SubstractPixelOperator : IEditPixelOperators<Tuple<double, double, double>>
     {
         private int meanB = 0;
         private int meanG = 0;

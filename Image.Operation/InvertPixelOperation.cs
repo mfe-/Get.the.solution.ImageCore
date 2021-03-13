@@ -5,7 +5,7 @@ namespace Image.Operation
     /// <summary>
     /// Performace a invert operation on the pixels
     /// </summary>
-    public class InvertOperation : IEditPixelOperator
+    public class InvertPixelOperation : IEditPixelOperator
     {
         /// <summary>
         /// Inverts each pixel by deducting 255
