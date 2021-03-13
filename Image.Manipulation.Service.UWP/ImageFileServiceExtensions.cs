@@ -268,5 +268,54 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                 }
             }
         }
+
+        public static unsafe void EditPixels(this SoftwareBitmap bitmap, IKernelOperation kernelOperation)
+        {
+            if (bitmap == null) throw new ArgumentException(nameof(bitmap));
+            if (bitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8) throw new ArgumentException(nameof(bitmap), $"{BitmapPixelFormat.Bgra8} expected");
+
+            if (kernelOperation == null) throw new ArgumentNullException(nameof(kernelOperation));
+
+            // Effect is hard-coded to operate on BGRA8 format only
+            if (bitmap.BitmapPixelFormat == BitmapPixelFormat.Bgra8)
+            {
+                // In BGRA8 format, each pixel is defined by 4 bytes
+                const int BYTES_PER_PIXEL = 4;
+
+                using (var buffer = bitmap.LockBuffer(BitmapBufferAccessMode.ReadWrite))
+                using (var reference = buffer.CreateReference())
+                {
+                    // Get a pointer to the pixel buffer
+                    byte* data;
+                    uint capacity;
+                    ((IMemoryBufferByteAccess)reference).GetBuffer(out data, out capacity);
+
+                    // Get information about the BitmapBuffer
+                    var desc = buffer.GetPlaneDescription(0);
+
+                    byte[,] r= kernelOperation.Process(desc.Height, desc.Width, (int height, int width) =>
+                        data[desc.StartIndex + desc.Stride * height + BYTES_PER_PIXEL * width + 0]);
+                    byte[,] g = kernelOperation.Process(desc.Height, desc.Width, (int height, int width) =>
+                        data[desc.StartIndex + desc.Stride * height + BYTES_PER_PIXEL * width + 1]);
+                    byte[,] b = kernelOperation.Process(desc.Height, desc.Width, (int height, int width) =>
+                        data[desc.StartIndex + desc.Stride * height + BYTES_PER_PIXEL * width + 2]);
+
+                    // Iterate over all pixels
+                    for (uint row = 0; row < desc.Height; row++)
+                    {
+                        for (uint col = 0; col < desc.Width; col++)
+                        {
+                            // 8 bit or 1 byte for one data field 0... 255
+
+                            // Index of the current pixel in the buffer (defined by the next 4 bytes, BGRA8)
+                            var currPixel = desc.StartIndex + desc.Stride * row + BYTES_PER_PIXEL * col;
+                            data[currPixel + 0] = r[row, col];
+                            data[currPixel + 1] = g[row, col];
+                            data[currPixel + 2] = b[row, col];
+                        }
+                    }
+                }
+            }
+        }
     }
 }
