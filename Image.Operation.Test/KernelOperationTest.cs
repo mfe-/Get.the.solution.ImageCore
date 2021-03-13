@@ -16,21 +16,21 @@ namespace Image.Operation.Test
         [Fact]
         public void Kernel_with_wrong_size_should_throw_exception()
         {
-            double[][] kernel = new double[][]
+            double[,] kernel = new double[,]
             {
-                new double[]{0.1,0.1,0.1 },
-                new double[]{0.1,0.1,0.1 },
+                {0.1,0.1,0.1 },
+                {0.1,0.1,0.1 },
             };
             Assert.Throws<ArgumentException>(() => new KernelOperation(kernel));
         }
         [Fact]
         public void Neighborhood_filtering_with3x3_kernel_should_return_expected_output()
         {
-            double[][] kernel = new double[][]
+            double[,] kernel = new double[,]
             {
-                new double[]{0.1,0.1,0.1 },
-                new double[]{0.1,0.2,0.1 },
-                new double[]{0.1,0.1,0.1 }
+                {0.1,0.1,0.1 },
+                {0.1,0.2,0.1 },
+                {0.1,0.1,0.1 }
             };
             KernelOperation kernelOperation = new KernelOperation(kernel);
             //Sample from Computer Vision: Algorithms and Applications (September 3, 2010) S112

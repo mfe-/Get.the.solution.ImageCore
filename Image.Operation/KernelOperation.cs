@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Get.the.solution.Image.Contract;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +9,12 @@ namespace Image.Operation
     /// <summary>
     ///  Neighborhood filtering (convolution)
     /// </summary>
-    public class KernelOperation
+    public class KernelOperation : IKernelOperation
     {
-        private readonly double[][] kernel;
-        public KernelOperation(double[][] kernel)
+        private readonly double[,] kernel;
+        public KernelOperation(double[,] kernel)
         {
-            if (kernel.Length != kernel[0].Length) throw new ArgumentException("Kernel structs needs to be size of n x n!");
+            if (kernel.GetLength(0) != kernel.GetLength(1)) throw new ArgumentException("Kernel structs needs to be size of n x n!");
             this.kernel = kernel;
         }
         static byte[][] CopyArrayLinq(byte[][] source)
@@ -32,17 +33,17 @@ namespace Image.Operation
             }
             return newB;
         }
-        private byte Compute(int x, int y, double[][] kernel, ref byte[][] vs)
+        private byte Compute(int x, int y, double[,] kernel, ref byte[][] vs)
         {
-            int kernelmiddle = kernel.Length / 2;
+            int kernelmiddle = kernel.GetLength(0) / 2;
             int xstart = x - kernelmiddle;
             int ystart = y - kernelmiddle;
             double accumulator = 0;
             double temp = 0;
             //Computer Vision: Algorithms and Applications (September 3, 2010 draft) S112
-            for (int yKernel = 0; yKernel < kernel.Length; yKernel++)
+            for (int yKernel = 0; yKernel < kernel.GetLength(0); yKernel++)
             {
-                for (int xKernel = 0; xKernel < kernel.Length; xKernel++)
+                for (int xKernel = 0; xKernel < kernel.GetLength(0); xKernel++)
                 {
                     if ((xstart < 0 || ystart < 0) || (xstart > vs.Length - 1 || ystart > vs.Length - 1))
                     {
@@ -50,7 +51,7 @@ namespace Image.Operation
                     }
                     else
                     {
-                        temp = (vs[ystart][xstart] * kernel[yKernel][xKernel]);
+                        temp = (vs[ystart][xstart] * kernel[yKernel, xKernel]);
                     }
                     accumulator += temp;
                     xstart++;
