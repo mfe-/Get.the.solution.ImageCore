@@ -14,6 +14,7 @@ namespace Get.the.solution.Image.Manipulation.Contract
         {
             Path = path;
             Stream = stream;
+            RotateTransform = 0;
         }
         public ImageFile(string path, Stream stream, int width, int height) : this(path, stream)
         {
@@ -105,6 +106,26 @@ namespace Get.the.solution.Image.Manipulation.Contract
             set { SetProperty(ref _IsReadOnly, value, nameof(IsReadOnly)); }
         }
 
+
+        private double _RotateTransform;
+        public double RotateTransform
+        {
+            get { return _RotateTransform; }
+            set { SetProperty(ref _RotateTransform, value, nameof(RotateTransform)); }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            // Cleanup
+            Stream?.Dispose();
+        }
+
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public virtual void OnPropertyChanged(string propertyName)
@@ -119,17 +140,5 @@ namespace Get.the.solution.Image.Manipulation.Contract
             return true;
         }
         #endregion
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            // Cleanup
-            Stream?.Dispose();
-        }
     }
 }

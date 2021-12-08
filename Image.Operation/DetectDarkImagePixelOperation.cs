@@ -6,15 +6,15 @@ namespace Image.Operation
     /// <summary>
     /// Detects whether the most pixels are dark or not
     /// </summary>
-    public class DetectDarkImageOperation : IEditPixelOperator<bool>
+    public class DetectDarkImagePixelOperation : IEditPixelOperator<bool>
     {
         /// <summary>
-        /// Initializes <seealso cref="DetectDarkImageOperation"/>
+        /// Initializes <seealso cref="DetectDarkImagePixelOperation"/>
         /// </summary>
         /// <param name="brightnessTolerance">Reference value for the max. allowed brightness. 
         /// A value above this parameter will treat the current summarized pixel (R,G,B) as "dark" pixel</param>
         /// <param name="darkPercentage">The Reference value at which percentage the image should be treated as "dark"</param>
-        public DetectDarkImageOperation(byte brightnessTolerance, double darkPercentage)
+        public DetectDarkImagePixelOperation(byte brightnessTolerance, double darkPercentage)
         {
             this.brightnessThreshold = brightnessTolerance;
             this.darkPercentageThreshold = darkPercentage;
