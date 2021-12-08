@@ -1,8 +1,10 @@
 ﻿using Get.the.solution.Image.Contract;
 using Get.the.solution.Image.Manipulation.Contract;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Processing;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Get.the.solution.Image.Manipulation.ResizeService
 {
@@ -16,7 +18,7 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
         {
             _loggerService = loggerService;
         }
-        public MemoryStream Resize(Stream inputStream, int width, int height, string suggestedFileName = null, int quality = 75)
+        public async Task<MemoryStream> ResizeAsync(Stream inputStream, int width, int height, string suggestedFileName = null, int quality = 75)
         {
             if (inputStream.Length == inputStream.Position)
             {
@@ -24,48 +26,47 @@ namespace Get.the.solution.Image.Manipulation.ResizeService
             }
             try
             {
-                using (var image = SixLabors.ImageSharp.Image.Load(inputStream))
+                (SixLabors.ImageSharp.Image Image, IImageFormat Format) imf = await SixLabors.ImageSharp.Image.LoadWithFormatAsync(inputStream);
                 {
                     var output = new MemoryStream();
-                    image.Mutate((x) => x.AutoOrient().Resize(width, height));
+                    imf.Image.Mutate((x) => x.AutoOrient().Resize(width, height));
 
-                    string extension = new FileInfo(suggestedFileName).Extension.ToLowerInvariant();
-                    var format = SixLabors.ImageSharp.Image.DetectFormat(inputStream);
-                    if (format == null)
+                    if (imf.Format == null)
                     {
+                        string extension = new FileInfo(suggestedFileName).Extension.ToLowerInvariant();
                         _loggerService.LogEvent(
                             $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is null. Using image extension", extension);
                         if (".gif".Equals(extension))
                         {
-                            format = SixLabors.ImageSharp.Formats.Gif.GifFormat.Instance;
+                            imf.Format = SixLabors.ImageSharp.Formats.Gif.GifFormat.Instance;
                         }
                         else if (".bmp".Equals(extension))
                         {
-                            format = SixLabors.ImageSharp.Formats.Bmp.BmpFormat.Instance;
+                            imf.Format = SixLabors.ImageSharp.Formats.Bmp.BmpFormat.Instance;
                         }
                         else if (".png".Equals(extension))
                         {
-                            format = SixLabors.ImageSharp.Formats.Png.PngFormat.Instance;
+                            imf.Format = SixLabors.ImageSharp.Formats.Png.PngFormat.Instance;
                         }
                         else
                         {
-                            format = SixLabors.ImageSharp.Formats.Jpeg.JpegFormat.Instance;
+                            imf.Format = SixLabors.ImageSharp.Formats.Jpeg.JpegFormat.Instance;
                         }
                     }
 
                     _loggerService.LogEvent(
-                        $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is", format?.Name);
+                        $"{nameof(SixLabors.ImageSharp.Image.DetectFormat)} is", imf.Format?.Name);
 
-                    if(format is SixLabors.ImageSharp.Formats.Jpeg.JpegFormat)
+                    if (imf.Format is SixLabors.ImageSharp.Formats.Jpeg.JpegFormat)
                     {
-                        image.Save(output,
+                        imf.Image.Save(output,
                             new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder() { Quality = quality });
                     }
                     else
                     {
-                        image.Save(output, format);
+                        imf.Image.Save(output, imf.Format);
                     }
-
+                    imf.Image?.Dispose();
 
                     return output;
                 }

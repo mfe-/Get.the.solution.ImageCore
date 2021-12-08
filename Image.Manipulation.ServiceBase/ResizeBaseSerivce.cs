@@ -3,6 +3,7 @@ using Get.the.solution.Image.Manipulation.Contract;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Get.the.solution.Image.Manipulation.ServiceBase
 {
@@ -20,7 +21,6 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
                 if (storeage != null)
                 {
                     string suggestedfilename = $"{storeage.FileInfo.Name.Replace(storeage.FileInfo.Extension, String.Empty)}-{storeage.Width}x{storeage.Height}{storeage.FileInfo.Extension}";
-                    //String suggestedfilename = $"{storeage.Name.Replace(storeage.FileType, String.Empty)}-{Width}x{Height}{storeage.FileType}";
                     _loggerService?.LogEvent(nameof(GenerateResizedFileName), new Dictionary<String, String>()
                         {
                             { nameof(suggestedfilename), $"{suggestedfilename}" },
@@ -40,7 +40,7 @@ namespace Get.the.solution.Image.Manipulation.ServiceBase
             return String.Empty;
         }
 
-        public abstract MemoryStream Resize(Stream inputStream, int width, int height, string suggestedFileName = null, int quality = 75);
+        public abstract Task<MemoryStream> ResizeAsync(Stream inputStream, int width, int height, string suggestedFileName = null, int quality = 75);
 
     }
 }

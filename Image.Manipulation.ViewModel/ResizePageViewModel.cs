@@ -461,7 +461,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                                 //do the resizing in a seperate thread using Task.Run
                                 try
                                 {
-                                    var ms = await Task.Run(() => _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, suggestedFileName, _localSettings.Settings.ImageQuality));
+                                    var ms = await Task.Run(() => _resizeService.ResizeAsync(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, suggestedFileName, _localSettings.Settings.ImageQuality));
                                     taskMemoryStreamCompletionSource.SetResult(ms);
                                 }
                                 catch (Exception e)
@@ -472,13 +472,13 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                             else
                             {
                                 //do the resizing on the main thread in share target to avoid issues see #53
-                                var ms = _resizeService.Resize(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, suggestedFileName, _localSettings.Settings.ImageQuality);
+                                var ms = await _resizeService.ResizeAsync(currentImage.Stream, currentImage.NewWidth, currentImage.NewHeight, suggestedFileName, _localSettings.Settings.ImageQuality);
                                 taskMemoryStreamCompletionSource.SetResult(ms);
                             }
                             using (MemoryStream resizedImageFileStream = await taskMemoryStreamCompletionSource.Task)
                             {
                                 //log image size
-                                _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
+                                _loggerService?.LogEvent(nameof(IResizeService.ResizeAsync), new Dictionary<String, String>()
                                 {
                                     { $"{nameof(ImageFile)}{nameof(Width)}", $"{currentImage?.Width}" },
                                     { $"{nameof(ImageFile)}{nameof(Height)}", $"{currentImage?.Height}" },
@@ -643,7 +643,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                             progressBarDialog.ProcessedItems++;
                             if (progressBarDialog.AbortedClicked())
                             {
-                                _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
+                                _loggerService?.LogEvent(nameof(IResizeService.ResizeAsync), new Dictionary<String, String>()
                                 {
                                     { nameof(progressBarDialog.AbortedClicked), Boolean.TrueString }
                                 });
@@ -682,7 +682,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             catch (Exception e)
             {
                 _loggerService?.LogException(nameof(ResizeImages), e);
-                _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
+                _loggerService?.LogEvent(nameof(IResizeService.ResizeAsync), new Dictionary<String, String>()
                 {
                     { "ResizeFinished","false" }
                 });
@@ -694,7 +694,7 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
                 Resizing = false;
             }
             //log image size
-            _loggerService?.LogEvent(nameof(IResizeService.Resize), new Dictionary<String, String>()
+            _loggerService?.LogEvent(nameof(IResizeService.ResizeAsync), new Dictionary<String, String>()
             {
                 { "ResizeFinished","true" }
             });

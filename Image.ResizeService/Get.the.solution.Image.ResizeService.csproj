@@ -4,10 +4,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Get.the.solution.Image.ResizeService</AssemblyName>
     <RootNamespace>Get.the.solution.Image.ResizeService</RootNamespace>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
   </ItemGroup>
 
