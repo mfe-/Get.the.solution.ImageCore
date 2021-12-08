@@ -216,7 +216,12 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             set { SetProperty(ref _UseBottomAppBar, value, nameof(UseBottomAppBar)); }
         }
 
-
+        private bool _LogToFile;
+        public bool LogToFile
+        {
+            get { return _LogToFile; }
+            set { SetProperty(ref _LogToFile, value, nameof(LogToFile)); }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

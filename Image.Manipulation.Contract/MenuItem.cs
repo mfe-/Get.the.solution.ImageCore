@@ -40,5 +40,9 @@ namespace Get.the.solution.Image.Manipulation.Contract
             OnPropertyChanged(propertyName);
             return true;
         }
+        public override string ToString()
+        {
+            return $"{nameof(MenuItem)} Name={Name}";
+        }
     }
 }
