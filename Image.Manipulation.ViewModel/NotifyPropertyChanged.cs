@@ -1,4 +1,5 @@
 ﻿using Get.the.solution.Image.Manipulation.Contract;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -36,7 +37,10 @@ namespace Get.the.solution.Image.Manipulation.ViewModel
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
             OnPropertyChanged(propertyName);
-            _loggerService?.LogEvent(propertyName, value?.ToString() ?? "NULL");
+            if (!(value is IEnumerable))
+            {
+                _loggerService?.LogEvent(propertyName, value?.ToString() ?? "NULL");
+            }
             return true;
         }
     }

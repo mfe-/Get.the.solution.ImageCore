@@ -82,5 +82,12 @@ namespace Get.the.solution.Image.Manipulation.Contract
         /// <param name="imageFile"></param>
         /// <returns></returns>
         Task<bool> TrySetWallpaperImageAsync(string imageFilePath);
+        /// <summary>
+        /// Converts an image like IStorageFile (uwp) into <see cref="ImageFile"/>
+        /// </summary>
+        /// <param name="storageFile">the image file for example IStoreageFile on uwp</param>
+        /// <param name="readStream">Whether the stream should be read to extract width and height properties</param>
+        /// <returns></returns>
+        public Task<ImageFile> FileToImageFileAsync(object imagefile, bool readStream = true);
     }
 }

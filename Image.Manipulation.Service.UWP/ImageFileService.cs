@@ -3,6 +3,7 @@ using Get.the.solution.Image.Manipulation.ServiceBase;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -14,12 +15,30 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
     public class ImageFileService : ImageFileBaseService, IImageFileService
     {
         private readonly FileService _fileService;
+        private readonly Func<Stream, ImageFile> _getWidthHeightFunc;
 
         public ImageFileService(ILoggerService loggerService, FileService fileService)
             : base(loggerService)
         {
             _fileService = fileService;
         }
+        public ImageFileService(ILoggerService loggerService, FileService fileService, Func<Stream, ImageFile> getWidthHeightFunc) : this(loggerService, fileService)
+        {
+            _getWidthHeightFunc = getWidthHeightFunc;
+        }
+        ///<inheritdoc/>
+        public override IList<string> FileTypeFilter { get; set; } = new List<String>()
+        {
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".bmp",
+            ".pbm",
+            ".tiff",
+            ".tga",
+            ".webp"
+        };
         ///<inheritdoc/>
         public async Task<IReadOnlyList<ImageFile>> PickMultipleFilesAsync(bool readStream = false)
         {
@@ -70,14 +89,16 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
             return null;
         }
-
-        public static async Task<ImageFile> FileToImageFileAsync(IStorageFile storageFile, bool readStream = true)
+        ///<inheritdoc/>
+        public async Task<ImageFile> FileToImageFileAsync(object imagefile, bool readStream = true)
         {
+            if (!(imagefile is IStorageFile)) throw new NotSupportedException($"Currently only {nameof(IStorageFile)} is supported.");
+            var storageFile = imagefile as IStorageFile;
+
             Stream imageStream = null;
             if (readStream)
             {
-                IRandomAccessStreamWithContentType RandomAccessStream = await storageFile?.OpenReadAsync();
-                imageStream = RandomAccessStream?.AsStreamForWrite();
+                imageStream = await GetStreamAsync(storageFile);
             }
             ImageProperties imageProp;
             int width = 0;
@@ -91,6 +112,28 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
                     width = (int)imageProp.Width;
                     height = (int)imageProp.Height;
                 }
+                //ImageProperties provide width and height only for standard image files which are known by windows
+                //this is a fallback function which can be used to detect the width and height by the stream
+                if (width == 0 && height == 0)
+                {
+                    //in readonly there is not stream loaded
+                    if (imageStream == null)
+                    {
+                        imageStream = await GetStreamAsync(storageFile);
+                    }
+                    if (_getWidthHeightFunc != null)
+                    {
+                        var temp = _getWidthHeightFunc.Invoke(imageStream);
+                        width = temp.Width;
+                        height = temp.Height;
+                    }
+                    if (!readStream)
+                    {
+                        imageStream?.Dispose();
+                        imageStream = null;
+                    }
+                }
+
                 //path can be empty if from the file picker dialog 
                 //a image path from the internet was enterted
                 if (String.IsNullOrEmpty(storageFile.Path))
@@ -113,7 +156,15 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             imageFile.Tag = storageFile;
             imageFile.IsReadOnly = (Windows.Storage.FileAttributes.ReadOnly & storageFile.Attributes) == Windows.Storage.FileAttributes.ReadOnly;
             return imageFile;
+
         }
+
+        private static async Task<Stream> GetStreamAsync(IStorageFile storageFile)
+        {
+            IRandomAccessStreamWithContentType RandomAccessStream = await storageFile?.OpenReadAsync();
+            return RandomAccessStream?.AsStreamForWrite();
+        }
+
         ///<inheritdoc/>
         public Task<ImageFile> FileToImageFileConverterAsync(object storageFile, bool readStream = true)
         {
@@ -203,7 +254,8 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
             }
 
             var storageFiles = (await targetStorageFolder.GetFilesAsync());
-            List<ImageFile> imageFiles = new List<ImageFile>();
+            if (storageFiles == null) storageFiles = new StorageFile[0];
+            var imageFiles = new List<ImageFile>();
             foreach (var item in storageFiles)
             {
                 if (FileTypeFilter.Contains(item.FileType.ToLower()))
