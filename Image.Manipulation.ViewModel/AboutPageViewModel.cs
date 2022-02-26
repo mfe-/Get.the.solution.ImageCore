@@ -21,6 +21,8 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
             }
         }
 
+        public string GitRevision { get;set; }
+
 
         public String AppVersion
         {
