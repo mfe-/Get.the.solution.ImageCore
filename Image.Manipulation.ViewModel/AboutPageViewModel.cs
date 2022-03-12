@@ -7,21 +7,35 @@ namespace Get.the.solution.Image.Manipulation.ViewModel.ResizeImage
     {
         protected readonly ILoggerService _LoggerService;
         protected readonly IApplicationService _applicationService;
-        public AboutPageViewModel(ILoggerService loggerService, IApplicationService applicationService) : base(loggerService)
+        private readonly ILocalSettings<ResizeSettings> _localSettings;
+
+        public AboutPageViewModel(ILoggerService loggerService, IApplicationService applicationService, ILocalSettings<ResizeSettings> localSettings) : base(loggerService)
         {
             try
             {
                 _LoggerService = loggerService;
                 _applicationService = applicationService;
                 _LoggerService?.LogEvent(nameof(AboutPageViewModel));
+                _localSettings = localSettings;
             }
             catch (Exception e)
             {
                 _LoggerService?.LogException(nameof(AboutPageViewModel), e);
             }
+
         }
 
-        public string GitRevision { get;set; }
+        public bool ShowDebugInformation
+        {
+            get { return _localSettings?.Settings?.LogToFile ?? false; }
+
+        }
+
+        public string GitRevision { get; set; }
+
+        public string AdsjumboApplicationIdKey { get; set; }
+
+        public string AppCenterId { get; set; }
 
 
         public String AppVersion
