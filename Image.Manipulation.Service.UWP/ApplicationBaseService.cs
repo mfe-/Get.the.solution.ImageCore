@@ -20,10 +20,12 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 {
     public abstract class ApplicationBaseService : IApplicationService
     {
+#pragma warning disable S1075 // URIs should not be hardcoded
         private const string fileProtocol = "file:///";
+#pragma warning restore S1075 // URIs should not be hardcoded
         private readonly ILoggerService _loggerService;
 
-        public ApplicationBaseService(ILoggerService loggerService)
+        protected ApplicationBaseService(ILoggerService loggerService)
         {
             _loggerService = loggerService;
         }
@@ -129,8 +131,8 @@ namespace Get.the.solution.Image.Manipulation.Service.UWP
 
                 try
                 {
-                    StorageFile? storageFile = null;
-                    StorageFolder? storageFolder = null;
+                    StorageFile storageFile = null;
+                    StorageFolder storageFolder = null;
                     try
                     {
                         storageFile = await StorageFile.GetFileFromPathAsync(protocol);
